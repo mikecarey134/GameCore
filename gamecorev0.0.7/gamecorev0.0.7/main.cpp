@@ -117,7 +117,7 @@ int main(void)
 
 	
 	////Dungeon example ////////////////////////////////////////////////////////
-	//device->getSceneManager()->loadScene("map/dungeon2.irr");//debug map scene
+	device->getSceneManager()->loadScene("map/dungeon2.irr");//debug map scene
 	//////////////////////////////////////////////////////////////////////////
 
 	//Open World Example///////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ int main(void)
 	////////////////////////////////////////////////////////////////////////////
 	
 	//house example////////////////////////////////////////////////////////////////
-	device->getSceneManager()->loadScene("map/subbsalpha.irr");//debug map scene
+	//device->getSceneManager()->loadScene("map/subbsalpha.irr");//debug map scene
 	//////////////////////////////////////////////////////////////////////////////
 
 	
@@ -177,10 +177,10 @@ int main(void)
 				IRigidBody* body = world->addRigidBody(shape);
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
-				node->setID(player::IDFlag_IsPickable);
+				//node->setID(player::IDFlag_IsPickable);
 
-				selector = smgr->createTriangleSelectorFromBoundingBox(node);
-				node->setTriangleSelector(selector);
+				//selector = smgr->createTriangleSelectorFromBoundingBox(node);
+			    //node->setTriangleSelector(selector);
 	
 			}
 

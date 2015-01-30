@@ -30,7 +30,7 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI gui,
 						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world):
 							device_(device),guienv_(guienv),driver_(driver),Context_(Context),gui_(gui),debug(false),							
-							pauseMenu(false), started(false), creditsDisplayed(false), inventory(false), engine_(engine), 
+							pauseMenu(false), started(false), chatshown(false),creditsDisplayed(false), inventory(false), engine_(engine), 
 							player_(thePlayer), world_(world)
 {
 	
@@ -77,6 +77,19 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			else
 				pauseMenu = true;
 			engine_->play2D("sounds/button-20.wav",false);
+		}
+		
+		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_T && 
+			event.KeyInput.PressedDown == true)
+		{//handle f3 key to display the debugging information
+			if (chatshown)
+			{
+				chatshown = false;
+
+			}
+			else
+				chatshown = true;
+			std::cout<<"T_Pressed!\n"<<"Value:"<<chatshown<<"\n";
 		}
 
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_F3 && 
@@ -239,8 +252,7 @@ bool consoleevent::IsKeyUp(irr::EKEY_CODE keyCode) const
 void consoleevent::drawMainMenu()//draws the main menu for the game
 {
 	IGUISkin* skin = guienv_->getSkin();
-	//guienv_ = device_->getGUIEnvironment();
-	//guienv_->drawAll();
+	
 	//add a button to our gui here
 	
 	ITexture* backgroundImage = driver_->getTexture("bill/creepyman-alt.jpg");
@@ -302,7 +314,9 @@ void consoleevent::drawPauseMenu ()// render the pause menu
 	skin->setFont(guienv_->getBuiltInFont(),EGDF_TOOLTIP);
 	device_->getCursorControl()->setVisible(true);
 	device_->getCursorControl()->setPosition(device_->getCursorControl()->getPosition());
+
 	guienv_->drawAll();
+
 }
 
 void consoleevent::drawInventory ()
@@ -375,11 +389,13 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 		gui_.drawDebug(font ,driver_,player_->getPosition());
 		world_->debugDrawWorld(true);
 	}
-	if(pauseMenu)
-		drawPauseMenu();
+	if(pauseMenu)drawPauseMenu();
 		
-	if(inventory)
-		drawInventory();
+	if(chatshown){gui_.drawchat(guienv_);}
+	
+	if(inventory) drawInventory();
 	if(!started)
-		drawMainMenu();
+		drawMainMenu();//guienv_->drawAll();
+
+	
 }

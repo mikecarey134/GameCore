@@ -66,6 +66,7 @@ private:
 	bool debug;
 	bool pauseMenu;
 	bool started;
+	bool chatshown;
 	bool creditsDisplayed;
 	bool inventory;
 	irrklang::ISoundEngine* engine_;

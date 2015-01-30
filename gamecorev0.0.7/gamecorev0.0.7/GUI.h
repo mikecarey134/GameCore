@@ -27,6 +27,14 @@ public:
 	void setSkinTransparency (irr::s32 alpha, irr::gui::IGUISkin * skin);
 	void setColor            (irr::video::SColor newColor){theColor_ = newColor;}
 	void drawloading(irr::video::IVideoDriver*& driver, irr::gui::IGUIEnvironment*& guienv);
+	void drawchat(irr::gui::IGUIEnvironment*& guienv)
+	{
+	
+
+		irr::gui::IGUIEditBox * ebox=guienv->addEditBox(irr::core::stringw("somevalue").c_str()
+			,irr::core::recti(10,400, 200,580),true);
+	
+	}
 
 private:
 	irr::video::SColor theColor_;
