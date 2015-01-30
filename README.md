@@ -8,11 +8,13 @@ Our goal is to make a full game engine where we can create a full 3D application
 #Version Notes#
 
 Version 0.0.3
+
 	-Added the Console 
 	-added the 3rd Person camera
 
 
 Version 0.0.4
+
 	-added more features to the debug menu
 	-added IrrKlang
 	-added inventory
@@ -27,12 +29,14 @@ Version 0.0.5
 	-cleaned up code
 
 Version 0.0.6
+
 	-new model
 	-bug fixes
 	-code cleaning
 
 	
 Version 0.0.7
+
 	-new world
 	-fog
 	-\tp command
