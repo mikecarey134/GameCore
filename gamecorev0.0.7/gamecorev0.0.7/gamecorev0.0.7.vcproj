@@ -197,11 +197,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetworkData.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleSystem.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\player.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\playerData.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\remotePlayer.cpp"
 				>
 			</File>
 		</Filter>
@@ -235,11 +247,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetworkData.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleSystem.h"
 				>
 			</File>
 			<File
 				RelativePath=".\player.h"
+				>
+			</File>
+			<File
+				RelativePath=".\playerData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\remotePlayer.h"
 				>
 			</File>
 			<File
