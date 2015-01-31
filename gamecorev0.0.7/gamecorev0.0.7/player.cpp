@@ -38,11 +38,11 @@ xDirection_(0.0f), zDirection_(0.0f)
 	float width  = 3.0;
 
 	character_ = new IKinematicCharacterController(world_);
-	//character_->warp(vector3df(41.0f, 73.0f, 23.0f));//set the init player pos on the map
+	character_->warp(vector3df(41.0f, 73.0f, 23.0f));//set the init player pos on the map
 
 	//dungeon example
 	//character_->warp(vector3df(-217.0f, 3.8f, 390.0f));
-	character_->warp(vector3df(-17.0f, 15.8f, -217.0f));
+	//character_->warp(vector3df(-17.0f, 15.8f, -217.0f));
 
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
 	
