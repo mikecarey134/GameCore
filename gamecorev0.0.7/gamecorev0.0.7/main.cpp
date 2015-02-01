@@ -19,10 +19,10 @@
 #include "driverChoice.h"
 #include "SAppcontext.h"
 #include "keymap.h"
-#include "Splash.h"
 #include "console.h"
 #include "consoleevent.h"
 #include "player.h"
+#include "NPC.h"
 #include "ParticleSystem.h"
 #include "InternalServer.h"
 #include <winsock2.h>
@@ -103,6 +103,7 @@ int main(void)
 	
 	//load our player into the scene
 	player thePlayer(device,"characters/stick.md2",smgr,driver, engine, world);
+	
 
 	if(!device)//if device fails to load exit
 	{
@@ -176,7 +177,7 @@ int main(void)
 			
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
 				IRigidBody* body = world->addRigidBody(shape);
-				//node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
+				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(player::IDFlag_IsPickable);
 
@@ -211,6 +212,7 @@ int main(void)
 		
 	}
 
+	NPC npc_tester(device,smgr,world,driver);
 
 	u32 then = device->getTimer()->getTime();
 
@@ -231,7 +233,7 @@ int main(void)
 		if (device->isWindowActive())//if a window is running
 		{	
 				
-			
+				
 				if (!crecv.getStarted())
 				{
 					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
@@ -245,6 +247,7 @@ int main(void)
 				}
 				else
 				{
+					npc_tester.moveNPC();
 					//internal client sends data to the server 
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
 					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background

@@ -4,7 +4,7 @@ IKinematicCharacterController::IKinematicCharacterController(irrBulletWorld* con
 {
     btTransform startTransform;
 	startTransform.setIdentity();
-	//startTransform.setOrigin(btVector3(0.210098,100.6433364,1.453260));
+	startTransform.setOrigin(btVector3(0.210098,100.6433364,1.453260));
 
 	GhostObject = new btPairCachingGhostObject();
 	GhostObject->setWorldTransform(startTransform);
