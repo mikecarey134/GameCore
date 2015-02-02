@@ -122,8 +122,8 @@ int main(void)
 	//////////////////////////////////////////////////////////////////////////
 
 	//Open World Example///////////////////////////////////////////////////////
-	device->getSceneManager()->loadScene("map/openworld.irr");//debug map scene
-	//device->getSceneManager()->loadScene("map/outdoor.irr");//debug map scene
+	//device->getSceneManager()->loadScene("map/openworld.irr");//debug map scene
+	device->getSceneManager()->loadScene("map/outdoortrees.irr");//debug map scene
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
 	////////////////////////////////////////////////////////////////////////////
 	
@@ -178,7 +178,7 @@ int main(void)
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
 				IRigidBody* body = world->addRigidBody(shape);
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
-				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
+				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(player::IDFlag_IsPickable);
 
 				//selector = smgr->createTriangleSelectorFromBoundingBox(node);

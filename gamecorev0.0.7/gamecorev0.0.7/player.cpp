@@ -152,6 +152,7 @@ void player::moveCameraControl()
 		// highlighted. 
 		if(selectedSceneNode->getID() == IDFlag_IsPickable)
 		{
+
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
 			//highlightedSceneNode = selectedSceneNode;
