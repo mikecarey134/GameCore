@@ -14,12 +14,14 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 {
 	character_ = new IKinematicCharacterController(world_);
 	
-	character_->setGravity(NPC_EARTH_GRAVITY);
+	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
 
-	//NPC will default to a toilet for the time being
+
+	
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"));
 	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
-
+    characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
+	
 	//characterModel_
 	characterModel_->setScale(vector3df(3.3, 3.3, 3.3));	
 	character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map

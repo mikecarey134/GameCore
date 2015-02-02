@@ -64,6 +64,7 @@ xDirection_(0.0f), zDirection_(0.0f)
 
 	//////////////////////////////////////////////////////////////////////////
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
+	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	//////////////////////////////////////////////////////////////////////////
