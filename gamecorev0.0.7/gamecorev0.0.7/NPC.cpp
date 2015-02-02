@@ -10,21 +10,24 @@ using namespace gui;
 
 NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
 		 irrBulletWorld* world, irr::video::IVideoDriver* driver) : 
-			device_(device), smgr_(smgr), driver_(driver), world_(world)
+			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH)
 {
 	character_ = new IKinematicCharacterController(world_);
 	
-	character_->setGravity(NPC_EARTH_GRAVITY);
+	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
 
-	//NPC will default to a toilet for the time being
+
+	
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"));
 	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
-
+    characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
+	
 	//characterModel_
 	characterModel_->setScale(vector3df(3.3, 3.3, 3.3));	
 	character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
 	directionCounter_ = 0.0f;
+	
 }
 
 NPC::~NPC()
@@ -43,7 +46,8 @@ void NPC::moveNPC()
 	//std::cout << AIdirection_.X << " " << AIdirection_.Z << std::endl;
 
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
-	character_->setPositionIncrementPerSimulatorStep(AIdirection_);
+
+	character_->setPositionIncrementPerSimulatorStep(AIdirection_* NPC_SPEED);
 	
 
 }

@@ -14,7 +14,6 @@
 #include <irrlicht.h>
 #include <irrKlang.h>
 #include <iostream>
-//#include "chatclient.h"
 
 #include "driverChoice.h"
 #include "SAppcontext.h"
@@ -49,7 +48,8 @@ using namespace RakNet;
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
 #pragma comment(lib, "irrKlang.lib")
-#ifdef CONSOLE
+
+#ifdef CONSOLE//if we want the console displayed
 #else
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")//comment out if you want to see the Debug console
 #pragma comment(lib,"IrrConsole-DEBUG")
@@ -247,7 +247,8 @@ int main(void)
 				}
 				else
 				{
-					npc_tester.moveNPC();
+					npc_tester.moveNPC();//move our npc 
+
 					//internal client sends data to the server 
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
 					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background

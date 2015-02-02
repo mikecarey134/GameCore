@@ -3,7 +3,11 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
+/*
+	PlayerData.h
+	get the player data and send it to the network
+	By: Michael Carey
+*/
 //////////////////////////////////////////////////////////////////////////
 
 #include "RakNetTypes.h"
@@ -36,11 +40,11 @@ private:
 	std::string guid_;
 };
 
-inline
+/*
 std::istream& operator>>(std::istream& in, playerData& ourPlayerData)
 {
 	ourPlayerData.getInput(in);
 	return in;
-};
+};*/
 
 #endif

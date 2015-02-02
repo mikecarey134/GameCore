@@ -80,7 +80,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		}
 		
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_T && 
-			event.KeyInput.PressedDown == true)
+			event.KeyInput.PressedDown == true && !console.isVisible()&& !pauseMenu)
 		{//handle f3 key to display the debugging information
 			if (chatshown)
 			{

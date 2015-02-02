@@ -20,7 +20,7 @@ using namespace gui;
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 {
 	chat_message_="\0";
 	camera_ = device->getSceneManager()->addCameraSceneNode();
@@ -64,6 +64,7 @@ xDirection_(0.0f), zDirection_(0.0f)
 
 	//////////////////////////////////////////////////////////////////////////
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
+	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	//////////////////////////////////////////////////////////////////////////
@@ -118,56 +119,9 @@ void player::moveCameraControl()
 
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
-	camera_->setPosition(calculateCameraPos());
+	camera_->setPosition(calculateCameraPos());	
 
-	//////////////////////////////////////////////////////////////////////////
-	//Early Selection Code Will be moved to a function later
-	//////////////////////////////////////////////////////////////////////////
-	 scene::ISceneCollisionManager* collMan = smgr_->getSceneCollisionManager();
-	line3d<f32> ray = collMan->getRayFromScreenCoordinates(device_->getCursorControl()->getPosition(), camera_);
-	//core::line3d<f32> ray;
-	
-	//ray.start = camera_->getPosition();
-	//ray.end = ray.start + (camera_->getTarget()- ray.start) * 100000.0f;
-	// Tracks the current intersection point with the level or a mesh
-	core::vector3df intersection;
-	// Used to show with triangle has been hit
-	core::triangle3df hitTriangle;
-
-	scene::ISceneNode * selectedSceneNode =
-		collMan->getSceneNodeAndCollisionPointFromRay(
-		ray,
-		intersection, // This will be the position of the collision
-		hitTriangle, // This will be the triangle hit in the collision
-		IDFlag_IsPickable, // This ensures that only nodes that we have
-		// set up to be pick able are considered
-		0); // Check the entire scene (this is actually the implicit default)
-
-	
-
-	if( selectedSceneNode)
-	{
-		
-		// We can check the flags for the scene node that was hit to see if it should be
-		// highlighted. 
-		if(selectedSceneNode->getID() == IDFlag_IsPickable)
-		{
-
-			driver_->setTransform(video::ETS_WORLD, core::matrix4());
-			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
-			//highlightedSceneNode = selectedSceneNode;
-
-			// Highlighting in this case means turning lighting OFF for this node,
-			// which means that it will be drawn with full brightness.
-			//highlightedSceneNode->setMaterialFlag(video::EMF_LIGHTING, false);
-			//selectedSceneNode->setDebugDataVisible(EDS_MESH_WIRE_OVERLAY);
-			//selectedSceneNode->setDebugDataVisible(EDS_OFF);
-		}
-	}
-	
-		
-
-	
+	nodeSelector(); //highlights nodes within a certain range of the playera
 }
 
 vector3df player::calculateCameraPos()
@@ -213,3 +167,50 @@ void player::idle()
 	characterModel_->setMD2Animation(EMAT_RUN);
 }
 
+void player::nodeSelector()
+{
+	//////////////////////////////////////////////////////////////////////////
+	//Early Selection Code
+	//////////////////////////////////////////////////////////////////////////
+	scene::ISceneCollisionManager* collMan = smgr_->getSceneCollisionManager();
+	line3d<f32> ray = collMan->getRayFromScreenCoordinates(device_->getCursorControl()->getPosition(), camera_);
+	//core::line3d<f32> ray;
+
+	//ray.start = camera_->getPosition();
+	//ray.end = ray.start + (camera_->getTarget()- ray.start) * 100000.0f;
+	// Tracks the current intersection point with the level or a mesh
+	core::vector3df intersection;
+	// Used to show with triangle has been hit
+	core::triangle3df hitTriangle;
+
+	scene::ISceneNode * selectedSceneNode =
+		collMan->getSceneNodeAndCollisionPointFromRay(
+		ray,
+		intersection, // This will be the position of the collision
+		hitTriangle, // This will be the triangle hit in the collision
+		IDFlag_IsPickable, // This ensures that only nodes that we have
+		// set up to be pick able are considered
+		0); // Check the entire scene (this is actually the implicit default)
+
+
+
+	if( selectedSceneNode)
+	{
+
+		// We can check the flags for the scene node that was hit to see if it should be
+		// highlighted. 
+		if(selectedSceneNode->getID() == IDFlag_IsPickable)
+		{
+
+			driver_->setTransform(video::ETS_WORLD, core::matrix4());
+			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
+			//highlightedSceneNode = selectedSceneNode;
+
+			// Highlighting in this case means turning lighting OFF for this node,
+			// which means that it will be drawn with full brightness.
+			//highlightedSceneNode->setMaterialFlag(video::EMF_LIGHTING, false);
+			//selectedSceneNode->setDebugDataVisible(EDS_MESH_WIRE_OVERLAY);
+			//selectedSceneNode->setDebugDataVisible(EDS_OFF);
+		}
+	}
+}
