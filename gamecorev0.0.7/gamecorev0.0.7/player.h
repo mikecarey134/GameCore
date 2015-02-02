@@ -56,11 +56,12 @@ public:
 	
 	~player(void);
 
-	void                 jump              ();
-	void                 rotate            (irr::core::vector3df rotation){ characterModel_->setRotation(rotation); }
-	void                 animate           (irr::scene::EMD2_ANIMATION_TYPE animation);
-	void                 moveCameraControl ();
-	irr::core::vector3df calculateCameraPos();
+	void                 jump				();
+	void                 rotate				(irr::core::vector3df rotation){ characterModel_->setRotation(rotation); }
+	void                 animate			(irr::scene::EMD2_ANIMATION_TYPE animation);
+	void                 moveCameraControl	();
+	irr::core::vector3df calculateCameraPos	();
+	void				 nodeSelector		();
 
 
 	void setTexture    (const char* filename)     {characterModel_->setMaterialTexture(0,driver_->getTexture(filename));}
