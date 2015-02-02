@@ -23,6 +23,7 @@
 #define PLAYER_JUMP_FORCE 60.0f
 #define PLAYER_EARTH_GRAVITY 150.0f
 #define PLAYER_ANIMATION_SPEED 15.0f
+#define PLAYER_HEALTH 100
 ///////////////////////////////////
 
 
@@ -82,6 +83,7 @@ public:
 	float                               getPlayerSpeed() {return playerSpeed_;}
 	char*                               getChatMessage() {return chat_message_;}
 	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
+	int                                 getHealth     () {return playerHealth_;}
 
 	//directional 
 	void                  forward   ();
@@ -121,6 +123,6 @@ private:
 
 	float playerSpeed_;
 	char* chat_message_;
-
+	int playerHealth_;
 
 };
