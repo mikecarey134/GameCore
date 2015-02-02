@@ -46,7 +46,8 @@ void NPC::moveNPC()
 	//std::cout << AIdirection_.X << " " << AIdirection_.Z << std::endl;
 
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
-	character_->setPositionIncrementPerSimulatorStep(AIdirection_);
+
+	character_->setPositionIncrementPerSimulatorStep(AIdirection_* NPC_SPEED);
 	
 
 }

@@ -19,6 +19,7 @@
 
 #define NPC_EARTH_GRAVITY 150.0f
 #define NPC_HEALTH 100
+#define NPC_SPEED 0.25
 
 class NPC
 {
