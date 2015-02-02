@@ -13,12 +13,13 @@ IKinematicCharacterController::IKinematicCharacterController(irrBulletWorld* con
 	Capsule = new btCapsuleShape(characterWidth,characterHeight);
 	GhostObject->setCollisionShape(Capsule);
 	GhostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+	GhostObject->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 	
 
 	btScalar stepHeight = btScalar(0.35);
 	Character = new btKinematicCharacterController(GhostObject,Capsule,stepHeight);
 	
-	World->getPointer()->addCollisionObject(GhostObject,btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter|btBroadphaseProxy::DefaultFilter);
+	World->getPointer()->addCollisionObject(GhostObject,btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter|btBroadphaseProxy::AllFilter);
 
 	World->getPointer()->addAction(Character);
 }

@@ -20,7 +20,7 @@ using namespace gui;
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 {
 	chat_message_="\0";
 	camera_ = device->getSceneManager()->addCameraSceneNode();

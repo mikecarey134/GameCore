@@ -18,6 +18,7 @@
 #include"exampleframework.h"
 
 #define NPC_EARTH_GRAVITY 150.0f
+#define NPC_HEALTH 100
 
 class NPC
 {
@@ -32,6 +33,7 @@ private:
 
 	irr::core::vector3df AIdirection_;
 	irr::u32 directionCounter_;
+	int npcHealth_;
 	
 public:
 	NPC(irr::IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
@@ -40,6 +42,7 @@ public:
 	~NPC(void);
 
 	void setposition   (irr::core::vector3df pos) { character_->warp(pos); }
-	void moveNPC ();
-	void luaSetDir();
+	void moveNPC   ();
+	void luaSetDir ();
+	int  getHealth () {return npcHealth_;}
 };
