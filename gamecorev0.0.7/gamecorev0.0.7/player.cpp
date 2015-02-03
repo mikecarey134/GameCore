@@ -154,18 +154,19 @@ vector3df player::calculateCameraPos()
 
 void player::forward()
 {	
-	characterModel_->setFrameLoop(1,7);
-	characterModel_->setAnimationSpeed(6);
-	if (walkframe_ == 8)
+	characterModel_->setFrameLoop(301,318);
+	characterModel_->setAnimationSpeed(4);
+
+	/*if (walkframe_== 0 || walkframe_ == 319 )
 	{
-		walkframe_ = 1;
+		walkframe_ = 301;
 	}
 	else
 	{
 		walkframe_++;
 	}
 
-	characterModel_->setCurrentFrame(walkframe_);
+	characterModel_->setCurrentFrame(walkframe_);*/
 }
 void player::backwards()
 {	
