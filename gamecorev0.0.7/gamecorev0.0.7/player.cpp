@@ -20,7 +20,7 @@ using namespace gui;
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0)
 {
 	chat_message_="\0";
 	camera_ = device->getSceneManager()->addCameraSceneNode();
@@ -47,7 +47,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
 	
 	setTexture("characters/playerskin3.jpg");
-	characterModel_->setScale(vector3df(0.75, 0.75, 0.75));
+	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
 	
@@ -68,6 +68,8 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	//////////////////////////////////////////////////////////////////////////
+	
+	idle();
 }
 
 player::~player(void)
@@ -86,8 +88,10 @@ void player::animate(EMD2_ANIMATION_TYPE animation)
 
 void player::jump()
 {
-	if (character_->isOnGround())
+	if (character_->isOnGround()){
 		character_->jump();
+		characterModel_->setFrameLoop(103,111);
+	}
 }
 
 void player::moveCameraControl()
@@ -96,7 +100,7 @@ void player::moveCameraControl()
 	
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
-	vector3df rot(0, camera_->getRotation().Y-90.0f, 0);
+	vector3df rot(0, camera_->getRotation().Y, 0);
 	characterModel_->setRotation(rot);
 
 	vector3df direction(xDirection_, 0.0f, zDirection_);
@@ -150,6 +154,18 @@ vector3df player::calculateCameraPos()
 
 void player::forward()
 {	
+	characterModel_->setFrameLoop(1,7);
+	characterModel_->setAnimationSpeed(6);
+	if (walkframe_ == 8)
+	{
+		walkframe_ = 1;
+	}
+	else
+	{
+		walkframe_++;
+	}
+
+	characterModel_->setCurrentFrame(walkframe_);
 }
 void player::backwards()
 {	
@@ -164,7 +180,7 @@ void player::right()
 
 void player::idle()
 {
-	characterModel_->setMD2Animation(EMAT_RUN);
+	characterModel_->setFrameLoop(206,250);
 }
 
 void player::nodeSelector()

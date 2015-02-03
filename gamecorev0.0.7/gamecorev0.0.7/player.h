@@ -22,7 +22,7 @@
 #define CAMERA_MOVE_SPEED 50.0f
 #define PLAYER_JUMP_FORCE 60.0f
 #define PLAYER_EARTH_GRAVITY 150.0f
-#define PLAYER_ANIMATION_SPEED 15.0f
+#define PLAYER_ANIMATION_SPEED 12.0f
 #define PLAYER_HEALTH 100
 ///////////////////////////////////
 
@@ -91,6 +91,7 @@ public:
 	void                  left      ();
 	void                  right     ();
 	void                  idle      ();
+	void                  attack    (){characterModel_->setFrameLoop(32,44); characterModel_->setAnimationSpeed(15);}
 
 
 	bool isStepSoundPaused() { return playerSteps_->getIsPaused(); }
@@ -124,5 +125,6 @@ private:
 	float playerSpeed_;
 	char* chat_message_;
 	int playerHealth_;
+	int walkframe_;
 
 };

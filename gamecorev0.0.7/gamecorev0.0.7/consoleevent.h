@@ -53,6 +53,14 @@ public:
 
 	void update(irr::u32 then, irr::u32 now);
 
+	struct SMouseState
+	{
+		core::position2di Position;
+		bool LeftButtonDown;
+		bool RightButtonDown;
+		SMouseState() : LeftButtonDown(false),RightButtonDown(false) { }
+	} MouseState;
+
 private:
 
 	IC_Console console;

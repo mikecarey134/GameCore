@@ -50,24 +50,62 @@ consoleevent::~consoleevent(){}
 
 bool consoleevent::OnEvent(const irr::SEvent& event)
 {
-	if(event.EventType == irr::EET_KEY_INPUT_EVENT )
+
+	//test for our mouse events
+	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT && !pauseMenu && !console.isVisible() )
+	{
+		switch(event.MouseInput.Event)
+		{
+		case EMIE_RMOUSE_PRESSED_DOWN:
+			MouseState.RightButtonDown = true;
+			cout<<"Right Mouse CLick!\n";
+			break;
+
+		case EMIE_RMOUSE_LEFT_UP:
+			MouseState.RightButtonDown = false;
+			break;
+
+		case EMIE_LMOUSE_PRESSED_DOWN:
+			MouseState.LeftButtonDown = true;
+			player_->attack();
+			cout<<"Left Mouse CLick!\n";
+			break;
+
+		case EMIE_LMOUSE_LEFT_UP:
+			MouseState.LeftButtonDown = false;
+			player_->idle();
+			break;
+		case EMIE_MOUSE_MOVED:
+			MouseState.Position.X = event.MouseInput.X;
+			MouseState.Position.Y = event.MouseInput.Y;
+			break;
+
+		default:
+			// We won't use the wheel
+			break;
+		}
+	}
+	if(event.EventType == irr::EET_KEY_INPUT_EVENT  )
 	{
 		KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
 
-		if(!console.isVisible())//handle player movement keyboard controls
+		if(!console.isVisible()&& !pauseMenu )//handle player movement keyboard controls
 		{
 			if (IsKeyDown(KEY_SPACE))
 				player_->jump();
 
-			if (IsKeyDown(KEY_KEY_W))		{ player_->setZDir(-player_->getPlayerSpeed()); }
+			if (IsKeyDown(KEY_KEY_W))		{ player_->setZDir(-player_->getPlayerSpeed()); player_->forward(); }
 			else if(IsKeyDown(KEY_KEY_S))	{ player_->setZDir(player_->getPlayerSpeed()); }
-			else							{ player_->setZDir(0.0f); }
+			else							{ player_->setZDir(0.0f); /*player_->idle();*/ }
 
 			if (IsKeyDown(KEY_KEY_A))		{ player_->setXDir(player_->getPlayerSpeed()); }
 			else if(IsKeyDown(KEY_KEY_D))	{ player_->setXDir(-player_->getPlayerSpeed()); }
-			else							{ player_->setXDir(0.0f); }
-			
+			else							{ player_->setXDir(0.0f); /*player_->idle();*/}
+
+			if(IsKeyUp(KEY_SPACE)&&IsKeyUp(KEY_KEY_W)&&IsKeyUp(KEY_KEY_S)&&IsKeyUp(KEY_KEY_A)&&IsKeyUp(KEY_KEY_D)){player_->idle();}
+		
 		}
+		
 
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_ESCAPE && 
 			event.KeyInput.PressedDown == true && !console.isVisible())
@@ -100,6 +138,9 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			else
 				debug = true;
 		}
+
+
+		
 
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_E &&
 			event.KeyInput.PressedDown == true && !pauseMenu && !console.isVisible())

@@ -102,7 +102,7 @@ int main(void)
 	context.counter = 0;
 	
 	//load our player into the scene
-	player thePlayer(device,"characters/stick.md2",smgr,driver, engine, world);
+	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world);
 	
 
 	if(!device)//if device fails to load exit
