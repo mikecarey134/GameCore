@@ -205,7 +205,7 @@ int main(void)
 
 		}
 		//node->setDebugDataVisible(EDS_BBOX);
-		//node->setMaterialFlag(EMF_LIGHTING,true);
+		//node->setMaterialFlag(EMF_LIGHTING,0);
 		//selector = smgr->createOctreeTriangleSelector(((scene::IMeshSceneNode*)node)->getMesh(), node);
 		//selector = smgr->createTriangleSelector(((scene::IMeshSceneNode*)node)->getMesh(), node);
 		

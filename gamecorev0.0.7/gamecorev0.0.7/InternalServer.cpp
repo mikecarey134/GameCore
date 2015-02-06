@@ -41,7 +41,8 @@ InternalServer::InternalServer(bool online):online_(online)
 		//////////////////////////////////////////////////////////////////////////
 		//current server info the user will specify this later
 		//////////////////////////////////////////////////////////////////////////
-		char ip[] = "mikesmcs.ddns.net";
+		//char ip[] = "mikesmcs.ddns.net";
+		char ip[] = "161.115.86.172";
 		char serverPort[] = "1080";
 		char clientPort[]= "1000";
 		//////////////////////////////////////////////////////////////////////////
@@ -184,9 +185,11 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 				default:
 
 					// It's a client, so just show the message
-					printf("%s", p->data);
-					puts("\n");
 
+					if(p->data[0]!= '0'){//if the packet id isnt 0 dont print it
+						printf("%s", p->data);
+						puts("\n");
+					}
 					networkData_.setRemote((char*)p->data);
 					
 					//GUI.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),(char*)p->data);

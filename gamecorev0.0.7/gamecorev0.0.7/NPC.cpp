@@ -20,9 +20,9 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"));
 	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
-    characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
+    characterModel_->setMaterialFlag(video::EMF_LIGHTING,1);
 	
-	//characterModel_
+	characterModel_->addShadowVolumeSceneNode();
 	characterModel_->setScale(vector3df(0.83, 0.83, 0.83));	
 	character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);

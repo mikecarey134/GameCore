@@ -123,7 +123,15 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 				pauseMenu = true;
 			engine_->play2D("sounds/button-20.wav",false);
 		}
-		
+		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_F && 
+			event.KeyInput.PressedDown == true && !console.isVisible())
+		{
+			if(player_->getIsLamp())
+				player_->setlamp(false);
+			else
+				player_->setlamp(true);
+		}
+
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_T && 
 			event.KeyInput.PressedDown == true && !console.isVisible()&& !pauseMenu)
 		{//handle f3 key to display the debugging information

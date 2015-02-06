@@ -70,6 +70,9 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	//////////////////////////////////////////////////////////////////////////
 	
 	idle();
+
+	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
+		SColor(150,237,245,157),15);//add our lamp here
 }
 
 player::~player(void)
@@ -96,7 +99,7 @@ void player::jump()
 
 void player::moveCameraControl()
 {
-
+	
 	
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
@@ -126,9 +129,16 @@ void player::moveCameraControl()
 	camera_->setPosition(calculateCameraPos());	
 
 	nodeSelector(); //highlights nodes within a certain range of the playera
-	
-}
 
+	vector3df lamppos;
+	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4)* -1 ;
+	lamppos.Y = characterModel_->getPosition().Y;
+	lamppos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * 4) * -1 ;
+	
+	lamp_->enableCastShadow(false);
+	
+	lamp_->setPosition(lamppos);
+}
 vector3df player::calculateCameraPos()
 {
 	vector3df newCamPos;

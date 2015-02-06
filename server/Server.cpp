@@ -309,10 +309,12 @@ int main(void)
 			default:
 				// The server knows the static data of all clients, so we can prefix the message
 				// With the name data
-				if(p->data[0]!= '0'){//if the packet id isnt one dont print it
+				if(p->data[0]!= '0')
+				{//if the packet id isnt 0 dont print it
 					printf("%s\n", p->data);
-					sprintf(message, "%s", p->data);
 				}
+				sprintf(message, "%s", p->data);
+				
 				// Relay the message.  We prefix the name for other clients.  This demonstrates
 				// That messages can be changed on the server before being broadcast
 				// Sending is the same as before
