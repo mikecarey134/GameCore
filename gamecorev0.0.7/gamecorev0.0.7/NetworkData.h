@@ -28,7 +28,7 @@ public:
 	void getRemote(remotePlayer& worldRemote, int dataIndex); //get the players remote data 
 	int getMaxPlayers();//return the max number of players for our network game
 
-	void setChatMessage(const std::string chat);
+	void setChatMessage(char* chat);
 	const std::string getChatMessage();
 	const std::string getThereChatMessage();
 	int chatLength();

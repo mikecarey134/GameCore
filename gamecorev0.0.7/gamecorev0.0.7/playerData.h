@@ -40,11 +40,6 @@ private:
 	std::string guid_;
 };
 
-/*
-std::istream& operator>>(std::istream& in, playerData& ourPlayerData)
-{
-	ourPlayerData.getInput(in);
-	return in;
-};*/
+std::istream& operator>>(std::istream& in, playerData& ourPlayerData);
 
 #endif

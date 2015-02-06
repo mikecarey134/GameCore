@@ -126,6 +126,7 @@ void player::moveCameraControl()
 	camera_->setPosition(calculateCameraPos());	
 
 	nodeSelector(); //highlights nodes within a certain range of the playera
+	
 }
 
 vector3df player::calculateCameraPos()

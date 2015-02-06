@@ -15,6 +15,7 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
+#include "playerData.h"
 
 //Player Variables/////////////
 #define DEFAULT_PLAYER_SPEED 3.0f
@@ -84,6 +85,7 @@ public:
 	char*                               getChatMessage() {return chat_message_;}
 	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
 	int                                 getHealth     () {return playerHealth_;}
+	playerData&                         getPlayerData () {return data_;}
 
 	//directional 
 	void                  forward   ();
@@ -126,5 +128,8 @@ private:
 	char* chat_message_;
 	int playerHealth_;
 	int walkframe_;
+
+	playerData data_;
+	
 
 };

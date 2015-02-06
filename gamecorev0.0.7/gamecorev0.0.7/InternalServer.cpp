@@ -1,3 +1,26 @@
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ BSD License 
+ For RakNet software
+
+ Copyright (c) 2014, Oculus VR, Inc.
+ All rights reserved.*/
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+/*
+	InternalServer.cpp 
+	By : Michael Carey
+	Purpose : provide communication to game Server from the client side
+	in the forms of chat and player data
+*/
+//////////////////////////////////////////////////////////////////////////
+
+
+
+
 #include "InternalServer.h"
 #include "MessageIdentifiers.h"
 #include "RakPeerInterface.h"
@@ -5,6 +28,7 @@
 #include "RakNetTypes.h"
 #include "BitStream.h"
 #include "PacketLogger.h"
+#include <string>
 
 
 using namespace RakNet;
@@ -14,9 +38,14 @@ InternalServer::InternalServer(bool online):online_(online)
 	if(online_)
 	{
 
+		//////////////////////////////////////////////////////////////////////////
+		//current server info the user will specify this later
+		//////////////////////////////////////////////////////////////////////////
 		char ip[] = "mikesmcs.ddns.net";
 		char serverPort[] = "1080";
 		char clientPort[]= "1000";
+		//////////////////////////////////////////////////////////////////////////
+
 
 		client_=RakNet::RakPeerInterface::GetInstance();
 		// Connecting the client is very simple.  0 means we don't care about
@@ -63,41 +92,36 @@ InternalServer::~InternalServer(void)
 void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font)
 {
 	
-	if (online_ == true)
+	if (online_ == true)//if the online parameter is set maybe we will have a user set this
 	{
-		// Notice what is not here: something to keep our network running.  It's
-		// fine to block on gets or anything we want
-		// Because the network engine was painstakingly written using threads.
 
 		// message is the data to send
 		// strlen(message)+1 is to send the null terminator
 		// HIGH_PRIORITY doesn't actually matter here because we don't use any other priority
 		// RELIABLE_ORDERED means make sure the message arrives in the right order
-		//client->Send(message, (int) strlen(message.length())+1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
-		//Sends our network info about our player.
-		//client->Send(ourPlayer.getNetworkData(), ourPlayer.length() + 1 , HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-
+		//send chat messages if we have them
+		networkData_.setString(thePlayer);
 		//since i made get read only once 
-		char* myMessage = thePlayer.getChatMessage(); 
+
+		std::string myMessage= "1 <client_id> ";//append the one as a message identifier
+		myMessage+= thePlayer.getChatMessage();
 		//+= "\0";
+	
 
 		//Only send if we have a new message
-		//if(myMessage != "")
-
-		if(!emptyMess(myMessage))
+	
+		if(!emptyMess(thePlayer.getChatMessage())) //if we have more than just the messageID aka its empty send
 		{
-			client_->Send(thePlayer.getChatMessage(), strlen(thePlayer.getChatMessage()) + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			client_->Send(myMessage.c_str(), myMessage.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 			thePlayer.setChatMessage("\0");
 		}
 
+		//Sends our network info about our player.
+		client_->Send(networkData_.getNetworkData(), networkData_.length() + 1 , HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 	}
 
-
-	//for (p=client_->Receive(); p; client_->DeallocatePacket(p), p=client_->Receive())
-	//{	
-		
 	if(online_)
 	{
 			// Get a packet from either the server or the client
@@ -155,14 +179,17 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 					// This tells the client they have connected
 					printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", p->systemAddress.ToString(true), p->guid.ToString());
 					printf("My external address is %s\n", client_->GetExternalID(p->systemAddress).ToString(true));
+					thePlayer.getPlayerData().setGuid(p->guid.ToString());//set the player guid
 					break;
 				default:
+
 					// It's a client, so just show the message
 					printf("%s", p->data);
 					puts("\n");
 
+					networkData_.setRemote((char*)p->data);
 					
-					GUI.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),(char*)p->data);
+					//GUI.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),(char*)p->data);
 					
 					//Takes data from server and decides how to handle it
 					//ourPlayer.setRemote((char*)p->data);
