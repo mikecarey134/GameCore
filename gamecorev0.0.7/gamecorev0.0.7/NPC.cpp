@@ -23,7 +23,7 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
     characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	
 	//characterModel_
-	characterModel_->setScale(vector3df(3.3, 3.3, 3.3));	
+	characterModel_->setScale(vector3df(0.83, 0.83, 0.83));	
 	character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
 	directionCounter_ = 0.0f;

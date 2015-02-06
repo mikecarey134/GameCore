@@ -2,8 +2,8 @@
 #define __KINEMATIC_CHARACTER_CONTROLLER_H__
 
 
-#define PLAYER_BOUNDING_HEIGHT 17.0
-#define PLAYER_BOUNDING_WIDTH 5.0
+#define PLAYER_BOUNDING_HEIGHT 4.0
+#define PLAYER_BOUNDING_WIDTH 2.0
 
 #include <irrTypes.h>
 #include <vector3d.h>

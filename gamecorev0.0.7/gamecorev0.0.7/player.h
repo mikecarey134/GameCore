@@ -72,6 +72,7 @@ public:
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
 	void setChatMessage(char* message)            { chat_message_ = message;}
+	void setCamDist    (float increment)          {cameradist_+= increment;}
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
@@ -86,6 +87,7 @@ public:
 	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
 	int                                 getHealth     () {return playerHealth_;}
 	playerData&                         getPlayerData () {return data_;}
+	
 
 	//directional 
 	void                  forward   ();
@@ -130,6 +132,7 @@ private:
 	int walkframe_;
 
 	playerData data_;
+	float cameradist_;
 	
 
 };

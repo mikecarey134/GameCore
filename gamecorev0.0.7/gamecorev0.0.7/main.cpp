@@ -123,7 +123,7 @@ int main(void)
 
 	//Open World Example///////////////////////////////////////////////////////
 	//device->getSceneManager()->loadScene("map/openworld.irr");//debug map scene
-	device->getSceneManager()->loadScene("map/outdoortrees.irr");//debug map scene
+	device->getSceneManager()->loadScene("map/test.irr");//debug map scene
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
 	////////////////////////////////////////////////////////////////////////////
 	

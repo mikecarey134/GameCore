@@ -85,6 +85,13 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			break;
 		}
 	}
+
+	//if we scroll the mouse wheel we get closer or farther away from our player
+	if(event.EventType == irr::EET_MOUSE_INPUT_EVENT && event.MouseInput.Event == EMIE_MOUSE_WHEEL){
+	
+		player_->setCamDist(event.MouseInput.Wheel);
+	}
+
 	if(event.EventType == irr::EET_KEY_INPUT_EVENT  )
 	{
 		KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;

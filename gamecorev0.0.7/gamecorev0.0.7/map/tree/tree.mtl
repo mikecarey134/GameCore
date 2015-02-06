@@ -1,38 +1,38 @@
 # Material file for tree.obj
 
-newmtl skin
-	Ns 0
+newmtl Material
+	Ns 96
 	d 1
 	illum 2
-	Kd 0.8 0.8 0.8
+	Kd 0.63 0.63 0.63
 	Ks 0.0 0.0 0.0
-	Ka 0.2 0.2 0.2
-	map_Kd download.png
+	Ka 0.0 0.0 0.0
+	map_Kd ..\..\..\\self contained apps\\irrEdit-1.5\\meshes\\vegetation\\d-tTbyMike\\oakbark.jpg
 
-newmtl skin
+newmtl leaves
 	Ns 0
 	d 1
 	illum 2
 	Kd 0.8 0.8 0.8
 	Ks 0.0 0.0 0.0
 	Ka 0.2 0.2 0.2
-	map_Kd download.png
+	map_Kd shrubLeaf3_2.png
 
-newmtl skin
+newmtl leaves2
 	Ns 0
 	d 1
 	illum 2
 	Kd 0.8 0.8 0.8
 	Ks 0.0 0.0 0.0
 	Ka 0.2 0.2 0.2
-	map_Kd download.png
+	map_Kd shrubLeaf3_2 copy.png
 
-newmtl skin
+newmtl leaves3
 	Ns 0
 	d 1
 	illum 2
 	Kd 0.8 0.8 0.8
 	Ks 0.0 0.0 0.0
 	Ka 0.2 0.2 0.2
-	map_Kd download.png
+	map_Kd 2mo5tgn.png
 

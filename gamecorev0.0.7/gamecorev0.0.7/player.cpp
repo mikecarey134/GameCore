@@ -20,7 +20,7 @@ using namespace gui;
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK)
 {
 	chat_message_="\0";
 	camera_ = device->getSceneManager()->addCameraSceneNode();
@@ -47,7 +47,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0)
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
 	
 	setTexture("characters/playerskin3.jpg");
-	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
+	characterModel_->setScale(vector3df(0.75, 0.75, 0.75));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
 	
@@ -146,9 +146,9 @@ vector3df player::calculateCameraPos()
 
 	//std::cout << mouseCursorX_ << ", " << mouseCursorY_ << std::endl;
 
-	newCamPos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * CAMERA_DISTANCE_BACK);
-	newCamPos.Y = characterModel_->getPosition().Y - (sin(mouseCursorY_ * PI / 180.0f) * CAMERA_DISTANCE_BACK);
-	newCamPos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * CAMERA_DISTANCE_BACK);
+	newCamPos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * cameradist_);
+	newCamPos.Y = characterModel_->getPosition().Y - (sin(mouseCursorY_ * PI / 180.0f) * cameradist_);
+	newCamPos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * cameradist_);
 
 	return newCamPos;
 }
