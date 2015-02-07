@@ -144,13 +144,13 @@ void NetworkData::setRemote(const char* ourData)
 //Get remote takes in a ref to a player in the game and sets all of its values based
 //on information it receives from the server (stored in player data)
 void NetworkData::getRemote(remotePlayer& worldRemote, int dataIndex)
-{/*
-	worldRemote.setPosition(ourPlayerData[dataIndex].getworldCoord());
-	worldRemote.setCamPos(ourPlayerData[dataIndex].getcamPosition());
-	worldRemote.setDirection(ourPlayerData[dataIndex].getDirection());
-	worldRemote.setState(ourPlayerData[dataIndex].getState());
-	worldRemote.setPlayerWeapon(ourPlayerData[dataIndex].getWeapon());
-*/
+{
+	worldRemote.setposition(ourPlayerData[dataIndex].getworldCoord());
+	//worldRemote.setCamPos(ourPlayerData[dataIndex].getcamPosition());
+	//worldRemote.setDirection(ourPlayerData[dataIndex].getDirection());
+	//worldRemote.setState(ourPlayerData[dataIndex].getState());
+	//worldRemote.setPlayerWeapon(ourPlayerData[dataIndex].getWeapon());
+
 }
 
 //Sets the number max number of players we are allowing

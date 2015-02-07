@@ -32,6 +32,7 @@
 #include "player.h"
 #include "GUI.h"
 #include "NetworkData.h"
+#include"remotePlayer.h"
 
 #define SERVER_PORT "1080"
 #define CLIENT_PORT "1000"
@@ -52,12 +53,12 @@ public:
 private:
 	bool online_;
 	//need to have an array of clients to send updates
-	//std::vector<FPlayer> clients_;
+	std::vector<remotePlayer> clients_;
 	RakNet::RakNetStatistics* rss_;
 	RakNet::RakPeerInterface* client_;
 	// Holds packets
 	RakNet::Packet* p;
-	unsigned char packetIdentifier;
+	//unsigned char packetIdentifier;
 	bool isServer;
 	char message[MAX_MESSAGE_SIZE];
 	NetworkData networkData_;

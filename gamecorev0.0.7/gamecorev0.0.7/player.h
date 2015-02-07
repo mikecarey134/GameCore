@@ -110,6 +110,7 @@ private:
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
     irr::scene::ICameraSceneNode* camera_;
+	irr::scene::ICameraSceneNode* fpsCam_;
 
 	irrBulletWorld* world_;
 	irr::IrrlichtDevice* device_;

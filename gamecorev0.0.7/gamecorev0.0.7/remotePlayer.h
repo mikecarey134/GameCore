@@ -10,7 +10,11 @@
 class remotePlayer
 {
 public:
-	remotePlayer(void);
+
+	remotePlayer(irr::IrrlichtDevice* device,char* filename,
+		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
+		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+
 	~remotePlayer(void);
 
 
@@ -39,11 +43,7 @@ public:
 	irr::core::vector3df                getRotation   () {return characterModel_->getRotation();}
 	irr::scene::IAnimatedMeshSceneNode* getPlayerNode () { return characterModel_; }
 	float                               getPlayerSpeed() {return playerSpeed_;}
-	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
 	int                                 getHealth     () {return playerHealth_;}
-
-
-
 
 
 private:
@@ -51,7 +51,6 @@ private:
 
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
-	irr::scene::ICameraSceneNode* camera_;
 
 	irrBulletWorld* world_;
 	irr::IrrlichtDevice* device_;

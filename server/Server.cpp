@@ -141,7 +141,7 @@ int main(void)
 		// fine to block on gets or anything we want
 		// Because the network engine was painstakingly written using threads.
 		
-		printf("->");
+		//printf("->");
 		Gets(message,sizeof(message));
 		
 		if (strcmp(message, "help")==0)

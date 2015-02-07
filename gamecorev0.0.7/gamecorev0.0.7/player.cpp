@@ -26,10 +26,13 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	camera_ = device->getSceneManager()->addCameraSceneNode();
 	camera_->bindTargetAndRotation(true);
 	camera_->setID(ID_IsNotPickable);
-	
+	fpsCam_ = smgr_->addCameraSceneNodeFPS();
+	fpsCam_->setID(ID_IsNotPickable);
+	smgr_->setActiveCamera(camera_);
 	//set up the camera clipping planes in order to render the scene faster
-	//camera_->setNearValue(10);
-	//camera_->setFarValue(800);
+	
+	camera_->setNearValue(5);
+	camera_->setFarValue(1500);
 	
 	mouseCursorX_ = 0.0;
 	mouseCursorY_ = 0.0;
@@ -72,7 +75,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	idle();
 
 	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
-		SColor(150,237,245,157),15);//add our lamp here
+		SColor(150,237,245,157),12);//add our lamp here
 }
 
 player::~player(void)
@@ -99,8 +102,24 @@ void player::jump()
 
 void player::moveCameraControl()
 {
+	//////////////////////////////////////////////////////////////////////////
+	//early fps camera switching
+	//////////////////////////////////////////////////////////////////////////
+	if(floor(cameradist_) == 1)
+	{
+		smgr_->setActiveCamera(fpsCam_);
+		characterModel_->setPosition(fpsCam_->getPosition());
+		characterModel_->setVisible(false);
+
+	}
+	//////////////////////////////////////////////////////////////////////////
+
+	else{
+
+	smgr_->setActiveCamera(camera_);
 	
-	
+	characterModel_->setVisible(true);
+
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
 	vector3df rot(0, camera_->getRotation().Y, 0);
@@ -130,11 +149,15 @@ void player::moveCameraControl()
 
 	nodeSelector(); //highlights nodes within a certain range of the playera
 
+	
+	
+	}
+
 	vector3df lamppos;
 	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4)* -1 ;
 	lamppos.Y = characterModel_->getPosition().Y;
 	lamppos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * 4) * -1 ;
-	
+
 	lamp_->enableCastShadow(false);
 	
 	lamp_->setPosition(lamppos);

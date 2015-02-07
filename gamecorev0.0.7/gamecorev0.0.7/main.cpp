@@ -180,7 +180,7 @@ int main(void)
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(player::IDFlag_IsPickable);
-
+				
 				//selector = smgr->createTriangleSelectorFromBoundingBox(node);
 			    //node->setTriangleSelector(selector);
 	
@@ -206,9 +206,7 @@ int main(void)
 		}
 		//node->setDebugDataVisible(EDS_BBOX);
 		//node->setMaterialFlag(EMF_LIGHTING,0);
-		//selector = smgr->createOctreeTriangleSelector(((scene::IMeshSceneNode*)node)->getMesh(), node);
-		//selector = smgr->createTriangleSelector(((scene::IMeshSceneNode*)node)->getMesh(), node);
-		
+		node->setAutomaticCulling(EAC_BOX);//cull unneeded primitives 
 		
 	}
 
