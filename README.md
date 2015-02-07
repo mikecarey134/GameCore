@@ -52,5 +52,11 @@ Version 0.0.7
 	-built internal server
 	-got chat working with the server
 	-fixed camera movement problem while paused inventory or in console
+	-added more network communications
+	-player animations jump hit idle and walk
+	-added shaders to the scene
+	-added a player flash-light
+	-added NPCs
+	-lua scripting
 	
 	
