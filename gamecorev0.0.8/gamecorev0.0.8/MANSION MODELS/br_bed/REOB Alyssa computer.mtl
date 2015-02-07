@@ -1,0 +1,13 @@
+# Blender3D MTL File: 
+# Material Count: 1
+newmtl Material_REOB_Alyssa_computer.
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.511373 0.511373 0.511373
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd REOB_Alyssa_computer.png
+
+

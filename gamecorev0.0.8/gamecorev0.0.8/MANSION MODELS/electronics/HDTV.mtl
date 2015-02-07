@@ -1,0 +1,116 @@
+# Material file for HDTV.obj
+
+newmtl SCREW1
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.862745 0.862745 0.862745
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl _0131_Silver_2
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.72549 0.72549 0.72549
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl _0137_Black_1
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 0.0 0.0
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl M_0045_Goldenrod
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.854902 0.647059 0.12549
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl M_0046_Gold
+	Ns 0
+	d 1
+	illum 2
+	Kd 1.0 0.843137 0.0
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl M_0129_WhiteSmoke
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.960784 0.960784 0.960784
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl M_0020_Red
+	Ns 0
+	d 1
+	illum 2
+	Kd 1.0 0.0 0.0
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl M_0075_ForestGreen
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.133333 0.545098 0.133333
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl M_0105_Navy
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 0.0 0.501961
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl screen
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.137255 0.137255 0.137255
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl _0064_Chartreuse_2
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.498039 1.0 0.0
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl _0064_Chartreuse_3
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.498039 1.0 0.0
+	Ks 0.33 0.33 0.33
+	Ka 0.0 0.0 0.0
+
+newmtl USB
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.501961 0.501961 0.501961
+	Ks 0.0 0.0 0.0
+	Ka 0.0 0.0 0.0
+	map_Kd HDTV\USB.png
+
+newmtl HDTV_BACK_PANEL
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.501961 0.501961 0.501961
+	Ks 0.0 0.0 0.0
+	Ka 0.0 0.0 0.0
+	map_Kd HDTV\HDTV_BACK_PANEL.jpg
+

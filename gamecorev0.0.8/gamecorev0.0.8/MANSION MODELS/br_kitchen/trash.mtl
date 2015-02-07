@@ -1,0 +1,11 @@
+# Material file for trash.obj
+
+newmtl OBJ_bin_D_Mat
+	Ns 10
+	d 1
+	illum 2
+	Kd 0.588 0.588 0.588
+	Ks 0.0 0.0 0.0
+	Ka 0.588 0.588 0.588
+	map_Kd OBJ_bin_D.tga
+
