@@ -42,8 +42,9 @@ InternalServer::InternalServer(bool online):online_(online)
 		//current server info the user will specify this later
 		//////////////////////////////////////////////////////////////////////////
 		char ip[] = "mikesmcs.ddns.net";
-		//char ip[] = "161.115.86.172";
-		char serverPort[] = "1080";
+		//char ip[] = "192.168.1.12";
+		//char serverPort[] = "1080";
+		char serverPort[] = "25585";//raspberrypi server
 		char clientPort[]= "1000";
 		//////////////////////////////////////////////////////////////////////////
 
