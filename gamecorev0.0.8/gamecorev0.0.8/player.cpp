@@ -23,6 +23,10 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK)
 {
 	chat_message_="\0";
+
+	//////////////////////////////////////////////////////////////////////////
+	//player cameras
+	//////////////////////////////////////////////////////////////////////////
 	camera_ = device->getSceneManager()->addCameraSceneNode();
 	camera_->bindTargetAndRotation(true);
 	camera_->setID(ID_IsNotPickable);
@@ -30,10 +34,11 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	fpsCam_->setID(ID_IsNotPickable);
 	smgr_->setActiveCamera(camera_);
 	//set up the camera clipping planes in order to render the scene faster
-	
+
 	camera_->setNearValue(5);
 	camera_->setFarValue(1500);
-	
+	//////////////////////////////////////////////////////////////////////////
+		
 	mouseCursorX_ = 0.0;
 	mouseCursorY_ = 0.0;
 
@@ -41,41 +46,52 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	float width  = 3.0;
 
 	character_ = new IKinematicCharacterController(world_);
-	character_->warp(vector3df(41.0f, 73.0f, 23.0f));//set the init player pos on the map
 
+	
 	//dungeon example
 	//character_->warp(vector3df(-217.0f, 3.8f, 390.0f));
 	//character_->warp(vector3df(-17.0f, 15.8f, -217.0f));
 
+
+	//////////////////////////////////////////////////////////////////////////
+	//player attributes
+	//////////////////////////////////////////////////////////////////////////
+
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
-	
+
 	setTexture("characters/playerskin3.jpg");
-	characterModel_->setScale(vector3df(0.75, 0.75, 0.75));
+	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
-	
 	
 	character_->setGravity(PLAYER_EARTH_GRAVITY);
 
 	character_->setJumpForce(PLAYER_JUMP_FORCE);
+	
+	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
 	character_->setMaxSlope(PI/4);
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
+	//////////////////////////////////////////////////////////////////////////
+
 	
-	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
 	//////////////////////////////////////////////////////////////////////////
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
 	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
+	
+	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
+	characterModel_->setPosition(vector3df(-155.0f, 20.0f, -58.0f));
+
 	//////////////////////////////////////////////////////////////////////////
 	
 	idle();
 
 	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
-		SColor(150,237,245,157),12);//add our lamp here
+		SColor(255,0,0,157),12);//add our lamp here
 }
 
 player::~player(void)
@@ -102,19 +118,20 @@ void player::jump()
 
 void player::moveCameraControl()
 {
+
 	//////////////////////////////////////////////////////////////////////////
 	//early fps camera switching
 	//////////////////////////////////////////////////////////////////////////
-	if(floor(cameradist_) == 1)
+	/*if(floor(cameradist_) == 1)
 	{
 		smgr_->setActiveCamera(fpsCam_);
 		characterModel_->setPosition(fpsCam_->getPosition());
 		characterModel_->setVisible(false);
 
-	}
+	}*/
 	//////////////////////////////////////////////////////////////////////////
 
-	else{
+	//else{
 
 	smgr_->setActiveCamera(camera_);
 	
@@ -147,20 +164,23 @@ void player::moveCameraControl()
 
 	camera_->setPosition(calculateCameraPos());	
 
-	nodeSelector(); //highlights nodes within a certain range of the playera
+	nodeSelector(); //highlights nodes within a certain range of the player
 
 	
 	
-	}
+	//}
+
 
 	vector3df lamppos;
-	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4)* -1 ;
-	lamppos.Y = characterModel_->getPosition().Y;
+	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4 )* -1 ;
+	lamppos.Y = characterModel_->getPosition().Y ;
 	lamppos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * 4) * -1 ;
 
-	lamp_->enableCastShadow(false);
+	//lamp_->enableCastShadow(false);
 	
 	lamp_->setPosition(lamppos);
+
+	
 }
 vector3df player::calculateCameraPos()
 {

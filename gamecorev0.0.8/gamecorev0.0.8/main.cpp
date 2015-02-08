@@ -122,13 +122,13 @@ int main(void)
 	//////////////////////////////////////////////////////////////////////////
 
 	//Open World Example///////////////////////////////////////////////////////
-	//device->getSceneManager()->loadScene("map/openworld.irr");//debug map scene
-	device->getSceneManager()->loadScene("map/test.irr");//debug map scene
+	//device->getSceneManager()->loadScene("map/arena.irr");//debug map scene
+	//device->getSceneManager()->loadScene("map/test.irr");//debug map scene
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
 	////////////////////////////////////////////////////////////////////////////
 	
 	//house example////////////////////////////////////////////////////////////////
-	//device->getSceneManager()->loadScene("map/subbsalpha.irr");//debug map scene
+	device->getSceneManager()->loadScene("map/subbs.irr");//debug map scene
 	//////////////////////////////////////////////////////////////////////////////
 
 	

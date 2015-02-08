@@ -23,8 +23,9 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
     characterModel_->setMaterialFlag(video::EMF_LIGHTING,1);
 	
 	characterModel_->addShadowVolumeSceneNode();
-	characterModel_->setScale(vector3df(0.83, 0.83, 0.83));	
-	character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
+	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));	
+	//character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
+	character_->warp(vector3df(259.0f, 38.0f, -25.0f));//set the init pos on the map
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
 	directionCounter_ = 0.0f;
 	

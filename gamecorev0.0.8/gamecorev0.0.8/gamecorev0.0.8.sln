@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gamecorev0.0.7", "gamecorev0.0.7.vcproj", "{C71CB6EA-808B-48B5-B32F-97694AE0AD9E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gamecorev0.0.8", "gamecorev0.0.8.vcproj", "{C71CB6EA-808B-48B5-B32F-97694AE0AD9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

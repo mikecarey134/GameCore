@@ -115,13 +115,18 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		
 
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_ESCAPE && 
-			event.KeyInput.PressedDown == true && !console.isVisible())
+			event.KeyInput.PressedDown == true)
 		{//handle the ESC key to display the pause menu
-			if(pauseMenu)
+			if(pauseMenu || console.isVisible())
+			{
 				pauseMenu = false;
+				console.setVisible(false);
+			}
+		
 			else
 				pauseMenu = true;
-			engine_->play2D("sounds/button-20.wav",false);
+
+		
 		}
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_F && 
 			event.KeyInput.PressedDown == true && !console.isVisible())
@@ -187,7 +192,8 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 				//KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
 			}
 			if(console.isVisible())
-			{
+			{	
+
 				console.handleKeyPress(event.KeyInput.Char, event.KeyInput.Key,event.KeyInput.Shift, event.KeyInput.Control);
 				return true;
 			}
@@ -259,8 +265,10 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 					return true;
 
 				case GUI_ID_RESUME:
+					if(pauseMenu)//this fixes the menu sound bug Mike
+						engine_->play2D("sounds/button-25.wav",false);
 					pauseMenu = false;
-					engine_->play2D("sounds/button-25.wav",false);
+					
 					return true;
 					
 				case GUI_ID_FILE_OPEN_BUTTON:

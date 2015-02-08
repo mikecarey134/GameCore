@@ -170,6 +170,9 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					printf("Connection attempt failed\n");
+					
+					online_= false;
+					
 					break;
 
 				case ID_NO_FREE_INCOMING_CONNECTIONS:
