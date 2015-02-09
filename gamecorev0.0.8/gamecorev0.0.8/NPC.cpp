@@ -22,7 +22,7 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
     characterModel_->setMaterialFlag(video::EMF_LIGHTING,1);
 	
-	characterModel_->addShadowVolumeSceneNode();
+	//characterModel_->addShadowVolumeSceneNode();
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));	
 	//character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
 	character_->warp(vector3df(259.0f, 38.0f, -25.0f));//set the init pos on the map
