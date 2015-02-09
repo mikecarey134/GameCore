@@ -70,7 +70,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
-	character_->setMaxSlope(PI/2);
+	character_->setMaxSlope(PI/4);
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	//////////////////////////////////////////////////////////////////////////
@@ -91,9 +91,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	idle();
 
 	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
-		SColor(255,200,200,200),15);	
-		//SColor(255,0,0,157),12);//add our lamp here
-	lamp_->enableCastShadow(false);//we dont want weird shadows
+		SColor(255,0,0,157),12);//add our lamp here
 }
 
 player::~player(void)
@@ -177,6 +175,8 @@ void player::moveCameraControl()
 	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4 )* -1 ;
 	lamppos.Y = characterModel_->getPosition().Y ;
 	lamppos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * 4) * -1 ;
+
+	//lamp_->enableCastShadow(false);
 	
 	lamp_->setPosition(lamppos);
 
