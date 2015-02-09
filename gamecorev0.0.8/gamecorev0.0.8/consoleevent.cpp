@@ -126,6 +126,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			else
 				pauseMenu = true;
 
+			engine_->play2D("sounds/button-20.wav",false);
 		
 		}
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_F && 
