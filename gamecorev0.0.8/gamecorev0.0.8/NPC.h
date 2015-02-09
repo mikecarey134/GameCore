@@ -35,6 +35,7 @@ private:
 	irr::core::vector3df AIdirection_;
 	irr::u32 directionCounter_;
 	int npcHealth_;
+	bool isHit_;
 	
 public:
 	NPC(irr::IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
@@ -45,5 +46,11 @@ public:
 	void setposition   (irr::core::vector3df pos) { character_->warp(pos); }
 	void moveNPC   ();
 	void luaSetDir ();
-	int  getHealth () {return npcHealth_;}
+	int  getHealth ()				{ return npcHealth_; }
+	void setHealth (int newHealth)	{ npcHealth_ = newHealth; }
+	void damage();
+	bool& isHit()					{ return isHit_; }
+	irr::core::vector3df getPosition() { return characterModel_->getPosition(); }
+
+	IKinematicCharacterController* getKinematicChar() { return character_; }
 };

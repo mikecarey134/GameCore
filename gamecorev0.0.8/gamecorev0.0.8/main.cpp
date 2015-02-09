@@ -103,7 +103,7 @@ int main(void)
 	
 	//load our player into the scene
 	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world);
-	
+	NPC npc_tester(device,smgr,world,driver);
 
 	if(!device)//if device fails to load exit
 	{
@@ -133,7 +133,7 @@ int main(void)
 
 	
 		//takes care of all input devices and events calls update during the gameloop
-		consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world);//event handeler
+		consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world, npc_tester);//event handeler
 	device->setEventReceiver(&crecv);
 
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");
@@ -210,8 +210,6 @@ int main(void)
 		
 	}
 
-	NPC npc_tester(device,smgr,world,driver);
-
 	u32 then = device->getTimer()->getTime();
 
 	ISound* intro = engine->play2D("sounds/slowintro.mp3", true);
@@ -245,8 +243,6 @@ int main(void)
 				}
 				else
 				{
-					npc_tester.moveNPC();//move our npc 
-
 					//internal client sends data to the server 
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
 					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
@@ -274,7 +270,11 @@ int main(void)
 
 						//we dont want the camera to update while the player is stationary
 						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
+						{
 							thePlayer.moveCameraControl();
+							npc_tester.moveNPC();//move our npc 
+							crecv.playerNpcCollisionCheck();
+						}
 						
 					
 						//GUI CLASS calls

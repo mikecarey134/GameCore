@@ -10,9 +10,10 @@ using namespace gui;
 
 NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
 		 irrBulletWorld* world, irr::video::IVideoDriver* driver) : 
-			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH)
+			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH),isHit_(false)
 {
 	character_ = new IKinematicCharacterController(world_);
+	//character_->setUseGhostSweepTest(true);
 	
 	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
 
@@ -41,7 +42,7 @@ void NPC::moveNPC()
 	++directionCounter_;
 	if (directionCounter_ > 100)
 	{
-		luaSetDir();
+		//luaSetDir();
 		directionCounter_ = 0.0f;
 	}
 	//std::cout << AIdirection_.X << " " << AIdirection_.Z << std::endl;
@@ -69,4 +70,18 @@ void NPC::luaSetDir()
 	AIdirection_.Z = lua_tonumber(L, -2);
 	vector3df newRotation = vector3df(characterModel_->getRotation().X, lua_tonumber(L, -1), characterModel_->getRotation().Z);
 	characterModel_->setRotation(newRotation);
+}
+
+void NPC::damage()
+{
+	if (npcHealth_ <= 0)
+	{
+		characterModel_->setFrameLoop(166,173);//166-173);
+		//characterModel_->setCurrentFrame(173);
+		characterModel_->remove();
+	}
+	else
+	{
+		npcHealth_ -= 5;
+	}
 }
