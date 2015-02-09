@@ -8,25 +8,33 @@
 /************************************************************************/
 
 #pragma once
-#include<irrlicht.h>
-#include<irrbullet.h>
+#include <irrlicht.h>
+#include <irrbullet.h>
 #include <irrKlang.h>
 #include "console.h"
 #include "SAppcontext.h"
-#include"GUI.h"
+#include "GUI.h"
 #include "player.h"
+#include "NPC.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 #include <iostream>
+
+
 
 
 class consoleevent : public irr::IEventReceiver, public GUI
 {
 public:
+	friend class NPC;
+	friend class Player;
+
 	enum{ESC = 101, GUI_ID_START = 0, GUI_ID_OPTIONS, GUI_ID_CREDITS, GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU};
 
 	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,GUI gui, 
-		/*irr::scene::ICameraSceneNode* camera,*/ irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world);
+		/*irr::scene::ICameraSceneNode* camera,*/ irrklang::ISoundEngine* engine, 
+		player* thePlayer, irrBulletWorld* world, NPC npc);
 	
 	~consoleevent();
 
@@ -51,6 +59,8 @@ public:
 
 	void drawInventory ();
 
+	void playerNpcCollisionCheck();
+
 	void update(irr::u32 then, irr::u32 now);
 
 	struct SMouseState
@@ -70,6 +80,7 @@ private:
 	SAppContext & Context_;
 	GUI gui_;
 	player* player_;
+	NPC npc_;
 	irrBulletWorld* world_;
 	bool debug;
 	bool pauseMenu;

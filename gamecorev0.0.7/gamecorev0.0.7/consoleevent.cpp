@@ -28,10 +28,10 @@ using namespace irrklang;
 
 consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI gui,
-						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world):
+						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, NPC npc):
 							device_(device),guienv_(guienv),driver_(driver),Context_(Context),gui_(gui),debug(false),							
 							pauseMenu(false), started(false), chatshown(false),creditsDisplayed(false), inventory(false), engine_(engine), 
-							player_(thePlayer), world_(world)
+							player_(thePlayer), world_(world), npc_(npc)
 {
 	
 	console.addExtensions(thePlayer,world,device);//register the player in the console
@@ -415,6 +415,50 @@ void consoleevent::drawInventory ()
 
 	device_->getCursorControl()->setVisible(true);
 	device_->getCursorControl()->setPosition(device_->getCursorControl()->getPosition());
+}
+
+void consoleevent::playerNpcCollisionCheck()
+{
+	//player_->getPSceneNode()->
+	/*
+	for(int i=0; i < world_->getNumManifolds(); i++)
+	{
+		ICollisionCallbackInformation *info = world_->getCollisionCallback(i);
+
+		bool hasCollideAttribute = (info->getBody0()->getAttributes()->existsAttribute("collide"));
+		ICollisionObject* obj = (hasCollideAttribute) ? info->getBody0() : info->getBody1();
+
+		if(obj->getAttributes()->existsAttribute("collide") && obj->getAttributes()->getAttributeAsBool("collide") == true)
+		{
+			obj->getAttributes()->setAttribute("collide", false);
+			world_->addToDeletionQueue(obj);
+		}
+
+		obj = (hasCollideAttribute) ? info->getBody1() : info->getBody0();
+		if(obj->getAttributes()->existsAttribute("vehicle"))
+		{
+			if(obj->getAttributes()->existsAttribute("destroyable"))
+			{
+					// Since we set a reference to the raycast vehicle of each tank, it will be removed automatically
+					// by irrBullet when the object is removed!
+					world_->removeCollisionObject(obj);				
+			}
+		}
+
+		delete info;
+	}
+	
+	//player_->getKinematicChar()->getGhostObject()->setCompanionId(0);
+	//npc_.character_->GhostObject->setCompanionId(1);
+
+	if (npc_.getKinematicChar()->getGhostObject()->checkCollideWith(player_->getKinematicChar()->getGhostObject()))
+	{
+		npc_.isHit() = true;
+		std::cout << npc_.getHealth() << std::endl;
+	}
+	else
+		npc_.isHit() = false;
+		*/
 }
 
 void consoleevent::update(u32 then, u32 now)//update the game throught the gameloop

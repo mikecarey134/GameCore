@@ -184,8 +184,12 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 				default:
 
 					// It's a client, so just show the message
-					printf("%s", p->data);
-					puts("\n");
+					if (p->data[0] != '0')
+					{
+						printf("%s", p->data);
+						puts("\n");
+					}
+					
 
 					networkData_.setRemote((char*)p->data);
 					

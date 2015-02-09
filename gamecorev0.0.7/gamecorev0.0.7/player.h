@@ -87,6 +87,7 @@ public:
 	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
 	int                                 getHealth     () {return playerHealth_;}
 	playerData&                         getPlayerData () {return data_;}
+	IKinematicCharacterController*		getKinematicChar() { return character_; }
 	
 
 	//directional 

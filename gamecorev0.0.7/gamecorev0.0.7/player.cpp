@@ -38,6 +38,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	float width  = 3.0;
 
 	character_ = new IKinematicCharacterController(world_);
+	//character_->setUseGhostSweepTest(true);
 	character_->warp(vector3df(41.0f, 73.0f, 23.0f));//set the init player pos on the map
 
 	//dungeon example
