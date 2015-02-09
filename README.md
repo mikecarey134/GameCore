@@ -53,4 +53,8 @@ Version 0.0.7
 	-got chat working with the server
 	-fixed camera movement problem while paused inventory or in console
 	
+Version 0.0.8
+
+    - fixed menu sound bug
+	- exit console with ESC key
 	
