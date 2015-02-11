@@ -55,6 +55,11 @@ Version 0.0.7
 	
 Version 0.0.8
 
+	-server compatibility with Linux and armLinux(RaspberryPi)
     - fixed menu sound bug
 	- exit console with ESC key
+	- new music track
+	- flashlight KEY_F
+	- new model (zombie)
+	- added \ph command (player health)
 	
