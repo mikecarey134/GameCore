@@ -92,7 +92,8 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	idle();
 
 	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
-		SColor(255,0,0,157),12);//add our lamp here
+		SColor(255,0,0,255),12);//add our lamp here
+	setlamp(false);
 }
 
 player::~player(void)
