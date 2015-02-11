@@ -364,3 +364,36 @@ bool IC_Command_P_SPEED::invoke(const array<WideString>& args, IC_Dispatcher* pD
 	else//otherwise display an error
 		throw IC_Error(L"No Valid Argument! <New Speed>");
 }
+//////////////////////////////////////////////////////////////////////////
+//set player health
+IC_Command_PH::IC_Command_PH(player* thePlayer) : IC_Command(L"ph")
+{
+	thePlayer_= thePlayer;
+
+	setUsage(L"\ph <New Health>");
+
+	addDescLine("Increases or decreases player health");
+}
+IC_Command_PH::~IC_Command_PH()
+{
+}
+
+//change the player speed for debugging
+bool IC_Command_PH::invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput)
+{
+	//if we have the right amount of arguments
+	if(args.size() == 1)
+	{
+		//arguments
+		const wchar_t* arg = args[0].c_str();
+		//conversion to float speed
+		float health=_wtof(arg);
+
+		//handle 
+		thePlayer_->setHealth(health);
+
+		return true;
+	}
+	else//otherwise display an error
+		throw IC_Error(L"No Valid Argument! <New Health>");
+}

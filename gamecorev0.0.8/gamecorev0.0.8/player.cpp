@@ -70,9 +70,10 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
-	character_->setMaxSlope(PI/4);
+	character_->setMaxSlope(PI / 1.8);
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
+	playerSteps_->setVolume(.25f);
 	//////////////////////////////////////////////////////////////////////////
 
 	
@@ -81,7 +82,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
 	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
-	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
+	//characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	
 	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
 	characterModel_->setPosition(vector3df(-155.0f, 20.0f, -58.0f));
@@ -208,19 +209,21 @@ vector3df player::calculateCameraPos()
 
 void player::forward()
 {	
+	
 	characterModel_->setFrameLoop(301,318);
 	characterModel_->setAnimationSpeed(4);
+	
+	u32 time = device_->getTimer()->getTime();
+	
+	if((time % 4) == 0)
+		walkframe_++;
 
-	/*if (walkframe_== 0 || walkframe_ == 319 )
+	if (walkframe_== 0 || walkframe_ >= 319 )
 	{
 		walkframe_ = 301;
 	}
-	else
-	{
-		walkframe_++;
-	}
-
-	characterModel_->setCurrentFrame(walkframe_);*/
+	
+	characterModel_->setCurrentFrame(walkframe_);
 }
 void player::backwards()
 {	
@@ -235,6 +238,7 @@ void player::right()
 
 void player::idle()
 {
+	characterModel_->setAnimationSpeed(4);
 	characterModel_->setFrameLoop(206,250);
 }
 

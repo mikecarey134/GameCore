@@ -74,6 +74,7 @@ public:
 	void setChatMessage(char* message)            { chat_message_ = message;}
 	void setCamDist    (float increment)          {cameradist_+= increment;}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
+	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }

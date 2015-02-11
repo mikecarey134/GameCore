@@ -43,10 +43,19 @@ void GUI::drawCrosshair(irr::gui::IGUIFont* font,irr::core::rect<irr::s32> locat
 		location,theColor_);//set to private member color
 
 }
-void GUI::drawHealth(IGUIFont* font,rect<s32> location)
-{
-	font->draw(L"Health: 100",//draw health icon
-	location,theColor_);
+void GUI::drawHealth(IGUIFont* font,rect<s32> location,int currhealth)
+{	core::stringw h;
+	SColor color;
+	//draw health color based on how much health they have
+	if(currhealth >=60 && currhealth < 101){color = green;}
+	else if(currhealth >=30 && currhealth < 60){color = yellow;}
+	else if(currhealth >=1 && currhealth < 30){color = red;}
+	else color = blue;
+
+	h+="Health: ";
+	h+= currhealth;
+	font->draw(h,//draw health icon
+	location,color);
 
 }
 void GUI::drawDebug(IGUIFont* font,IVideoDriver* driver,vector3df nodePosition)

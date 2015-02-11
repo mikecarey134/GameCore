@@ -407,6 +407,9 @@ void IC_Console::loadDefaultCommands(irr::IrrlichtDevice* device)
 	cmd = new IC_Command_P_SPEED(thePlayer_);
 	registerCommand(cmd);
 
+	cmd = new IC_Command_PH(thePlayer_);
+	registerCommand(cmd);
+
 	cmd = new IC_Command_SAY(thePlayer_);
 	registerCommand(cmd);
 

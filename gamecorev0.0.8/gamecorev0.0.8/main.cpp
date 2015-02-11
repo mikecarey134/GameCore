@@ -233,17 +233,25 @@ int main(void)
 				if (!crecv.getStarted())
 				{
 					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
+					
 
 					if (!engine->isCurrentlyPlaying("sounds/slowintro.mp3"))
 						engine->play2D("sounds/slowintro.mp3", true);//startup the main menu track
-
+					
 					crecv.drawMainMenu();
 
 				
 				}
 				else
 				{
-					//internal client sends data to the server 
+					//if we have started our game
+					if(crecv.getStarted()){
+					if (!engine->isCurrentlyPlaying("sounds/man.mp3"))
+						engine->play2D("sounds/man.mp3", true);//startup the main track				
+					}
+
+					//internal client sends data to the server
+	
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
 					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
 
@@ -282,7 +290,7 @@ int main(void)
 						{
 							gui::IGUIFont* font = device->getGUIEnvironment()->getBuiltInFont();
 							//draw the current gui related items
-							//theGui.drawHealth(font2,core::rect<s32>(10,565,450,100));
+							theGui.drawHealth(font2,core::rect<s32>(10,565,450,100),thePlayer.getHealth());
 							//theGui.drawCrosshair(font2,core::rect<s32>(400,300,450,100));
 							//theGui.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),"");
 						}
