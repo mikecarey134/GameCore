@@ -46,7 +46,8 @@ void NetworkData::setString(player& thereInput)
 {
 	//set to 0 at start tell clients its PlayerData not chat
 	ourNetworkData.str(""); 
-	ourNetworkData << "0 " << thereInput.getname()<<thereInput.getPosition().X << "," << thereInput.getPosition().Y << "," << thereInput.getPosition().Z;
+	ourNetworkData << "0 " << thereInput.getname() << " " <<thereInput.getPosition().X 
+		<< " " << thereInput.getPosition().Y << " " << thereInput.getPosition().Z;
 }
 
 
