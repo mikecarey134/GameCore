@@ -58,8 +58,9 @@ void NetworkData::setRemote(const char* ourData)
 	std::string ID;
 	std::string mType;
 	std::stringstream ourID;
+	float rem_x,rem_y,rem_z;
 	ourID.str(ourData);
-	ourID >> mType >> ID;
+	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z;
 
 	//is it playerData
 	if( mType == "0")
@@ -74,6 +75,7 @@ void NetworkData::setRemote(const char* ourData)
 			if(ourPlayerData[x].getGuid() == ID)
 			{
 				otherPlayer >> ourPlayerData[x];
+				players_[x].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
 				notFound = false;
 			}
 		}
