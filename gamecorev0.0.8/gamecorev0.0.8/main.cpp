@@ -114,7 +114,7 @@ int main(void)
 		return 1;
 	}
 	
-	InternalServer Client(true);
+	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world);
 
 	
 	////Dungeon example ////////////////////////////////////////////////////////

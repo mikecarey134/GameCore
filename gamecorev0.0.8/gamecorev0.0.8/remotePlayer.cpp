@@ -37,15 +37,15 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	float width  = 3.0;
 
 	character_ = new IKinematicCharacterController(world_);
-	character_->warp(vector3df(41.0f, 73.0f, 23.0f));//set the init player pos on the map
+	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
 
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
 	
-	setTexture("characters/playerskin3.jpg");
-	characterModel_->setScale(vector3df(0.75, 0.75, 0.75));
+	setTexture("characters/playerskin_m2.jpg");
+	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
-	
+	characterModel_->setPosition(vector3df(113.0f, 38.0f, 25.0f));
 	
 	character_->setGravity(PLAYER_EARTH_GRAVITY);
 
@@ -58,10 +58,10 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
 	//////////////////////////////////////////////////////////////////////////
-	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
-	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
+	//characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
+	//characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	//characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
-	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
+	//characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	//////////////////////////////////////////////////////////////////////////
 	
 	//idle();

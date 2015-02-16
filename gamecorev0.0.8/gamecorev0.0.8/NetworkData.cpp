@@ -4,15 +4,19 @@
 #include "remotePlayer.h"
 #include <string.h>
 #include <iostream>
+#include <irrlicht.h>
 
-NetworkData::NetworkData() : currentPlayers_(0), maxPlayers_(8)
+NetworkData::NetworkData(irr::IrrlichtDevice* device,char* filename,
+						 irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
+						 irrklang::ISoundEngine* engine, irrBulletWorld* world) : currentPlayers_(0), maxPlayers_(8),
+						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world)
 {
-
+	players_.reserve(MAX_PLAYERS);//reserve this as the max amount of players
 }
 
 
 NetworkData::~NetworkData()
-{
+	{
 
 }
 
@@ -42,7 +46,7 @@ void NetworkData::setString(player& thereInput)
 {
 	//set to 0 at start tell clients its PlayerData not chat
 	ourNetworkData.str(""); 
-	ourNetworkData << "0 " << thereInput.getPosition().X << "," << thereInput.getPosition().Y << "," << thereInput.getPosition().Z;
+	ourNetworkData << "0 " << thereInput.getname()<<thereInput.getPosition().X << "," << thereInput.getPosition().Y << "," << thereInput.getPosition().Z;
 }
 
 
@@ -54,10 +58,10 @@ void NetworkData::setRemote(const char* ourData)
 	std::string mType;
 	std::stringstream ourID;
 	ourID.str(ourData);
-	ourID >> ID >> mType;
+	ourID >> mType >> ID;
 
 	//is it playerData
-	if(mType == "0")
+	if( mType == "0")
 	{
 		bool notFound = true;
 		std::stringstream otherPlayer;
@@ -82,13 +86,17 @@ void NetworkData::setRemote(const char* ourData)
 				//When you find empty one store it
 				if(ourPlayerData[x].getState() == 10)
 				{
+					printf("New Player Joined");
+					remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
+					players_.push_back(newPlayer);
+
 					ourPlayerData[x].setGuid(ID);
 					otherPlayer >> ourPlayerData[x];
+					ourPlayerData->setState(-10);
+					++currentPlayers_;
+				
 
-					if(ourPlayerData[x].getState() != 10)
-					{
-						++currentPlayers_;
-					}
+				
 
 					break;
 				}

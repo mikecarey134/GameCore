@@ -15,11 +15,15 @@ By: Michael Carey
 #include "player.h"
 #include "remotePlayer.h"
 #include "playerData.h"
+#include <vector>
 
 class NetworkData
 {
 public:
-	NetworkData();
+	NetworkData(irr::IrrlichtDevice* device,char* filename,
+		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
+		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+
 	virtual ~NetworkData();
 	const char* getNetworkData()  const;// get the remote data
 	int length();
@@ -42,6 +46,15 @@ private:
 	std::string ourNetworkChatMine;
 	std::string ourNetworkChatTheres;
 	playerData ourPlayerData[MAX_PLAYERS];
+	std::vector<remotePlayer> players_;
+	
+	irr::IrrlichtDevice* device_;
+	char* filename_;
+	irr::scene::ISceneManager* smgr_;
+	irr::video::IVideoDriver* driver_;
+	irrklang::ISoundEngine* engine_;
+	irrBulletWorld* world_;
+
 };
 
 #endif

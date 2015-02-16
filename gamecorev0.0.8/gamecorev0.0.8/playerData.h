@@ -27,6 +27,8 @@ public:
 	irr::core::vector3df getcamPosition ()                       { return camPos_;}
 	int			         getWeapon      ()                       { return weaponNum_;}
 	int			         getState       ()                       { return state_;}
+	
+	void			     setState       (int state)              { state_ = state;}
 	void		         setGuid        (const std::string guid);
 	std::string	         getGuid        ();
 	std::istream&        getInput       (std::istream& in);

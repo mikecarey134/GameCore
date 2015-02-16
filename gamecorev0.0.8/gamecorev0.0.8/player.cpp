@@ -22,6 +22,7 @@ player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* 
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK)
 {
+	player_name_ = "Mike";
 	chat_message_="\0";
 
 	//////////////////////////////////////////////////////////////////////////

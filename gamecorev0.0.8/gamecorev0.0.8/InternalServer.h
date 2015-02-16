@@ -42,7 +42,10 @@
 class InternalServer
 {
 public:
-	InternalServer(bool online);
+	InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
+		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
+		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+
 	~InternalServer(void);
 	void messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font);
 	bool emptyMess(char* message);
@@ -52,8 +55,16 @@ public:
 	
 private:
 	bool online_;
+
+	irr::IrrlichtDevice* device_;
+	char* filename_;
+	irr::scene::ISceneManager* smgr_;
+	irr::video::IVideoDriver* driver_;
+	irrklang::ISoundEngine* engine_;
+	irrBulletWorld* world_;
+
 	//need to have an array of clients to send updates
-	std::vector<remotePlayer> clients_;
+	//std::vector<remotePlayer> clients_;
 	RakNet::RakNetStatistics* rss_;
 	RakNet::RakPeerInterface* client_;
 	// Holds packets

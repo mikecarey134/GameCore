@@ -33,7 +33,10 @@
 
 using namespace RakNet;
 
-InternalServer::InternalServer(bool online):online_(online)
+InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
+							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
+							   irrklang::ISoundEngine* engine, irrBulletWorld* world): online_(online),
+device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),networkData_(device,filename,smgr,driver,engine,world)
 {
 	if(online_)
 	{

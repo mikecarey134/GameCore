@@ -11,6 +11,7 @@
 #include<irrlicht.h>
 #include<irrKlang.h>
 #include<irrbullet.h>
+#include<string>
 
 #include<string>
 #include"kinematiccharactercontroller.h"
@@ -90,6 +91,7 @@ public:
 	int                                 getHealth     () {return playerHealth_;}
 	playerData&                         getPlayerData () {return data_;}
 	bool                                getIsLamp     () {return lamp_->isVisible();}
+	std::string                         getname       () {return player_name_;}
 	
 
 	//directional 
@@ -139,6 +141,7 @@ private:
 	float cameradist_;
 
 	irr::scene::ILightSceneNode* lamp_;
+	std::string player_name_;
 	
 
 };
