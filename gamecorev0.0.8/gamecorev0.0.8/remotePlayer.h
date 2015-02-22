@@ -48,7 +48,7 @@ public:
 
 private:
 
-
+	void idle();
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 

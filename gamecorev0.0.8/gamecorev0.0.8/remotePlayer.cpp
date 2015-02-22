@@ -64,7 +64,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	//characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	//////////////////////////////////////////////////////////////////////////
 	
-	//idle();
+	idle();
 
 	//lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
 		//SColor(150,237,245,157),12);//add our lamp here
@@ -124,9 +124,9 @@ void remotePlayer::right()
 
 
 
-
+*/
 void remotePlayer::idle()
 {
 	characterModel_->setFrameLoop(206,250);
 }
-*/
+
