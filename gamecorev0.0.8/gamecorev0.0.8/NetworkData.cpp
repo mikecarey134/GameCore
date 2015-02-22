@@ -47,7 +47,8 @@ void NetworkData::setString(player& thereInput)
 	//set to 0 at start tell clients its PlayerData not chat
 	ourNetworkData.str(""); 
 	ourNetworkData << "0 " << thereInput.getname() << " " <<thereInput.getPosition().X 
-		<< " " << thereInput.getPosition().Y << " " << thereInput.getPosition().Z;
+		<< " " << thereInput.getPosition().Y << " " << thereInput.getPosition().Z << " " <<thereInput.getRotation().X 
+		<< " " << thereInput.getRotation().Y << " " << thereInput.getRotation().Z;
 }
 
 
@@ -55,12 +56,13 @@ void NetworkData::setString(player& thereInput)
 //by the client 
 void NetworkData::setRemote(const char* ourData)
 {
+	//get our remote information from the server
 	std::string ID;
 	std::string mType;
 	std::stringstream ourID;
-	float rem_x,rem_y,rem_z;
+	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
 	ourID.str(ourData);
-	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z;
+	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ;
 
 	//is it playerData
 	if( mType == "0")
@@ -76,6 +78,7 @@ void NetworkData::setRemote(const char* ourData)
 			{
 				otherPlayer >> ourPlayerData[x];
 				players_[x].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
+				players_[x].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
 				notFound = false;
 			}
 		}
