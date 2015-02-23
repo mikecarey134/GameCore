@@ -16,10 +16,9 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	//character_->setUseGhostSweepTest(true);
 	
 	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
-
-
 	
-	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"));
+	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"),
+		0, player::IDFlag_IsPickable);
 	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
     characterModel_->setMaterialFlag(video::EMF_LIGHTING,1);
 	
@@ -30,6 +29,9 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
 	directionCounter_ = 0.0f;
 	
+	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
+	characterModel_->setTriangleSelector(selector);
+	//smgr_->createTriangleSelector(characterModel_);
 }
 
 NPC::~NPC()
@@ -50,8 +52,6 @@ void NPC::moveNPC()
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
 	character_->setPositionIncrementPerSimulatorStep(AIdirection_* NPC_SPEED);
-	
-
 }
 
 void NPC::luaSetDir()
