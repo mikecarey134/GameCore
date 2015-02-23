@@ -38,6 +38,9 @@ private:
 	int npcHealth_;
 	bool isHit_;
 	bool isDead_;
+
+	irr::scene::IBillboardTextSceneNode* healthDisplay_;
+	irr::core::stringw healthText_;
 	
 public:
 	NPC(irr::IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
