@@ -108,12 +108,14 @@ void NPC::damage()
 
 	if (npcHealth_ < 1)
 	{
-		//characterModel_->setFrameLoop(166,173);//166-173);
+		characterModel_->setFrameLoop(166,166);//166-173);
 		//characterModel_->setCurrentFrame(173);
 		
 		characterModel_->setPosition(vector3df(1000,1000,1000));		
 		character_->warp(vector3df(1000,1000,1000));
-		characterModel_->setVisible(false);
+		//characterModel_->setVisible(false);
+		isDead_ = true;
+		healthDisplay_->remove();
 
 		//characterModel_->drop();
 	}
