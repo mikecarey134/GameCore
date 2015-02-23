@@ -89,6 +89,8 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	characterModel_->setPosition(vector3df(-155.0f, 20.0f, -58.0f));
 
 	//////////////////////////////////////////////////////////////////////////
+
+	enemyInRange_ = false;
 	
 	idle();
 
@@ -269,15 +271,17 @@ void player::nodeSelector()
 		// set up to be pick able are considered
 		0); // Check the entire scene (this is actually the implicit default)
 
-
-
 	if( selectedSceneNode)
 	{
 
 		// We can check the flags for the scene node that was hit to see if it should be
-		// highlighted. 
+		// highlighted.
+		
 		if(selectedSceneNode->getID() == IDFlag_IsPickable)
 		{
+			std::string nodeName = selectedSceneNode->getName();	//Need to convert from c8* into a std string
+			if (nodeName == "test_npc")								//so it will work with the if statement
+				enemyInRange_ = true;
 
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));

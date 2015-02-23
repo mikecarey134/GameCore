@@ -210,6 +210,8 @@ int main(void)
 		
 	}
 
+	npc_tester.setID(player::selectionType::IDFlag_IsPickable);
+
 	u32 then = device->getTimer()->getTime();
 
 	ISound* intro = engine->play2D("sounds/slowintro.mp3", true);
@@ -280,7 +282,10 @@ int main(void)
 						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
 						{
 							thePlayer.moveCameraControl();
-							npc_tester.moveNPC();//move our npc 
+
+							if(!npc_tester.isDead())
+								npc_tester.moveNPC();//move our npc 
+	
 							crecv.playerNpcCollisionCheck();
 						}
 						

@@ -84,6 +84,8 @@ class IKinematicCharacterController
 
         irr::f32 getMaxSlope() const;
 
+		btConvexShape* getCapsule() { return Capsule; }
+
     private:
         irrBulletWorld* World;
         btConvexShape* Capsule;
