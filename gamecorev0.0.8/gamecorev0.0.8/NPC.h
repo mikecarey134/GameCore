@@ -16,6 +16,7 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
+#include"player.h"
 
 #define NPC_EARTH_GRAVITY 150.0f
 #define NPC_HEALTH 100
@@ -53,4 +54,6 @@ public:
 	irr::core::vector3df getPosition() { return characterModel_->getPosition(); }
 
 	IKinematicCharacterController* getKinematicChar() { return character_; }
+
+	void setID(player::selectionType id) { characterModel_->setID(id); }
 };

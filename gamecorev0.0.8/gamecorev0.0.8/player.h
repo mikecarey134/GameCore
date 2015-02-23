@@ -34,7 +34,7 @@ class player
 
 public:
 
-	enum
+	enum selectionType
 	{
 		// I use this ISceneNode ID to indicate a scene node that is
 		// not pickable by getSceneNodeAndCollisionPointFromRay()

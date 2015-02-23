@@ -269,16 +269,15 @@ void player::nodeSelector()
 		// set up to be pick able are considered
 		0); // Check the entire scene (this is actually the implicit default)
 
-
-
 	if( selectedSceneNode)
 	{
 
 		// We can check the flags for the scene node that was hit to see if it should be
-		// highlighted. 
+		// highlighted.
+		
 		if(selectedSceneNode->getID() == IDFlag_IsPickable)
 		{
-
+			std::cout << "ray intersection\n";
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
 			//highlightedSceneNode = selectedSceneNode;
