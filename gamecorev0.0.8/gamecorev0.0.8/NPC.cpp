@@ -56,6 +56,14 @@ void NPC::drawNPCHealth()
 													  vector3df(characterModel_->getPosition().X, 
 													            characterModel_->getPosition().Y+19,
 																characterModel_->getPosition().Z));
+	
+	if (npcHealth_ > 50)
+		healthDisplay_->setColor(SColor(255,0,255,0));
+	else if (npcHealth_ <= 50 && npcHealth_ > 20)
+		healthDisplay_->setColor(SColor(255,255,252,66));
+	else
+		healthDisplay_->setColor(SColor(255,255,0,0));
+	
 }
 
 void NPC::moveNPC()
@@ -95,24 +103,19 @@ void NPC::luaSetDir()
 
 void NPC::damage()
 {
-	if (npcHealth_ <= 0)
+	npcHealth_ -= 5;
+	std::cout << npcHealth_ << std::endl;
+
+	if (npcHealth_ < 1)
 	{
 		//characterModel_->setFrameLoop(166,173);//166-173);
 		//characterModel_->setCurrentFrame(173);
 		
-		characterModel_->setPosition(vector3df(1000,
-											   1000,
-											   1000));
-		character_->warp(vector3df(1000,
-								   1000,
-								   1000));
+		characterModel_->setPosition(vector3df(1000,1000,1000));		
+		character_->warp(vector3df(1000,1000,1000));
 		characterModel_->setVisible(false);
+
 		//characterModel_->drop();
-	}
-	else
-	{
-		npcHealth_ -= 5;
-		std::cout << npcHealth_ << std::endl;
 	}
 	
 }
