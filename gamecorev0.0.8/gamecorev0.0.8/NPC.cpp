@@ -10,7 +10,7 @@ using namespace gui;
 
 NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
 		 irrBulletWorld* world, irr::video::IVideoDriver* driver) : 
-			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH),isHit_(false)
+			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH),isHit_(false),isDead_(false)
 {
 	character_ = new IKinematicCharacterController(world_);
 	//character_->setUseGhostSweepTest(true);
@@ -32,11 +32,25 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
 	characterModel_->setTriangleSelector(selector);
 	//smgr_->createTriangleSelector(characterModel_);
+
+	characterModel_->setName("test_npc");
 }
 
 NPC::~NPC()
 {
 
+}
+
+void NPC::drawNPCHealth()
+{
+	IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
+	char healthChars[5];
+	itoa(npcHealth_, healthChars, 10);
+	wchar_t* healthText = new wchar_t[5];
+	mbstowcs(healthText, healthChars, 5);
+	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
+
+	ISceneNode* healthDisplay = smgr_->addBillboardTextSceneNode(font,healthText,0,dimension2d<f32>(15,5),textPosition);
 }
 
 void NPC::moveNPC()
@@ -52,6 +66,8 @@ void NPC::moveNPC()
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
 	character_->setPositionIncrementPerSimulatorStep(AIdirection_* NPC_SPEED);
+
+	drawNPCHealth();
 }
 
 void NPC::luaSetDir()
@@ -76,12 +92,17 @@ void NPC::damage()
 {
 	if (npcHealth_ <= 0)
 	{
-		characterModel_->setFrameLoop(166,173);//166-173);
+		//characterModel_->setFrameLoop(166,173);//166-173);
 		//characterModel_->setCurrentFrame(173);
-		characterModel_->remove();
+		characterModel_->setVisible(false);
+		characterModel_->setPosition(vector3df(characterModel_->getPosition().X + 500,
+											   characterModel_->getPosition().Y + 500,
+											   characterModel_->getPosition().Z + 500));
+		//characterModel_->drop();
 	}
 	else
 	{
 		npcHealth_ -= 5;
+		std::cout << npcHealth_ << std::endl;
 	}
 }

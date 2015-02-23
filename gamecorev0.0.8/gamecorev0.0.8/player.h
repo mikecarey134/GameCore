@@ -80,6 +80,7 @@ public:
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
 	bool isOnGround        ()           {return character_->isOnGround();  }
+	bool isEnemyInRange	   ()			{ return enemyInRange_; }
 
 	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () {return characterModel_;}
 	irr::core::vector3df                getPosition   () {return characterModel_->getPosition();}
@@ -143,5 +144,5 @@ private:
 	irr::scene::ILightSceneNode* lamp_;
 	std::string player_name_;
 	
-
+	bool enemyInRange_;
 };

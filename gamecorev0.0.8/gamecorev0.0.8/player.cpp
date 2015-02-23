@@ -89,6 +89,8 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	characterModel_->setPosition(vector3df(-155.0f, 20.0f, -58.0f));
 
 	//////////////////////////////////////////////////////////////////////////
+
+	enemyInRange_ = false;
 	
 	idle();
 
@@ -277,7 +279,10 @@ void player::nodeSelector()
 		
 		if(selectedSceneNode->getID() == IDFlag_IsPickable)
 		{
-			std::cout << "ray intersection\n";
+			std::string nodeName = selectedSceneNode->getName();	//Need to convert from c8* into a std string
+			if (nodeName == "test_npc")								//so it will work with the if statement
+				enemyInRange_ = true;
+
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
 			//highlightedSceneNode = selectedSceneNode;

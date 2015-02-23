@@ -282,7 +282,10 @@ int main(void)
 						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
 						{
 							thePlayer.moveCameraControl();
-							npc_tester.moveNPC();//move our npc 
+
+							if(!npc_tester.isDead())
+								npc_tester.moveNPC();//move our npc 
+	
 							crecv.playerNpcCollisionCheck();
 						}
 						

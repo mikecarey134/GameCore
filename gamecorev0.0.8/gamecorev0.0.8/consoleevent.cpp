@@ -68,6 +68,9 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		case EMIE_LMOUSE_PRESSED_DOWN:
 			MouseState.LeftButtonDown = true;
 			player_->attack();
+			if(player_->isEnemyInRange())
+				npc_.damage();
+
 			cout<<"Left Mouse CLick!\n";
 			break;
 

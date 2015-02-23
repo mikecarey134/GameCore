@@ -37,6 +37,7 @@ private:
 	irr::u32 directionCounter_;
 	int npcHealth_;
 	bool isHit_;
+	bool isDead_;
 	
 public:
 	NPC(irr::IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
@@ -51,7 +52,10 @@ public:
 	void setHealth (int newHealth)	{ npcHealth_ = newHealth; }
 	void damage();
 	bool& isHit()					{ return isHit_; }
+	bool isDead()					{ return isDead_; }
 	irr::core::vector3df getPosition() { return characterModel_->getPosition(); }
+
+	void drawNPCHealth();
 
 	IKinematicCharacterController* getKinematicChar() { return character_; }
 
