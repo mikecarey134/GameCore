@@ -133,7 +133,7 @@ int main(void)
 
 	
 		//takes care of all input devices and events calls update during the gameloop
-		consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world, npc_tester);//event handeler
+		consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world, &npc_tester);//event handeler
 	device->setEventReceiver(&crecv);
 
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");

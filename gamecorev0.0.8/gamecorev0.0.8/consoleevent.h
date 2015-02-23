@@ -34,7 +34,7 @@ public:
 	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,GUI gui, 
 		/*irr::scene::ICameraSceneNode* camera,*/ irrklang::ISoundEngine* engine, 
-		player* thePlayer, irrBulletWorld* world, NPC npc);
+		player* thePlayer, irrBulletWorld* world, NPC* npc);
 	
 	~consoleevent();
 
@@ -80,7 +80,7 @@ private:
 	SAppContext & Context_;
 	GUI gui_;
 	player* player_;
-	NPC npc_;
+	NPC* npc_;
 	irrBulletWorld* world_;
 	bool debug;
 	bool pauseMenu;

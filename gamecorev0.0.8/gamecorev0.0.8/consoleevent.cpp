@@ -28,7 +28,7 @@ using namespace irrklang;
 
 consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI gui,
-						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, NPC npc):
+						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, NPC* npc):
 							device_(device),guienv_(guienv),driver_(driver),Context_(Context),gui_(gui),debug(false),							
 							pauseMenu(false), started(false), chatshown(false),creditsDisplayed(false), inventory(false), engine_(engine), 
 							player_(thePlayer), world_(world), npc_(npc)
@@ -69,7 +69,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			MouseState.LeftButtonDown = true;
 			player_->attack();
 			if(player_->isEnemyInRange())
-				npc_.damage();
+				npc_->damage();
 
 			cout<<"Left Mouse CLick!\n";
 			break;

@@ -34,6 +34,9 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	//smgr_->createTriangleSelector(characterModel_);
 
 	characterModel_->setName("test_npc");
+	healthText_ += npcHealth_;
+	healthDisplay_ = smgr_->addBillboardTextSceneNode(device_->getGUIEnvironment()->getBuiltInFont(),
+													 healthText_.c_str());
 }
 
 NPC::~NPC()
@@ -44,13 +47,15 @@ NPC::~NPC()
 void NPC::drawNPCHealth()
 {
 	IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
-	char healthChars[5];
-	itoa(npcHealth_, healthChars, 10);
-	wchar_t* healthText = new wchar_t[5];
-	mbstowcs(healthText, healthChars, 5);
+	healthText_ = "";
+	healthText_ += npcHealth_;
 	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
 
-	ISceneNode* healthDisplay = smgr_->addBillboardTextSceneNode(font,healthText,0,dimension2d<f32>(15,5),textPosition);
+	healthDisplay_->remove();
+	healthDisplay_ = smgr_->addBillboardTextSceneNode(font, healthText_.c_str(),0, dimension2d<f32>(11,5),
+													  vector3df(characterModel_->getPosition().X, 
+													            characterModel_->getPosition().Y+19,
+																characterModel_->getPosition().Z));
 }
 
 void NPC::moveNPC()
@@ -94,10 +99,14 @@ void NPC::damage()
 	{
 		//characterModel_->setFrameLoop(166,173);//166-173);
 		//characterModel_->setCurrentFrame(173);
+		
+		characterModel_->setPosition(vector3df(1000,
+											   1000,
+											   1000));
+		character_->warp(vector3df(1000,
+								   1000,
+								   1000));
 		characterModel_->setVisible(false);
-		characterModel_->setPosition(vector3df(characterModel_->getPosition().X + 500,
-											   characterModel_->getPosition().Y + 500,
-											   characterModel_->getPosition().Z + 500));
 		//characterModel_->drop();
 	}
 	else
@@ -105,4 +114,5 @@ void NPC::damage()
 		npcHealth_ -= 5;
 		std::cout << npcHealth_ << std::endl;
 	}
+	
 }
