@@ -323,7 +323,7 @@ int main(void)
 
 	if(Client.isOnline())//if we are online
 	{
-		Client.shutdown();//shutdown internal server
+		Client.shutdown(thePlayer);//shutdown internal server
 	}
 	return 0;
 }

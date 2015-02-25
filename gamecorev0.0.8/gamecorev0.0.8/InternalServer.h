@@ -49,7 +49,7 @@ public:
 	~InternalServer(void);
 	void messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font);
 	bool emptyMess(char* message);
-	void shutdown();
+	void shutdown(player& thePlayer);
 	bool isOnline(){return online_;}
 	
 	

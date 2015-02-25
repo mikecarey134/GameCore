@@ -240,9 +240,12 @@ bool InternalServer::emptyMess(char* message)
 
 	return length == 0;
 }
-void InternalServer::shutdown()
+void InternalServer::shutdown(player& thePlayer)
 {
-	// Be nice and let the server know we quit.
+	// Be nice and let the server know we quit
+	std::string quit_message ="99 ";
+	quit_message += thePlayer.getname();
+	client_->Send(quit_message.c_str(), quit_message.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 	client_->Shutdown(300);
 	RakNet::RakPeerInterface::DestroyInstance(client_);
 	puts("Shutting Down Internal Server");

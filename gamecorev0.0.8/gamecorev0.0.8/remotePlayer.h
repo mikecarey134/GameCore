@@ -10,7 +10,7 @@
 class remotePlayer
 {
 public:
-
+	remotePlayer(){}
 	remotePlayer(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		irrklang::ISoundEngine* engine, irrBulletWorld* world);
@@ -24,6 +24,7 @@ public:
 	void                 moveCameraControl	();
 	irr::core::vector3df calculateCameraPos	();
 	void				 nodeSelector		();
+	void                 delete_player      (){characterModel_->remove();}
 
 	void setRotation(irr::core::vector3df pos)    {characterModel_->setRotation(pos);}
 	void setTexture    (const char* filename)     {characterModel_->setMaterialTexture(0,driver_->getTexture(filename));}

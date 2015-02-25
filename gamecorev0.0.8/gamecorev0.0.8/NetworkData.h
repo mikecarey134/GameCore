@@ -46,7 +46,7 @@ private:
 	std::string ourNetworkChatMine;
 	std::string ourNetworkChatTheres;
 	playerData ourPlayerData[MAX_PLAYERS];
-	std::vector<remotePlayer> players_;
+	std::map<std::string,remotePlayer> players_;
 	
 	irr::IrrlichtDevice* device_;
 	char* filename_;

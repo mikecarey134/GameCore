@@ -11,7 +11,7 @@ NetworkData::NetworkData(irr::IrrlichtDevice* device,char* filename,
 						 irrklang::ISoundEngine* engine, irrBulletWorld* world) : currentPlayers_(0), maxPlayers_(8),
 						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world)
 {
-	players_.reserve(MAX_PLAYERS);//reserve this as the max amount of players
+	//players_.reserve(MAX_PLAYERS);//reserve this as the max amount of players
 }
 
 
@@ -74,11 +74,12 @@ void NetworkData::setRemote(const char* ourData)
 		//Update current Players
 		for(int x =0; x < currentPlayers_ && notFound; x++)
 		{
-			if(ourPlayerData[x].getGuid() == ID)
+			//if(ourPlayerData[x].getGuid() == ID)
+			if(players_.find(ID) != players_.end())
 			{
 				otherPlayer >> ourPlayerData[x];
-				players_[x].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
-				players_[x].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
+				players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
+				players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
 				notFound = false;
 			}
 		}
@@ -94,7 +95,8 @@ void NetworkData::setRemote(const char* ourData)
 				{
 					printf("New Player Joined");
 					remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
-					players_.push_back(newPlayer);
+					//players_.push_back(newPlayer);
+					players_[ID]= newPlayer;
 
 					ourPlayerData[x].setGuid(ID);
 					otherPlayer >> ourPlayerData[x];
@@ -152,6 +154,12 @@ void NetworkData::setRemote(const char* ourData)
 
 		ourNetworkChatTheres = temp;
 
+	}
+	else if (mType == "99")
+	{
+		std::cout<<"Player:" << ID <<" left";
+		players_[ID].delete_player();
+		players_.erase(ID);
 	}
 
 }
