@@ -14,6 +14,8 @@
 #include <irrlicht.h>
 #include <irrKlang.h>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 #include "driverChoice.h"
 #include "SAppcontext.h"
@@ -60,7 +62,7 @@ using namespace RakNet;
 
 int main(void)
 {
-
+	srand(time(NULL));
 	//setup the irrlicht devices here
 	IrrlichtDevice *device = createDevice(EDT_OPENGL,//standard open_gl drivers
 	dimension2d<u32>(800,600),16,false,true,true);
