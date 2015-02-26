@@ -26,7 +26,9 @@
 #include "NPC.h"
 #include "ParticleSystem.h"
 #include "InternalServer.h"
+#include "mapLoader.h"
 #include <winsock2.h>
+
 
 
 
@@ -74,7 +76,7 @@ int main(void)
 	GUI theGui;theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
 	
 	//load our scene manager and set up the shadow color with an alpha channel
-		ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
+	ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
 	keymap userkeys;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -118,107 +120,27 @@ int main(void)
 	
 	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world);
 
-	
-	////Dungeon example ////////////////////////////////////////////////////////
-	//device->getSceneManager()->loadScene("map/dungeon2.irr");//debug map scene
-	//////////////////////////////////////////////////////////////////////////
+	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);	
 
-	//Open World Example///////////////////////////////////////////////////////
-	//device->getSceneManager()->loadScene("map/arena.irr");//debug map scene
-	//device->getSceneManager()->loadScene("map/test.irr");//debug map scene
-	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
-	////////////////////////////////////////////////////////////////////////////
-	
-	//house example////////////////////////////////////////////////////////////////
-	device->getSceneManager()->loadScene("map/subbs.irr");//debug map scene
-	//////////////////////////////////////////////////////////////////////////////
-
+	//Loading map now handled in its own class
+	mapLoader currentMap(device,driver,smgr,world);
+	currentMap.setMap("subbs.irr");
+	//currentMap->setMap("arena.irr");
+	//currentMap->setMap("dungeon2.irr");
 	
 		//takes care of all input devices and events calls update during the gameloop
-		consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world, &npc_tester);//event handeler
+	consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world, &npc_tester, &currentMap);//event handeler
 	device->setEventReceiver(&crecv);
 
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");
 
-	
-	core::array<scene::ISceneNode*> nodes;
-	smgr->getSceneNodesFromType(scene::ESNT_ANY,nodes);
-	scene::ITriangleSelector* selector = 0;
-
-	for (u32 i=0; i < nodes.size(); ++i)//create collision response and psychics for our scene nodes
-	{
-	
-		scene::ISceneNode* node = nodes[i];
-		stringc name = node->getName();
-		const stringc prefix = name.subString(0,name.findFirst('_'));
-		const stringc suffix = name.subString(name.findFirst('_')+1, name.size()-name.findFirst('_'));
-
-
-		if(node->getType() == scene::ESNT_MESH || scene::ESNT_CUBE || scene::ESNT_SPHERE ||scene::ESNT_ANY)
-		{
-			if(prefix == "rigid")
-			{
-				ICollisionShape* shape = 0;
-
-				if(suffix == "mesh")
-					shape = new IGImpactMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), node->getBoundingBox().getVolume()*(irr::f32)0.001);
-
-				else if(suffix == "box")
-					shape = new IBoxShape(node, node->getBoundingBox().getVolume()*(irr::f32)0.001);
-
-				else if(suffix == "sphere")
-					shape = new ISphereShape(node, node->getBoundingBox().getVolume()*(irr::f32)0.001);
-
-				world->addRigidBody(shape);
-
-				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
-			}
-
-			else if(prefix == "static")
-			{
-			
-				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
-				IRigidBody* body = world->addRigidBody(shape);
-				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
-				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
-				//node->setID(player::IDFlag_IsPickable);
-				
-				//selector = smgr->createTriangleSelectorFromBoundingBox(node);
-			    //node->setTriangleSelector(selector);
-	
-			}
-
-			else if(prefix == "soft")
-			{
-				ISoftBody* softbody = world->addSoftBody(static_cast<IMeshSceneNode*>(node));
-				softbody->setTotalMass(0.1f, false);
-				softbody->setActivationState(EAS_DISABLE_DEACTIVATION);
-				node->setMaterialFlag(EMF_BACK_FACE_CULLING, false);
-				node->setAutomaticCulling(EAC_OFF);
-			
-				softbody->getConfiguration().liftCoefficient = 0.0;
-				softbody->getConfiguration().dragCoefficient = 0.0;
-				softbody->getConfiguration().dampingCoefficient = 0.0;
-				softbody->getConfiguration().poseMatchingCoefficient = 0.0f;
-				softbody->getConfiguration().positionsSolverIterations = 56;
-				softbody->updateConfiguration();
-			}
-
-
-		}
-		//node->setDebugDataVisible(EDS_BBOX);
-		//node->setMaterialFlag(EMF_LIGHTING,0);
-		node->setAutomaticCulling(EAC_BOX);//cull unneeded primitives 
-		
-	}
+	currentMap.loadMap();
 
 	npc_tester.setID(player::selectionType::IDFlag_IsPickable);
 
 	u32 then = device->getTimer()->getTime();
 
-	ISound* intro = engine->play2D("sounds/slowintro.mp3", true);
-
-	
+	ISound* intro = engine->play2D("sounds/slowintro.mp3", true);	
 
 	while(device->run())//while the game is running
 	{	
