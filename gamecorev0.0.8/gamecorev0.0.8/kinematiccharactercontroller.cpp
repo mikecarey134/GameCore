@@ -120,9 +120,15 @@ irr::f32 IKinematicCharacterController::getMaxSlope() const
     return Character->getMaxSlope();
 }
 
+void IKinematicCharacterController::destroy()
+{
+	
+
+}
+
 IKinematicCharacterController::~IKinematicCharacterController()
 {
-    delete Capsule;
-    World->getPointer()->removeCollisionObject(GhostObject);
+	delete Capsule;
+	World->getPointer()->removeCollisionObject(GhostObject);
 	World->getPointer()->removeAction(Character);
 }

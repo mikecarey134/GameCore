@@ -40,6 +40,7 @@ class IKinematicCharacterController
         void setMaxJumpHeight(irr::f32 maxJumpHeight);
 
         void jump();
+		void destroy();
 
         void setUseGhostSweepTest(bool useGhostObjectSweepTest);
 
