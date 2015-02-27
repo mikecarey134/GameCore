@@ -163,6 +163,14 @@ IC_Command_CLS::~IC_Command_CLS()
 }
 bool IC_Command_CLS::invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput)
 {
+	//if we are compiling with windows clear the console
+    #ifdef _WINDOWS_
+		system("cls");
+		std::cout<<"Console Clear Command Issued!\n";
+	#endif
+	
+
+	
 	pOutput->clearMessages();
 	return true;
 }

@@ -209,7 +209,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 					// It's a client, so just show the message
 
-					if(p->data[0]!= '0'){//if the packet id isnt 0 dont print it
+					if(p->data[0]!= '0' && p->data[0]!= '9' ){//if the packet id isnt 0 dont print it
 						printf("%s", p->data);
 						puts("\n");
 					}

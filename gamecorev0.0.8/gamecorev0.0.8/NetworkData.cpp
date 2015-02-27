@@ -9,17 +9,9 @@
 NetworkData::NetworkData(irr::IrrlichtDevice* device,char* filename,
 						 irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 						 irrklang::ISoundEngine* engine, irrBulletWorld* world) : currentPlayers_(0), maxPlayers_(8),
-						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world)
-{
-	//players_.reserve(MAX_PLAYERS);//reserve this as the max amount of players
-}
+						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world){}
 
-
-NetworkData::~NetworkData()
-	{
-
-}
-
+NetworkData::~NetworkData(){}
 
 const char* NetworkData::getNetworkData() const
 {
@@ -57,12 +49,12 @@ void NetworkData::setString(player& thereInput)
 void NetworkData::setRemote(const char* ourData)
 {
 	//get our remote information from the server
-	std::string ID;
-	std::string mType;
+	std::string ID;//player_key
+	std::string mType;//code from server 0 = player data 1 = chat 99 = quit
 	std::stringstream ourID;
 	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
 	ourID.str(ourData);
-	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ;
+	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ;//set up incoming variables
 
 	//is it playerData
 	if( mType == "0")
@@ -71,46 +63,25 @@ void NetworkData::setRemote(const char* ourData)
 		std::stringstream otherPlayer;
 		otherPlayer << ourData;
 
-		//Update current Players
-		for(int x =0; x < currentPlayers_ && notFound; x++)
+		//update the player based off the player_key from the server
+		if(players_.find(ID) != players_.end())
 		{
-			//update the player based off the key from the server
-			if(players_.find(ID) != players_.end())
-			{
-				otherPlayer >> ourPlayerData[x];
-				players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
-				players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
-				players_[ID].drawName();
-				notFound = false;//set the player not found to false to indicate an exsisting player
-			}
+			players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
+			players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
+			players_[ID].drawName();
+			notFound = false;//set the player not found to false to indicate an existing player
 		}
 
-		//Add our new player
-		if(notFound == true)
+		if(notFound == true)//Add our new player if they arent found
 		{
-			//add to next empty
-			for(int x =0; x < 8 && notFound; x++)
-			{
-				//When you find empty one store it
-				if(ourPlayerData[x].getState() == 10)
-				{
-					printf("New Player Joined");
-					remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
-					//newPlayer.setName(ID);
-					//players_.push_back(newPlayer);
-					players_[ID]= newPlayer;
-					players_[ID].setName(ID);
-					ourPlayerData[x].setGuid(ID);
-					otherPlayer >> ourPlayerData[x];
-					ourPlayerData->setState(-10);
-					++currentPlayers_;
-				
-
-				
-
-					break;
-				}
-			}
+				//add new player to map
+				//printf("New Player Joined\n");
+			    std::cout<<ID<<" Joined\n";
+				remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
+				players_[ID]= newPlayer;
+				players_[ID].setName(ID);
+				++currentPlayers_;//update the current amount of players
+	
 		}
 		else
 		{
@@ -153,13 +124,12 @@ void NetworkData::setRemote(const char* ourData)
 
 		//ourData
 		ourNetworkChatTheres = "";
-
 		ourNetworkChatTheres = temp;
 
 	}
 	else if (mType == "99")
 	{
-		std::cout<<"Player:" << ID <<" left";
+		std::cout<< ID <<" left\n";
 		players_[ID].delete_player();
 		players_.erase(ID);
 	}
@@ -169,12 +139,6 @@ void NetworkData::setRemote(const char* ourData)
 //on information it receives from the server (stored in player data)
 void NetworkData::getRemote(remotePlayer& worldRemote, int dataIndex)
 {
-	worldRemote.setposition(ourPlayerData[dataIndex].getworldCoord());
-	//worldRemote.setCamPos(ourPlayerData[dataIndex].getcamPosition());
-	//worldRemote.setDirection(ourPlayerData[dataIndex].getDirection());
-	//worldRemote.setState(ourPlayerData[dataIndex].getState());
-	//worldRemote.setPlayerWeapon(ourPlayerData[dataIndex].getWeapon());
-
 }
 
 //Sets the number max number of players we are allowing
@@ -182,7 +146,6 @@ int NetworkData::getMaxPlayers()
 {
 	return maxPlayers_;
 }
-
 
 //Used to transfer chat messages.
 void NetworkData::setChatMessage(char* chat)

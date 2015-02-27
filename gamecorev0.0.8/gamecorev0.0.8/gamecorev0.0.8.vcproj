@@ -209,10 +209,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\playerData.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\remotePlayer.cpp"
 				>
 			</File>
@@ -256,10 +252,6 @@
 			</File>
 			<File
 				RelativePath=".\player.h"
-				>
-			</File>
-			<File
-				RelativePath=".\playerData.h"
 				>
 			</File>
 			<File

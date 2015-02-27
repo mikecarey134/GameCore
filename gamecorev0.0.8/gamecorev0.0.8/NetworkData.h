@@ -45,7 +45,7 @@ private:
 	std::ostringstream ourNetworkData;
 	std::string ourNetworkChatMine;
 	std::string ourNetworkChatTheres;
-	playerData ourPlayerData[MAX_PLAYERS];
+	//playerData ourPlayerData[MAX_PLAYERS];
 	std::map<std::string,remotePlayer> players_;
 	
 	irr::IrrlichtDevice* device_;
