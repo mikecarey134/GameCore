@@ -16,7 +16,7 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
-#include "playerData.h"
+
 
 //Player Variables/////////////
 #define DEFAULT_PLAYER_SPEED 3.0f

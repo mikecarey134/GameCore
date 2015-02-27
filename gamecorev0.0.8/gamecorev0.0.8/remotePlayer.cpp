@@ -16,7 +16,7 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
-#include "playerData.h"
+
 
 using namespace irr;
 using namespace irrklang;

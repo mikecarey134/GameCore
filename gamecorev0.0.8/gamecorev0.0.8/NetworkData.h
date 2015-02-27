@@ -14,7 +14,6 @@ By: Michael Carey
 #include <string>
 #include "player.h"
 #include "remotePlayer.h"
-#include "playerData.h"
 #include <vector>
 
 class NetworkData
