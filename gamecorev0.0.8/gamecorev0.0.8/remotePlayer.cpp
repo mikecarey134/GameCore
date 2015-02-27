@@ -57,6 +57,17 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
+
+
+	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
+	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
+
+
+	nameDisplay_ = smgr_->addBillboardTextSceneNode(font,name_.c_str(),0, dimension2d<f32>(11,5),
+		vector3df(characterModel_->getPosition().X, 
+		characterModel_->getPosition().Y+19,
+		characterModel_->getPosition().Z),-1,video::SColor(255,0,250,0),video::SColor(255,255,0,0));
+
 	//////////////////////////////////////////////////////////////////////////
 	//characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
 	//characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
@@ -130,3 +141,24 @@ void remotePlayer::idle()
 	characterModel_->setFrameLoop(206,250);
 }
 
+void remotePlayer::drawName()
+{
+	//draw the remote players name 
+	nameDisplay_->setText(name_.c_str());
+	nameDisplay_->setSize(dimension2d<f32>(12,2));
+	nameDisplay_->setPosition(vector3df(characterModel_->getPosition().X, 
+		characterModel_->getPosition().Y+15,
+		characterModel_->getPosition().Z));
+
+}
+void remotePlayer::setName(const std::string& name)
+{
+	name_="<";
+	for(size_t i=0;i<name.size();++i)
+	{
+		name_+= (wchar_t)name[i];
+
+	}
+	name_+=">";
+
+}

@@ -74,13 +74,14 @@ void NetworkData::setRemote(const char* ourData)
 		//Update current Players
 		for(int x =0; x < currentPlayers_ && notFound; x++)
 		{
-			//if(ourPlayerData[x].getGuid() == ID)
+			//update the player based off the key from the server
 			if(players_.find(ID) != players_.end())
 			{
 				otherPlayer >> ourPlayerData[x];
 				players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
 				players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
-				notFound = false;
+				players_[ID].drawName();
+				notFound = false;//set the player not found to false to indicate an exsisting player
 			}
 		}
 
@@ -95,9 +96,10 @@ void NetworkData::setRemote(const char* ourData)
 				{
 					printf("New Player Joined");
 					remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
+					//newPlayer.setName(ID);
 					//players_.push_back(newPlayer);
 					players_[ID]= newPlayer;
-
+					players_[ID].setName(ID);
 					ourPlayerData[x].setGuid(ID);
 					otherPlayer >> ourPlayerData[x];
 					ourPlayerData->setState(-10);

@@ -2,6 +2,7 @@
 #include<irrlicht.h>
 #include<irrKlang.h>
 #include<irrbullet.h>
+#include <string>
 
 #include<string>
 #include"kinematiccharactercontroller.h"
@@ -24,8 +25,9 @@ public:
 	void                 moveCameraControl	();
 	irr::core::vector3df calculateCameraPos	();
 	void				 nodeSelector		();
-	void                 delete_player      (){characterModel_->remove();delete character_;}
-
+	void                 delete_player      (){characterModel_->remove();delete character_; nameDisplay_->remove();}
+    void                 drawName();
+	
 	void setRotation(irr::core::vector3df pos)    {characterModel_->setRotation(pos);}
 	void setTexture    (const char* filename)     {characterModel_->setMaterialTexture(0,driver_->getTexture(filename));}
 	void setposition   (irr::core::vector3df pos) { character_->warp(pos); characterModel_->setPosition(character_->getWorldTransform().getTranslation());}//set the player at the correct pos
@@ -33,7 +35,7 @@ public:
 	void setSpeed      (float newSpeed)           {playerSpeed_ = newSpeed;}
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
-	
+	void setName       (const std::string& name);         
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
@@ -45,9 +47,10 @@ public:
 	irr::scene::IAnimatedMeshSceneNode* getPlayerNode () { return characterModel_; }
 	float                               getPlayerSpeed() {return playerSpeed_;}
 	int                                 getHealth     () {return playerHealth_;}
-
+	
 
 private:
+	
 
 	void idle();
 	IKinematicCharacterController* character_;
@@ -73,5 +76,8 @@ private:
 	float playerSpeed_;
 	char* chat_message_;
 	int playerHealth_;
+	irr::scene::IBillboardTextSceneNode* nameDisplay_;
+	irr::core::stringw name_;
+
 
 };

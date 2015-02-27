@@ -58,20 +58,21 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		{
 		case EMIE_RMOUSE_PRESSED_DOWN:
 			MouseState.RightButtonDown = true;
-			cout<<"Right Mouse CLick!\n";
+			//cout<<"Right Mouse CLick!\n";
 			break;
 
 		case EMIE_RMOUSE_LEFT_UP:
 			MouseState.RightButtonDown = false;
 			break;
 
+		//handle mouse events  
 		case EMIE_LMOUSE_PRESSED_DOWN:
 			MouseState.LeftButtonDown = true;
 			player_->attack();
 			if(player_->isEnemyInRange() && !npc_->isDead())
 				npc_->damage();
 
-			cout<<"Left Mouse CLick!\n";
+			//cout<<"Left Mouse CLick!\n";
 			break;
 
 		case EMIE_LMOUSE_LEFT_UP:
