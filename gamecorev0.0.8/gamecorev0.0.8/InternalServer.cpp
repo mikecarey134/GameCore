@@ -111,7 +111,9 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 		networkData_.setString(thePlayer);
 		//since i made get read only once 
 
-		std::string myMessage= "1 <client_id> ";//append the one as a message identifier
+		std::string myMessage= "1 ";//append the one as a message identifier
+		myMessage+= thePlayer.getname();//add the name of the player to the message
+		myMessage+=" ";//separator
 		myMessage+= thePlayer.getChatMessage();
 		//+= "\0";
 
