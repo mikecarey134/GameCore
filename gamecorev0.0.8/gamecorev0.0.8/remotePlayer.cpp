@@ -16,7 +16,7 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
-#include "playerData.h"
+
 
 using namespace irr;
 using namespace irrklang;
@@ -57,6 +57,17 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
+
+
+	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
+	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
+
+
+	nameDisplay_ = smgr_->addBillboardTextSceneNode(font,name_.c_str(),0, dimension2d<f32>(12,2),
+		vector3df(characterModel_->getPosition().X, 
+		characterModel_->getPosition().Y+19,
+		characterModel_->getPosition().Z),-1,video::SColor(255,0,250,0),video::SColor(255,255,0,0));
+
 	//////////////////////////////////////////////////////////////////////////
 	//characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
 	//characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
@@ -64,10 +75,8 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	//characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	//////////////////////////////////////////////////////////////////////////
 	
-	idle();
+	idle();//make the player start at idle
 
-	//lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
-		//SColor(150,237,245,157),12);//add our lamp here
 }
 
 remotePlayer::~remotePlayer(void)
@@ -77,10 +86,8 @@ remotePlayer::~remotePlayer(void)
 void remotePlayer::animate(EMD2_ANIMATION_TYPE animation)
 {
 
-	
 	characterModel_->setMaterialFlag(video::EMF_LIGHTING, true);
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
-	
 	characterModel_->setMD2Animation(animation);
 }
 
@@ -130,3 +137,24 @@ void remotePlayer::idle()
 	characterModel_->setFrameLoop(206,250);
 }
 
+void remotePlayer::drawName()
+{
+	//draw the remote players name 
+	nameDisplay_->setText(name_.c_str());
+	nameDisplay_->setPosition(vector3df(characterModel_->getPosition().X, 
+		characterModel_->getPosition().Y+15,
+		characterModel_->getPosition().Z));
+
+}
+void remotePlayer::setName(const std::string& name)
+{
+	name_="<";//prefix
+	for(size_t i=0;i<name.size();++i)
+	{
+		name_+= (wchar_t)name[i];
+
+	}
+	name_+=">";//postfix 
+	//create < player_name >
+
+}

@@ -365,11 +365,16 @@ void IC_Console::initializeConsole(irr::gui::IGUIEnvironment* guienv, const irr:
 	//calculate the console rectangle
 	calculateConsoleRect(screenSize);
 
-	//append a message
+	//intro console message
+	appendMessage(L"#############################################");
 	appendMessage(L"Gamecore v0.0.8 Console ");
+	appendMessage(L"Use \\list to list all commands");
+	appendMessage(L"Or \\help <command> to get its useage");
+	appendMessage(L"#############################################");
 
 	//resize message array
 	resizeMessages();
+
 }
 //=========================================================================================
 //! loads commands into the console

@@ -111,7 +111,9 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 		networkData_.setString(thePlayer);
 		//since i made get read only once 
 
-		std::string myMessage= "1 <client_id> ";//append the one as a message identifier
+		std::string myMessage= "1 ";//append the one as a message identifier
+		myMessage+= thePlayer.getname();//add the name of the player to the message
+		myMessage+=" ";//separator
 		myMessage+= thePlayer.getChatMessage();
 		//+= "\0";
 
@@ -209,7 +211,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 					// It's a client, so just show the message
 
-					if(p->data[0]!= '0'){//if the packet id isnt 0 dont print it
+					if(p->data[0]!= '0' && p->data[0]!= '9' ){//if the packet id isnt 0 dont print it
 						printf("%s", p->data);
 						puts("\n");
 					}

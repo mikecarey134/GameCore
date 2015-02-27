@@ -16,7 +16,7 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
-#include "playerData.h"
+
 
 //Player Variables/////////////
 #define DEFAULT_PLAYER_SPEED 3.0f
@@ -90,7 +90,7 @@ public:
 	char*                               getChatMessage() {return chat_message_;}
 	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
 	int                                 getHealth     () {return playerHealth_;}
-	playerData&                         getPlayerData () {return data_;}
+	//playerData&                         getPlayerData () {return data_;}
 	bool                                getIsLamp     () {return lamp_->isVisible();}
 	std::string                         getname       () {return player_name_;}
 	
@@ -138,7 +138,7 @@ private:
 	int playerHealth_;
 	int walkframe_;
 
-	playerData data_;
+	//playerData data_;
 	float cameradist_;
 
 	irr::scene::ILightSceneNode* lamp_;
