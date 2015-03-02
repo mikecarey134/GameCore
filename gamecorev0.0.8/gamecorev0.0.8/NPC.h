@@ -9,7 +9,6 @@
 #include<irrlicht.h>
 #include<irrKlang.h>
 #include<irrbullet.h>
-#include<irrbullet.h>
 
 #include<lua.hpp>
 

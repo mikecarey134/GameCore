@@ -21,6 +21,7 @@
 //Player Variables/////////////
 #define DEFAULT_PLAYER_SPEED 3.0f
 #define CAMERA_DISTANCE_BACK 30.0f
+#define CAMERA_OFFSET 15.0f
 #define CAMERA_MOVE_SPEED 50.0f
 #define PLAYER_JUMP_FORCE 60.0f
 #define PLAYER_EARTH_GRAVITY 150.0f
@@ -53,7 +54,7 @@ public:
 
 	player(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world,std::string player_name);
+		irrklang::ISoundEngine* engine, irrBulletWorld* world,std::string palyer_name);
 	
 	
 	~player(void);

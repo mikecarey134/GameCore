@@ -405,3 +405,50 @@ bool IC_Command_PH::invoke(const array<WideString>& args, IC_Dispatcher* pDispat
 	else//otherwise display an error
 		throw IC_Error(L"No Valid Argument! <New Health>");
 }
+
+IC_Command_LM::IC_Command_LM(mapLoader* currentMap) : IC_Command(L"lm")
+{
+	currentMap_ = currentMap;
+
+	setUsage(L"\lm <New Map>");
+
+	addDescLine("Change the currently loaded map");
+}
+
+IC_Command_LM::~IC_Command_LM()
+{
+}
+
+bool IC_Command_LM::invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput)
+{
+	//if we have the right amount of arguments
+	if(args.size() == 1)
+	{
+		//arguments
+		const wchar_t* arg = args[0].c_str();
+		if (args.size()==1)
+		{
+			char* newMap = new char[args[0].size()];//dynamically allocate a c string and copy the contents of args[0]
+			unsigned int i=0;
+			for(;i<args[0].size();++i)
+			{
+				newMap[i] = (char)args[0][i];
+
+			}
+
+			newMap[i] ='\0';//insert null terminator
+			
+			currentMap_->closeMap();
+			currentMap_->setMap(newMap);
+			currentMap_->loadMap();
+		}
+		else
+			throw IC_Error(L"Missing Argument! <Message>");
+		
+		
+
+		return true;
+	}
+	else//otherwise display an error
+		throw IC_Error(L"No Valid Argument! <New Health>");
+}

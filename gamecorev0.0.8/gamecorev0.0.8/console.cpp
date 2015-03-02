@@ -423,6 +423,9 @@ void IC_Console::loadDefaultCommands(irr::IrrlichtDevice* device)
 
 	cmd = new IC_Command_QUIT();
 	registerCommand(cmd);
+
+	cmd = new IC_Command_LM(currentMap_);
+	registerCommand(cmd);
 }
 //=========================================================================================
 //! resize the message count
