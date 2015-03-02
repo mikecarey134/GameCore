@@ -35,7 +35,8 @@ using namespace RakNet;
 
 InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
 							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-							   irrklang::ISoundEngine* engine, irrBulletWorld* world): online_(online),
+							   irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip
+							   ,int remote_port, int local_port): online_(online),
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),networkData_(device,filename,smgr,driver,engine,world)
 {
 	if(online_)
@@ -47,15 +48,15 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 		char ip[] = "mikesmcs.ddns.net";
 		//char ip[] = "192.168.1.12";
 		//char serverPort[] = "1080";
-		char serverPort[] = "25585";//raspberrypi server
-		char clientPort[]= "1000";
+		//char serverPort[] = "25585";//raspberrypi server
+		//char clientPort[]= "1000";
 		//////////////////////////////////////////////////////////////////////////
 
 
 		client_=RakNet::RakPeerInterface::GetInstance();
 		// Connecting the client is very simple.  0 means we don't care about
 		// a connectionValidationInteger, and false for low priority threads
-		SocketDescriptor socketDescriptor(atoi(clientPort),0);
+		SocketDescriptor socketDescriptor(local_port,0);
 		socketDescriptor.socketFamily=AF_INET;
 
 		// Record the first client that connects to us so we can pass it to the ping function
@@ -76,7 +77,7 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 			client_->Startup(8,&socketDescriptor,1);
 			client_->SetOccasionalPing(true);
 
-			RakNet::ConnectionAttemptResult car = client_->Connect(ip, atoi(serverPort), "0", (int) strlen("0"));
+			RakNet::ConnectionAttemptResult car = client_->Connect(ip, remote_port, "0", (int) strlen("0"));
 			bool b = (car==RakNet::CONNECTION_ATTEMPT_STARTED);
 
 			if (b)

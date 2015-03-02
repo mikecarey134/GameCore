@@ -29,6 +29,7 @@
 #include "mapLoader.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
+#include "Config_Reader.h"	
 #include <winsock2.h>
 
 
@@ -72,6 +73,7 @@ int main(void)
 	dimension2d<u32>(800,600),16,false,true,true);
 	device->setWindowCaption(L"gamecore v0.0.8");//set the caption for the window
 	
+	Config_Reader config_reader(device,"config/configure.txt");
 	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
 	IVideoDriver* driver = device->getVideoDriver();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
@@ -108,7 +110,7 @@ int main(void)
 	context.counter = 0;
 	
 	//load our player into the scene
-	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world);
+	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name());
 	NPC npc_tester(device,smgr,world,driver);
 
 	if(!device)//if device fails to load exit
@@ -120,7 +122,8 @@ int main(void)
 		return 1;
 	}
 	
-	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world);
+	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip(),
+							config_reader.get_rem_port(), config_reader.get_port());
 
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);	
 
