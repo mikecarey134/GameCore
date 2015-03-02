@@ -35,7 +35,8 @@ using namespace RakNet;
 
 InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
 							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-							   irrklang::ISoundEngine* engine, irrBulletWorld* world): online_(online),
+							   irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip
+							   , int remote_port, int local_port): online_(online),
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),networkData_(device,filename,smgr,driver,engine,world)
 {
 	if(online_)
@@ -44,30 +45,20 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 		//////////////////////////////////////////////////////////////////////////
 		//current server info the user will specify this later
 		//////////////////////////////////////////////////////////////////////////
-		char ip[] = "mikesmcs.ddns.net";
-		//char ip[] = "192.168.1.12";
-		//char serverPort[] = "1080";
-		char serverPort[] = "25585";//raspberrypi server
-		char clientPort[]= "1000";
+		//const char* nip = "mikesmcs.ddns.net";
+		
+		ip = "mikesmcs.ddns.net";
 		//////////////////////////////////////////////////////////////////////////
-
 
 		client_=RakNet::RakPeerInterface::GetInstance();
 		// Connecting the client is very simple.  0 means we don't care about
 		// a connectionValidationInteger, and false for low priority threads
-		SocketDescriptor socketDescriptor(atoi(clientPort),0);
+		SocketDescriptor socketDescriptor(local_port,0);
 		socketDescriptor.socketFamily=AF_INET;
-
-		// Record the first client that connects to us so we can pass it to the ping function
-		//RakNet::SystemAddress clientID=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
-		isServer=false;
 
 		if(online_)
 		{
 			// Record the first client that connects to us so we can pass it to the ping function
-			//SystemAddress clientID = UNASSIGNED_SYSTEM_ADDRESS;
-
-
 			// A client
 			isServer=false;
 
@@ -76,7 +67,7 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 			client_->Startup(8,&socketDescriptor,1);
 			client_->SetOccasionalPing(true);
 
-			RakNet::ConnectionAttemptResult car = client_->Connect(ip, atoi(serverPort), "0", (int) strlen("0"));
+			RakNet::ConnectionAttemptResult car = client_->Connect(ip, remote_port, "0", (int) strlen("0"));
 			bool b = (car==RakNet::CONNECTION_ATTEMPT_STARTED);
 
 			if (b)
@@ -84,7 +75,7 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 			else
 			{
 				puts("Bad connection attempt.  Terminating.");
-				exit(1);
+				exit(-1);
 			}
 		}
 	}

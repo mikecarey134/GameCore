@@ -53,7 +53,7 @@ public:
 
 	player(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+		irrklang::ISoundEngine* engine, irrBulletWorld* world,std::string player_name);
 	
 	
 	~player(void);
