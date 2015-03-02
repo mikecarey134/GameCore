@@ -16,7 +16,11 @@
 #include "GUI.h"
 #include "player.h"
 #include "NPC.h"
+#include "mapLoader.h"
+#include "InteractiveObject.h"
+#include "ClueObject.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
+
 
 #include <iostream>
 
@@ -34,7 +38,7 @@ public:
 	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,GUI gui, 
 		/*irr::scene::ICameraSceneNode* camera,*/ irrklang::ISoundEngine* engine, 
-		player* thePlayer, irrBulletWorld* world, NPC* npc);
+		player* thePlayer, irrBulletWorld* world, NPC* npc, mapLoader* currentMap);
 	
 	~consoleevent();
 
@@ -60,6 +64,8 @@ public:
 	void drawInventory ();
 
 	void playerNpcCollisionCheck();
+
+	void addInteractiveObject(IneractiveObject* object) { anInteractiveObject_ = object; }
 
 	void update(irr::u32 then, irr::u32 now);
 
@@ -89,6 +95,10 @@ private:
 	bool creditsDisplayed;
 	bool inventory;
 	irrklang::ISoundEngine* engine_;
+	mapLoader* currentMap_;
+
+	IneractiveObject* anInteractiveObject_; 
+
 	// We use this array to store the current state of each key
 	bool KeyIsDown[irr::KEY_KEY_CODES_COUNT];
 };

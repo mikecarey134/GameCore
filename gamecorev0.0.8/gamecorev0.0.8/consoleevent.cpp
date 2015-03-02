@@ -28,13 +28,14 @@ using namespace irrklang;
 
 consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI gui,
-						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, NPC* npc):
+						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
+						   NPC* npc, mapLoader* currentMap):
 							device_(device),guienv_(guienv),driver_(driver),Context_(Context),gui_(gui),debug(false),							
 							pauseMenu(false), started(false), chatshown(false),creditsDisplayed(false), inventory(false), engine_(engine), 
-							player_(thePlayer), world_(world), npc_(npc)
+							player_(thePlayer), world_(world), npc_(npc), currentMap_(currentMap)
 {
 	
-	console.addExtensions(thePlayer,world,device);//register the player in the console
+	console.addExtensions(thePlayer,world,device,currentMap_);//register the player in the console
 									//add world psychics to the console
 	console.loadDefaultCommands(device);//load the default commands help echo etc
 	console.initializeConsole(guienv, dimension2d<s32>(800,500));//prepare the console

@@ -173,6 +173,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ClueObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Config_Reader.cpp"
 				>
 			</File>
@@ -201,6 +205,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\mapLoader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NetworkData.cpp"
 				>
 			</File>
@@ -223,6 +231,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\ClueObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Config_Reader.h"
 				>
 			</File>
@@ -239,6 +251,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\InteractiveObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InternalServer.h"
 				>
 			</File>
@@ -248,6 +264,10 @@
 			</File>
 			<File
 				RelativePath=".\kinematiccharactercontroller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mapLoader.h"
 				>
 			</File>
 			<File
