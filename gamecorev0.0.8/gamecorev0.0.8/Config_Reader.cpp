@@ -71,5 +71,5 @@ bool Config_Reader::readLine(IReadFile* f, std::string& str)
 }
 Config_Reader::~Config_Reader(void)
 {	//deallocate dyanmic memory
-	delete [] filename_;
+	//delete filename_;
 }

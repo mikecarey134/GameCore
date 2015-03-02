@@ -45,9 +45,9 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 		//////////////////////////////////////////////////////////////////////////
 		//current server info the user will specify this later
 		//////////////////////////////////////////////////////////////////////////
-		//const char* nip = "mikesmcs.ddns.net";
+		const char* nip = "mikesmcs.ddns.net";
 		
-		ip = "mikesmcs.ddns.net";
+		//ip = "mikesmcs.ddns.net";
 		//////////////////////////////////////////////////////////////////////////
 
 		client_=RakNet::RakPeerInterface::GetInstance();
@@ -67,7 +67,7 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 			client_->Startup(8,&socketDescriptor,1);
 			client_->SetOccasionalPing(true);
 
-			RakNet::ConnectionAttemptResult car = client_->Connect(ip, remote_port, "0", (int) strlen("0"));
+			RakNet::ConnectionAttemptResult car = client_->Connect(nip, remote_port, "0", (int) strlen("0"));
 			bool b = (car==RakNet::CONNECTION_ATTEMPT_STARTED);
 
 			if (b)

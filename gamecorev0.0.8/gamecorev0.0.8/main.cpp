@@ -302,7 +302,6 @@ int main(void)
 							gui::IGUIFont* font = device->getGUIEnvironment()->getBuiltInFont();
 							//draw the current gui related items
 							theGui.drawHealth(font2,core::rect<s32>(10,565,450,100),thePlayer.getHealth());
-							//theGui.drawCrosshair(font2,core::rect<s32>(400,300,450,100));
 							//theGui.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),"");
 						}
 					
