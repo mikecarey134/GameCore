@@ -44,7 +44,8 @@ class InternalServer
 public:
 	InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+		irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip
+        ,int remote_port, int local_port);
 
 	~InternalServer(void);
 	void messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font);

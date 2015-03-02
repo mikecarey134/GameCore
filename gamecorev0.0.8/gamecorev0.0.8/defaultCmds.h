@@ -5,7 +5,6 @@
 #include "console.h"
 #include "player.h"
 #include<irrbullet.h>
-#include "mapLoader.h"
 
 //
 //	Default Command Set
@@ -153,15 +152,6 @@ private:
 	player* thePlayer_;
 };
 
-class IC_Command_LM : public IC_Command
-{
-public:
-	IC_Command_LM(mapLoader* currentMap);
-	virtual ~IC_Command_LM();
-	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
-private:
-	mapLoader* currentMap_;
-};
 
 
 #endif

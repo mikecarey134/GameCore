@@ -7,7 +7,6 @@
 #include<exception>
 #include "utils.h"
 #include"player.h"
-#include"mapLoader.h"
 #include<irrbullet.h>
 #include<irrlicht.h>
 
@@ -311,18 +310,16 @@ private:
 	player* thePlayer_;
 	irrBulletWorld* world_;
 	irr::IrrlichtDevice* device_;
-	mapLoader* currentMap_;
 
 
 public:
 
 	//add console extentions
-	void addExtensions(player* thePlayer,irrBulletWorld* world,irr::IrrlichtDevice* device, mapLoader* currentMap)
+	void addExtensions(player* thePlayer,irrBulletWorld* world,irr::IrrlichtDevice* device)
 	{
 		thePlayer_ = thePlayer;
 		world_=world;
 		device_ = device;
-		currentMap_ = currentMap;
 	}
 };
 //=====================================================================================

@@ -20,10 +20,11 @@ using namespace gui;
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world,std::string player_name):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK),player_name_(player_name)
 {
 	player_name_ += "_";
-	for (int i=0;i<4;++i)
+	
+	for (int i=0;i < 4 ;++i)
 	{
 		int id = (rand() % 10) +48;
 		player_name_+= id;
@@ -287,12 +288,8 @@ void player::nodeSelector()
 		if(selectedSceneNode->getID() == IDFlag_IsPickable)
 		{
 			std::string nodeName = selectedSceneNode->getName();	//Need to convert from c8* into a std string
-																	//so it will work with the if statement
-			std::cout << "Looking at " << nodeName << std::endl;
-			if (nodeName == "test_npc")								
+			if (nodeName == "test_npc")								//so it will work with the if statement
 				enemyInRange_ = true;
-			else
-				enemyInRange_ = false;
 
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
@@ -304,14 +301,5 @@ void player::nodeSelector()
 			//selectedSceneNode->setDebugDataVisible(EDS_MESH_WIRE_OVERLAY);
 			//selectedSceneNode->setDebugDataVisible(EDS_OFF);
 		}
-		else
-		{
-			enemyInRange_ = false;
-		}
-		
-	}
-	else
-	{
-		enemyInRange_ = false;
 	}
 }
