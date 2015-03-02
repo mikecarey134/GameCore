@@ -184,6 +184,8 @@ int main(void)
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
 				IRigidBody* body = world->addRigidBody(shape);
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
+				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
+				node->setAutomaticCulling(EAC_BOX);
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(player::IDFlag_IsPickable);
 				
