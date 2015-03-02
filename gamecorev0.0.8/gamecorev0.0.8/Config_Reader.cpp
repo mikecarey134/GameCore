@@ -42,7 +42,10 @@ Config_Reader::Config_Reader(irr::IrrlichtDevice* device, char* filename):device
 	
 	while(readLine(file_reader_, read_string))
 	{
-		ini_vals.push_back(read_string);
+		if(read_string[0] == '#')//ignore comment lines
+			read_string = "";
+		else
+			ini_vals.push_back(read_string);
 	}
 	ini_vals.push_back(read_string);//push last item on the vector
 
@@ -61,7 +64,6 @@ bool Config_Reader::readLine(IReadFile* f, std::string& str)
 	{
 		if(ch == '\n' )//if its the return char
 			return true;
-		
 		else
 			str += ch;
 	}
