@@ -7,8 +7,9 @@
 /************************************************************************/
 
 #define _IRR_WINDOWS_
+#define CONSOLE
 
-#define CONSOLE//debugging console
+
 #include "exampleframework.h"
 #include <irrbullet.h>
 #include <irrlicht.h>
@@ -16,8 +17,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-
-#include "driverChoice.h"
 #include "SAppcontext.h"
 #include "keymap.h"
 #include "console.h"
@@ -31,8 +30,6 @@
 #include "ClueObject.h"
 #include "Config_Reader.h"	
 #include <winsock2.h>
-
-
 
 
 //standard irrlicht namespaces
@@ -64,16 +61,20 @@ using namespace RakNet;
 #endif
 
 
-
 int main(void)
 {
+	//seed the random time
 	srand(time(NULL));
-	//setup the irrlicht devices here
-	IrrlichtDevice *device = createDevice(EDT_OPENGL,//standard open_gl drivers
-	dimension2d<u32>(800,600),16,false,true,true);
-	device->setWindowCaption(L"gamecore v0.0.8");//set the caption for the window
+	//read in our config file
+	Config_Reader config_reader("config/configure.txt");
 	
-	Config_Reader config_reader(device,"config/configure.txt");
+	//setup the irrlicht devices here
+	IrrlichtDevice *device = createDevice(config_reader.getDriver(),//drivers
+	dimension2d<u32>(800,600),16,config_reader.get_full_screen()
+	,config_reader.get_s_buffer(),config_reader.get_vsinc());
+	
+	device->setWindowCaption(L"gamecore v0.0.8");//set the caption for the window
+
 	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
 	IVideoDriver* driver = device->getVideoDriver();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
@@ -86,6 +87,7 @@ int main(void)
 	//////////////////////////////////////////////////////////////////////////
 	//Alpha Particle class Tester
 	//////////////////////////////////////////////////////////////////////////
+	/*
 	ParticleSystem particle_system(smgr,driver);
 	particle_system.setPosition(vector3df(-13,48,-296));
 	particle_system.setUpMaterials("textures/brightfire.jpg");
@@ -95,7 +97,7 @@ int main(void)
 		,SColor(100,90,67,184),SColor(150,252,8,215),1000,200,20,dimension2df(0.2,0.2),dimension2df(10.0,10.0));
 	blood_particle_system.setPosition(vector3df(-22,-35,166));
 	blood_particle_system.setUpMaterials("textures/particle_red.bmp");
-	blood_particle_system.setUpEmitter();
+	blood_particle_system.setUpEmitter();*/
 	//////////////////////////////////////////////////////////////////////////
 	
 
@@ -142,7 +144,7 @@ int main(void)
 	currentMap.loadMap();
 
 	IneractiveObject* testClue;
-	testClue = new ClueObject("models/cluePrototype.obj",device,smgr,world,driver,&currentMap);
+	testClue = new ClueObject("models/clue/clue.obj",device,smgr,world,driver,&currentMap);
 
 	crecv.addInteractiveObject(testClue);
 
@@ -164,7 +166,6 @@ int main(void)
 		
 		if (device->isWindowActive())//if a window is running
 		{	
-				
 				
 				if (!crecv.getStarted())
 				{
@@ -237,8 +238,6 @@ int main(void)
 					
 					crecv.displayconsole(frameDeltaTime);
 					
-				
-					
 				}
 				
 			
@@ -252,12 +251,12 @@ int main(void)
 	//reclaim memory and shutdown device
 	device->drop();
 
-
-
+	
 	if(Client.isOnline())//if we are online
 	{
 		Client.shutdown(thePlayer);//shutdown internal server
 	}
+
 	return 0;
 }
 

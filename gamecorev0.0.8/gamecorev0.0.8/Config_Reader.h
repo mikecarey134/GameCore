@@ -21,18 +21,24 @@ class Config_Reader
 {
 public:
 	//locations for data in our vector
-	enum c_val{ ONLINE = 0,REMOTE_PORT, PORT,IP ,PLAYER_NAME};
+	enum c_val{ DRIVER_TYPE=0,DEBUG,STENCIL_BUFF, 
+		VSINC, FULL_SCREEN, ONLINE,REMOTE_PORT, PORT,IP ,PLAYER_NAME};
 	
-	Config_Reader(irr::IrrlichtDevice* device, char* filename);
+	Config_Reader(char* filename);
 	~Config_Reader(void);
 	bool readLine(irr::io::IReadFile* f,std::string& str );
 
 	//get all the attributes from our config file
-	bool         get_online      () {return ini_vals[ONLINE][0] == '1';}
-	int          get_port        () {return atoi(ini_vals[PORT].c_str());}
-	int          get_rem_port    () {return atoi(ini_vals[REMOTE_PORT].c_str());}
-	char*  get_ip                () {return const_cast<char*>(ini_vals[IP].c_str());}
-	std::string  get_player_name () {return ini_vals[PLAYER_NAME];}
+	irr::video::E_DRIVER_TYPE getDriver       ();
+	bool                      get_debug       () {return ini_vals[DEBUG][0] == '1';}
+	bool                      get_s_buffer    () {return ini_vals[STENCIL_BUFF][0] == '1';}
+	bool                      get_vsinc       () {return ini_vals[VSINC][0] == '1';}
+	bool                      get_full_screen () {return ini_vals[FULL_SCREEN][0] == '1';}
+	bool                      get_online      () {return ini_vals[ONLINE][0] == '1';}
+	int                       get_port        () {return atoi(ini_vals[PORT].c_str());}
+	int                       get_rem_port    () {return atoi(ini_vals[REMOTE_PORT].c_str());}
+	char*                     get_ip          () {return const_cast<char*>(ini_vals[IP].c_str());}
+	std::string               get_player_name () {return ini_vals[PLAYER_NAME];}
 
 private:
 	irr::IrrlichtDevice* device_;
