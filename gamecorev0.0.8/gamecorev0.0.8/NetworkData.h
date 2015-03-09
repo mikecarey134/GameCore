@@ -10,18 +10,21 @@ By: Michael Carey
 */
 #define  MAX_PLAYERS 8
 
+#pragma once
+#include "ChatQueue.h"
 #include <sstream>
 #include <string>
 #include "player.h"
 #include "remotePlayer.h"
 #include <vector>
 
+
 class NetworkData
 {
 public:
 	NetworkData(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+		irrklang::ISoundEngine* engine, irrBulletWorld* world, ChatQueue* message_buffer);
 
 	virtual ~NetworkData();
 	const char* getNetworkData()  const;// get the remote data
@@ -53,6 +56,7 @@ private:
 	irr::video::IVideoDriver* driver_;
 	irrklang::ISoundEngine* engine_;
 	irrBulletWorld* world_;
+	ChatQueue* message_buffer_;
 
 };
 

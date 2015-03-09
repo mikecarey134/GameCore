@@ -8,8 +8,8 @@
 
 NetworkData::NetworkData(irr::IrrlichtDevice* device,char* filename,
 						 irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-						 irrklang::ISoundEngine* engine, irrBulletWorld* world) : currentPlayers_(0), maxPlayers_(8),
-						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world){}
+						 irrklang::ISoundEngine* engine, irrBulletWorld* world,ChatQueue* message_buffer) : currentPlayers_(0), maxPlayers_(8),
+						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),message_buffer_(message_buffer){}
 
 NetworkData::~NetworkData(){}
 
@@ -74,13 +74,20 @@ void NetworkData::setRemote(const char* ourData)
 
 		if(notFound == true)//Add our new player if they arent found
 		{
-				//add new player to map
-				//printf("New Player Joined\n");
-			    std::cout<<ID<<" Joined\n";
-				remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
-				players_[ID]= newPlayer;
-				players_[ID].setName(ID);
-				++currentPlayers_;//update the current amount of players
+			//tell the player someone has joined
+			std::string join_msg = "";
+			join_msg+= ID;
+			join_msg+=" ";
+			join_msg+="Joined";
+			message_buffer_->addMessage(join_msg.c_str(),irr::video::SColor(255,0,255,0));
+			
+			//add new player to map
+			//printf("New Player Joined\n");
+			std::cout<<ID<<" Joined\n";
+			remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
+			players_[ID]= newPlayer;
+			players_[ID].setName(ID);
+			++currentPlayers_;//update the current amount of players
 	
 		}
 		else
@@ -126,9 +133,22 @@ void NetworkData::setRemote(const char* ourData)
 		ourNetworkChatTheres = "";
 		ourNetworkChatTheres = temp;
 
+		//show message in our chat queue
+		std::string buffered =ID;
+		buffered+= " ";
+		buffered+= temp;
+		message_buffer_->addMessage(buffered.c_str());
+
 	}
 	else if (mType == "99")
 	{
+		//tell the players someone has left
+		std::string quit_msg = "";
+		quit_msg+= ID;
+		quit_msg+=" ";
+		quit_msg+="Left";
+		message_buffer_->addMessage(quit_msg.c_str(),irr::video::SColor(255,255,0,0));
+
 		std::cout<< ID <<" left\n";
 		players_[ID].delete_player();
 		players_.erase(ID);

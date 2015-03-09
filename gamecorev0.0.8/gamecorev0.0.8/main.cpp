@@ -11,6 +11,7 @@
 
 
 #include "exampleframework.h"
+#include "ChatQueue.h"
 #include <irrbullet.h>
 #include <irrlicht.h>
 #include <irrKlang.h>
@@ -123,10 +124,17 @@ int main(void)
 	{
 		return 1;
 	}
-	
-	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip(),
-							config_reader.get_rem_port(), config_reader.get_port());
 
+	//init the chat buffer display that shows all player chat
+	ChatQueue chat_queue(device,rect<s32>(0,580,580,500),5000,true,500);
+	//chat_queue.setDebug(true);
+	//set up the chat buffers font
+	chat_queue.setFont(device->getGUIEnvironment()->getFont("bill/console.bmp"));
+	
+
+	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip(),
+							config_reader.get_rem_port(), config_reader.get_port(),&chat_queue);
+	
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);	
 
 	//Loading map now handled in its own class
@@ -144,7 +152,7 @@ int main(void)
 	currentMap.loadMap();
 
 	IneractiveObject* testClue;
-	testClue = new ClueObject("models/clue/clue.obj",device,smgr,world,driver,&currentMap);
+	testClue = new ClueObject("models/clue/clue.md2",device,smgr,world,driver,&currentMap);
 
 	crecv.addInteractiveObject(testClue);
 
@@ -235,11 +243,12 @@ int main(void)
 							//theGui.drawCrosshair(font2,core::rect<s32>(400,300,450,100));
 							//theGui.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),"");
 						}
-					
+
+				    chat_queue.draw();
 					crecv.displayconsole(frameDeltaTime);
 					
 				}
-				
+			
 			
 			driver->endScene();
 

@@ -16,6 +16,7 @@ ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device,
 
 	model_ = smgr->addMeshSceneNode(smgr->getMesh(filename),0,-1,clueProperties_.location_,
 									vector3df(90.0f, 0.0f, 0.0f));
+	
 	model_->setMaterialFlag(EMF_LIGHTING,0);
 
 	model_->setID(player::IDFlag_IsPickable);

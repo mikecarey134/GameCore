@@ -33,6 +33,7 @@
 #include "GUI.h"
 #include "NetworkData.h"
 #include"remotePlayer.h"
+#include"ChatQueue.h"
 
 #define SERVER_PORT "1080"
 #define CLIENT_PORT "1000"
@@ -45,7 +46,7 @@ public:
 	InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip
-        ,int remote_port, int local_port);
+        ,int remote_port, int local_port,ChatQueue* message_buffer);
 
 	~InternalServer(void);
 	void messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font);
@@ -74,5 +75,6 @@ private:
 	bool isServer;
 	char message[MAX_MESSAGE_SIZE];
 	NetworkData networkData_;
+	ChatQueue* message_buffer_;
 };
 unsigned char GetPacketIdentifier(RakNet::Packet *p);
