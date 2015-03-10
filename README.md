@@ -7,6 +7,8 @@ Our goal is to make a full game engine where we can create a full 3D application
 
 #Version Notes#
 
+*Versions before v0.0.3 were not documented
+
 Version 0.0.3
 
 	-Added the Console 
@@ -62,4 +64,17 @@ Version 0.0.8
 	- flashlight KEY_F
 	- new model (zombie)
 	- added \ph command (player health)
+	
+Version 0.1.0 (alpha-build)
+
+	-added chat queue
+	-added configure file and config-file reader
+	-added clue 
+	-added map loader
+	-server configure file
+	-expanded server capacity
+	-added remote player rendering
+	-added stl map to store players
+	-remote player leave and join messages
+
 	

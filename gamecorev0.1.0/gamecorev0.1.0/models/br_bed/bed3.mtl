@@ -1,0 +1,20 @@
+# Material file for bed3.obj
+
+newmtl br_bed1.jpg
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.8 0.8 0.8
+	Ks 0.0 0.0 0.0
+	Ka 0.2 0.2 0.2
+	map_Kd br_bed1.jpg
+
+newmtl br_spread3.jpg
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.8 0.8 0.8
+	Ks 0.0 0.0 0.0
+	Ka 0.2 0.2 0.2
+	map_Kd br_spread3.jpg
+
