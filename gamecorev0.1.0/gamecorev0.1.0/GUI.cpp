@@ -143,3 +143,28 @@ void GUI::drawloading(irr::video::IVideoDriver*& driver, irr::gui::IGUIEnvironme
 
 
 }
+
+
+//temporary function in order to draw a loading screen whilst loading data
+void GUI::drawIntro(irr::video::IVideoDriver*& driver, irr::gui::IGUIEnvironment*& guienv)
+{
+	driver->beginScene(true, false, irr::video::SColor(0,0,0,0));
+
+	ITexture* backgroundImage = driver->getTexture("bill/intro.jpg");
+	//ITexture* titleImage = driver->getTexture("bill/loading.jpg");
+
+	driver->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
+	//driver->draw2DImage(titleImage,position2d<s32>(100,100),rect<s32>(40,40,600,300),NULL,SColor(255,255,255,255), false);
+
+	guienv->drawAll();
+
+
+
+	//irr::gui::IGUIFont* font = guienv->getFont("bill/bigfont.png");
+
+	//font->draw(L"LOADING...", irr::core::rect<irr::s32>(325,275,475,325), irr::video::SColor(255,255,255,255));
+
+	driver->endScene();
+
+
+}

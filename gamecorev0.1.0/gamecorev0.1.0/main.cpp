@@ -79,7 +79,13 @@ int main(void)
 	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
 	IVideoDriver* driver = device->getVideoDriver();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
-	GUI theGui;theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
+	
+
+
+	GUI theGui;//create an instance of gui
+	theGui.drawIntro(driver,guienv);//draw our intro 
+	
+	
 	
 	//load our scene manager and set up the shadow color with an alpha channel
 	ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
@@ -129,7 +135,8 @@ int main(void)
 	ChatQueue chat_queue(device,rect<s32>(0,580,580,500),5000,true,500);
 	//set up the chat buffers font
 	chat_queue.setFont(device->getGUIEnvironment()->getFont("bill/console.bmp"));
-	
+
+	theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
 
 	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip(),
 							config_reader.get_rem_port(), config_reader.get_port(),&chat_queue);
