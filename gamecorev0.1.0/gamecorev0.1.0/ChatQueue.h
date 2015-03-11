@@ -1,3 +1,10 @@
+/************************************************************************/
+/* ChatQueue.h
+	purpose: to render player chat and events
+	By: Michael Carey
+*/
+/************************************************************************/
+
 #ifndef __ChatQueue_H__
 #define __ChatQueue_H__
 

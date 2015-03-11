@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////////
 NETWORKDATA.H
 used to transport data from the client to the host
+as well as store and remove remote players 
 By: Michael Carey
 //////////////////////////////////////////////////////////////////////////
 */
@@ -22,34 +23,37 @@ By: Michael Carey
 class NetworkData
 {
 public:
+	//ctor
 	NetworkData(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		irrklang::ISoundEngine* engine, irrBulletWorld* world, ChatQueue* message_buffer);
-
+	//dtor
 	virtual ~NetworkData();
-	const char* getNetworkData()  const;// get the remote data
-	int length();
-	void setString(player& thereInput);
-	void setRemote(const char* ourData);
-	void getRemote(remotePlayer& worldRemote, int dataIndex); //get the players remote data 
-	int getMaxPlayers();//return the max number of players for our network game
 
-	void setChatMessage(char* chat);
-	const std::string getChatMessage();
-	const std::string getThereChatMessage();
-	int chatLength();
+	int chatLength ();
+	int length     ();
+	
+	//setters
+	void  setChatMessage  (char* chat);
+	void  setString       (player& thereInput);
+	void  setRemote       (const char* ourData);
+	
+	//getters
+    const char*       getNetworkData      ()const;// get the remote data
+	const std::string getChatMessage      ();
+	const std::string getThereChatMessage ();
+	int               getMaxPlayers       ();//return the max number of players for our network game
 
 
 private:
+
 	int dataSize_;
 	int currentPlayers_;
 	int maxPlayers_;
 	std::ostringstream ourNetworkData;
 	std::string ourNetworkChatMine;
 	std::string ourNetworkChatTheres;
-	//playerData ourPlayerData[MAX_PLAYERS];
 	std::map<std::string,remotePlayer> players_;
-	
 	irr::IrrlichtDevice* device_;
 	char* filename_;
 	irr::scene::ISceneManager* smgr_;

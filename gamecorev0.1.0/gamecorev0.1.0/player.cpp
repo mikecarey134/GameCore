@@ -22,13 +22,13 @@ player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* 
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name)
 {
-	player_name_ += "_";
+	/*player_name_ += "_";
 	for (int i=0;i<4;++i)
 	{
 		int id = (rand() % 10) +48;
 		player_name_+= id;
 	}
-	
+	*/
 
 	chat_message_="\0";
 

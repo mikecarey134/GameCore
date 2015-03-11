@@ -1,3 +1,11 @@
+/************************************************************************/
+/* ChatQueue.cpp
+	purpose: to render player chat and events
+	By: Michael Carey
+*/
+/************************************************************************/
+
+
 #include "ChatQueue.h"
 
 ChatQueue::ChatQueue(IrrlichtDevice * device,

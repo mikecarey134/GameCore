@@ -1,3 +1,11 @@
+/************************************************************************/
+/* NPC.cpp
+	purpose: To make a functional npc for the game
+	By: Dan Brown
+*/
+/************************************************************************/
+
+
 #include"NPC.h"
 
 using namespace irr;

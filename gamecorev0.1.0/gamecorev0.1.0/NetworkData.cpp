@@ -1,6 +1,14 @@
+/*
+//////////////////////////////////////////////////////////////////////////
+NETWORKDATA.CPP
+used to transport data from the client to the host
+as well as store and remove remote players 
+By: Michael Carey
+//////////////////////////////////////////////////////////////////////////
+*/
+
+
 #include "NetworkData.h"
-
-
 #include "remotePlayer.h"
 #include <string.h>
 #include <iostream>
@@ -51,14 +59,18 @@ void NetworkData::setRemote(const char* ourData)
 	//get our remote information from the server
 	std::string ID;//player_key
 	std::string mType;//code from server 0 = player data 1 = chat 99 = quit
+	std::string rem_msg;//player_message
 	std::stringstream ourID;
+	
 	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
 	ourID.str(ourData);
 	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ;//set up incoming variables
 
+
 	//is it playerData
 	if( mType == "0")
 	{
+	
 		bool notFound = true;
 		std::stringstream otherPlayer;
 		otherPlayer << ourData;
@@ -96,38 +108,20 @@ void NetworkData::setRemote(const char* ourData)
 			notFound = true;
 		}
 	}
-	else if(mType == "1")
+	else if(mType == "1")//it is chat data
 	{
-		//is it chat data
 		//chat message
 		char* temp = new char[100];
 		int foundSpace = 0;
 		
 
-		int start = ID.length() + mType.length()+ 2;
+		int start = ID.length() + mType.length()+ 2;//start where the message is
 		int length = strlen(ourData);
 		
-		for(int i=start;i<length;i++)
+		for(int i=start;i < length;i++)//copy the message contents 
 		{
-			if(isalpha((unsigned char)ourData[i])) 
-			{
-				temp[i-start]=ourData[i];
-			}
-			else if(ourData[i] == ' ')
-			{
-				temp[i-start] = ' ';
-			}
-			else 
-			{
-				temp[i-start] = 0;
-				break;
-			}
-			
+			temp[i-start]=ourData[i];
 		}
-
-		//strcpy(temp, ourData);
-		
-		
 
 		//ourData
 		ourNetworkChatTheres = "";
@@ -141,7 +135,7 @@ void NetworkData::setRemote(const char* ourData)
 		message_buffer_->addMessage(buffered.c_str());
 
 	}
-	else if (mType == "99")
+	else if (mType == "99")//quit message
 	{
 		//tell the players someone has left
 		std::string quit_msg = "<";
@@ -156,11 +150,6 @@ void NetworkData::setRemote(const char* ourData)
 	}
 
 }
-//Get remote takes in a ref to a player in the game and sets all of its values based
-//on information it receives from the server (stored in player data)
-void NetworkData::getRemote(remotePlayer& worldRemote, int dataIndex)
-{
-}
 
 //Sets the number max number of players we are allowing
 int NetworkData::getMaxPlayers()
@@ -171,15 +160,9 @@ int NetworkData::getMaxPlayers()
 //Used to transfer chat messages.
 void NetworkData::setChatMessage(char* chat)
 {
-	std::string clientChat(chat);//make a conversion from c_string to string
-	//set to 1 at start tell clients its chat data and not playerData
-	ourNetworkChatMine = "1 ";
-	ourNetworkChatMine += clientChat;
-
-	//ourNetworkChatMine.append(clientChat);//append the message here
-	
-	//ourNetworkChatMine << "1 " << clientChat;
-	
+	std::string clientChat(chat);     //make a conversion from c_string to string
+	ourNetworkChatMine = "1 ";        //set to 1 at start tell clients its chat data and not playerData
+	ourNetworkChatMine += clientChat; //glue the messages together
 }
 
 const std::string NetworkData::getChatMessage()

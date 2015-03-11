@@ -1,18 +1,18 @@
-#include "remotePlayer.h"
+
 
 /************************************************************************/
-/* Player.cpp
-	purpose: to render the character and animate them
+/* remotePlayer.cpp
+	purpose: to render client characters and animate them
 	By: Michael Carey
 */
 /************************************************************************/
 
 
+#include "remotePlayer.h"
 #include "player.h"
 #include<irrlicht.h>
 #include<irrKlang.h>
 #include<irrbullet.h>
-
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"

@@ -318,26 +318,70 @@ IC_Command_SAY::~IC_Command_SAY()
 //////////////////////////////////////////////////////////////////////////
 bool IC_Command_SAY::invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput)
 {
-	if (args.size()==1)
+	if (args.size()>=1)
 	{
-		char* message = new char[args[0].size()];//dynamically allocate a c string and copy the contents of args[0]
-		unsigned int i=0;
-		for(;i<args[0].size();++i)
+		//copy all args to alleviate having to put "" around the message
+		core::stringw message;	
+		for(int i = 0;i < args.size();++i)
 		{
-			message[i] = (char)args[0][i];
-		
+			message+= args[i];
+			message +=" ";
+	
 		}
+		char* dest_msg = new char[message.size()];
+		int ret = wcstombs(dest_msg,message.c_str(),message.size());//convert from wchar_t* to char*
+		if(ret == message.size()){dest_msg[message.size()-1] ='\0';}//insert the null terminator
 
-		message[i] ='\0';//insert null terminator
-
-		thePlayer_->setChatMessage(message);//set players chat message to the passed in string
-		//delete [] message;//deallocate dynamic memory
+		thePlayer_->setChatMessage(dest_msg);//set players chat message to the passed in string
+		
+		//delete [] dest_msg;
 	}
 	else
 		throw IC_Error(L"Missing Argument! <Message>");
 
 	return true;
 }
+
+
+IC_Command_C::IC_Command_C(player* thePlayer) : IC_Command(L"c")
+{
+	thePlayer_=thePlayer;
+
+	setUsage("/c <Message>");
+	addDescLine("Add Chat Message");
+}
+IC_Command_C::~IC_Command_C()
+{
+}
+//////////////////////////////////////////////////////////////////////////
+//simple chat message
+//////////////////////////////////////////////////////////////////////////
+bool IC_Command_C::invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput)
+{
+	if (args.size()>=1)
+	{
+		//copy all args to alleviate having to put "" around the message
+		core::stringw message;	
+		for(int i = 0;i < args.size();++i)
+		{
+			message+= args[i];
+			message +=" ";
+
+		}
+		char* dest_msg = new char[message.size()];
+		int ret = wcstombs(dest_msg,message.c_str(),message.size());//convert from wchar_t* to char*
+		if(ret == message.size()){dest_msg[message.size()-1] ='\0';}//insert the null terminator
+
+		thePlayer_->setChatMessage(dest_msg);//set players chat message to the passed in string
+
+		//delete [] dest_msg;
+	}
+	else
+		throw IC_Error(L"Missing Argument! <Message>");
+
+	return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //set player speed

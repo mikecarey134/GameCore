@@ -1,3 +1,12 @@
+/************************************************************************/
+/* remotePlayer.h
+	purpose: to render client characters and animate them
+	By: Michael Carey
+*/
+/************************************************************************/
+
+
+
 #pragma once
 #include<irrlicht.h>
 #include<irrKlang.h>
