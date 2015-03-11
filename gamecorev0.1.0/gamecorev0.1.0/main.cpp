@@ -1,7 +1,7 @@
 /************************************************************************/
 /*
 	Main.cpp
-	Purpose: The main game-loop for "The Uninvited" v0.1.0
+	Purpose: The main game-loop for GameCore v0.1.0
 	By:Michael Carey && Dan Brown
 */
 /************************************************************************/
@@ -74,19 +74,17 @@ int main(void)
 	dimension2d<u32>(800,600),16,config_reader.get_full_screen()
 	,config_reader.get_s_buffer(),config_reader.get_vsinc());
 	
-	device->setWindowCaption(L"gamecore v0.1.0");//set the caption for the window
-
-	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
-	IVideoDriver* driver = device->getVideoDriver();
-	IGUIEnvironment* guienv = device->getGUIEnvironment();
-	
-
 
 	GUI theGui;//create an instance of gui
-	theGui.drawIntro(driver,guienv);//draw our intro 
+	theGui.drawIntro(device);//draw our intro 
+
+
 	
-	
-	
+	device->setWindowCaption(L"gamecore Build v0.1.0(Alpha)");//set the caption for the window
+	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
+	IGUIEnvironment* guienv = device->getGUIEnvironment();
+	IVideoDriver* driver = device->getVideoDriver();
+
 	//load our scene manager and set up the shadow color with an alpha channel
 	ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
 	keymap userkeys;
@@ -187,7 +185,7 @@ int main(void)
 				
 				if (!crecv.getStarted())
 				{
-					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
+					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a black background
 					
 
 					if (!engine->isCurrentlyPlaying("sounds/slowintro.mp3"))
@@ -210,7 +208,7 @@ int main(void)
 					//internal client sends data to the server
 	
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
-					driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
+					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a white background
 
 					if (engine->isCurrentlyPlaying("sounds/slowintro.mp3"))//if we are starting
 							engine->removeSoundSource("sounds/slowintro.mp3");//remove the main menu sounds
