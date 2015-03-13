@@ -18,15 +18,16 @@ using namespace gui;
 
 NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
 		 irrBulletWorld* world, irr::video::IVideoDriver* driver) : 
-			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH),isHit_(false),isDead_(false)
+			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH),
+				isLoaded_(NOT_LOADED),isHit_(false),isDead_(false)
 {
 	character_ = new IKinematicCharacterController(world_);
 	//character_->setUseGhostSweepTest(true);
 	
 	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
-	
+	/*
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"),
-		0, player::IDFlag_IsPickable);
+		0, IDFlag_IsPickable);
 	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
     characterModel_->setMaterialFlag(video::EMF_LIGHTING,1);
 	
@@ -34,9 +35,10 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));	
 	//character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
 	character_->warp(vector3df(259.0f, 38.0f, -25.0f));//set the init pos on the map
+	*/
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
 	directionCounter_ = 0.0f;
-	
+	/*
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
 	characterModel_->setTriangleSelector(selector);
 	//smgr_->createTriangleSelector(characterModel_);
@@ -45,6 +47,7 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	healthText_ += npcHealth_;
 	healthDisplay_ = smgr_->addBillboardTextSceneNode(device_->getGUIEnvironment()->getBuiltInFont(),
 													 healthText_.c_str());
+													 */
 }
 
 NPC::~NPC()
@@ -127,5 +130,29 @@ void NPC::damage()
 
 		//characterModel_->drop();
 	}
-	
+}
+
+void NPC::loadModel()
+{
+	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"),
+		0, /*player::*/IDFlag_IsPickable);
+	characterModel_->setMaterialTexture(0,driver_->getTexture("characters/playerskin_d1.bmp"));
+	characterModel_->setMaterialFlag(video::EMF_LIGHTING,1);
+	characterModel_->setID(IDFlag_IsPickable);
+
+	//characterModel_->addShadowVolumeSceneNode();
+	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));	
+	//character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
+	character_->warp(vector3df(259.0f, 38.0f, -25.0f));//set the init pos on the map
+
+	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
+	characterModel_->setTriangleSelector(selector);
+	//smgr_->createTriangleSelector(characterModel_);
+
+	characterModel_->setName("test_npc");
+	healthText_ += npcHealth_;
+	healthDisplay_ = smgr_->addBillboardTextSceneNode(device_->getGUIEnvironment()->getBuiltInFont(),
+		healthText_.c_str());
+
+	isLoaded_ = DONE_LOADING;
 }

@@ -1,13 +1,16 @@
 #pragma once
 
 #include<irrlicht.h>
+#include<irrKlang.h>
+#include<irrbullet.h>
 
-class IneractiveObject
+class InteractiveObject
 {
 public:
-	IneractiveObject () {}
-	virtual ~IneractiveObject() {}
+	InteractiveObject () {};
+	virtual ~InteractiveObject() = 0;
 
 	virtual const irr::core::string<char> getObjectType() const = 0;
-	virtual void update() const = 0;
+	virtual void update() = 0;
+	virtual void eraseModelFromWorld() = 0;
 };

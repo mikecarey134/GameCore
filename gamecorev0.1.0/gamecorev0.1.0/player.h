@@ -12,10 +12,14 @@
 #include<irrKlang.h>
 #include<irrbullet.h>
 #include<string>
+#include<vector>
 
-#include<string>
+#include "common.h"
+#include "InteractiveObject.h"
+#include "ClueObject.h"
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
+
 
 
 //Player Variables/////////////
@@ -27,6 +31,8 @@
 #define PLAYER_EARTH_GRAVITY 150.0f
 #define PLAYER_ANIMATION_SPEED 12.0f
 #define PLAYER_HEALTH 100
+#define MAX_CLUES 3
+#define CLUES_TO_FIND 1
 ///////////////////////////////////
 
 
@@ -34,7 +40,7 @@ class player
 {
 
 public:
-
+/*
 	enum selectionType
 	{
 		// I use this ISceneNode ID to indicate a scene node that is
@@ -50,7 +56,7 @@ public:
 		// hominids can be highlighted, but the level mesh can't.
 		IDFlag_IsHighlightable = 1 << 1
 	};
-
+*/
 
 	player(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
@@ -80,20 +86,26 @@ public:
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
-	bool isOnGround        ()           {return character_->isOnGround();  }
+	bool isOnGround        ()           { return character_->isOnGround();  }
 	bool isEnemyInRange	   ()			{ return enemyInRange_; }
+	bool isClueInRange	   ()			{ return clueInRange_; }
+	irr::scene::ISceneNode* getSelectedNode(){ return selectedSceneNode_; }
+	void addClue (ClueObject* clue);
+				  
 
-	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () {return characterModel_;}
-	irr::core::vector3df                getPosition   () {return characterModel_->getPosition();}
-	irr::core::vector3df                getRotation   () {return characterModel_->getRotation();}
+	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () { return characterModel_; }
+	irr::core::vector3df                getPosition   () { return characterModel_->getPosition(); }
+	irr::core::vector3df                getRotation   () { return characterModel_->getRotation(); }
 	irr::scene::IAnimatedMeshSceneNode* getPlayerNode () { return characterModel_; }
-	float                               getPlayerSpeed() {return playerSpeed_;}
-	char*                               getChatMessage() {return chat_message_;}
-	irr::scene::ICameraSceneNode*       getCamera     () {return camera_;}
-	int                                 getHealth     () {return playerHealth_;}
+	float                               getPlayerSpeed() { return playerSpeed_; }
+	char*                               getChatMessage() { return chat_message_; }
+	irr::scene::ICameraSceneNode*       getCamera     () { return camera_; }
+	int                                 getHealth     () { return playerHealth_; }
 	//playerData&                         getPlayerData () {return data_;}
-	bool                                getIsLamp     () {return lamp_->isVisible();}
-	std::string                         getname       () {return player_name_;}
+	bool                                getIsLamp     () { return lamp_->isVisible(); }
+	std::string                         getname       () { return player_name_; }
+	std::vector<ClueObject*>			getFoundClues () { return clues_; }
+	bool								isKillerKnown () { return (clues_.size() >= CLUES_TO_FIND); }
 	
 
 	//directional 
@@ -138,6 +150,8 @@ private:
 	char* chat_message_;
 	int playerHealth_;
 	int walkframe_;
+	
+	irr::scene::ISceneNode* selectedSceneNode_;
 
 	//playerData data_;
 	float cameradist_;
@@ -146,4 +160,7 @@ private:
 	std::string player_name_;
 	
 	bool enemyInRange_;
+	bool clueInRange_;
+	
+	std::vector<ClueObject*> clues_;
 };

@@ -2,6 +2,7 @@
 #define _IrrConsole_Default_Cmds_h_
 #include "includes.h"
 #include "utils.h"
+#include "common.h"
 #include "console.h"
 #include "player.h"
 #include<irrbullet.h>

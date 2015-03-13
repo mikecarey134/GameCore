@@ -82,9 +82,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	playerSteps_->setVolume(.25f);
-	//////////////////////////////////////////////////////////////////////////
-
-	
+	//////////////////////////////////////////////////////////////////////////	
 
 	//////////////////////////////////////////////////////////////////////////
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
@@ -98,17 +96,20 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	//////////////////////////////////////////////////////////////////////////
 
 	enemyInRange_ = false;
+	clueInRange_ = false;
 	
 	idle();
 
 	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
 		SColor(255,0,0,255),12);//add our lamp here
 	setlamp(false);
+
+	clues_.clear();
 }
 
 player::~player(void)
 {
-	
+
 }
 void player::animate(EMD2_ANIMATION_TYPE animation)
 {
@@ -269,7 +270,7 @@ void player::nodeSelector()
 	// Used to show with triangle has been hit
 	core::triangle3df hitTriangle;
 
-	scene::ISceneNode * selectedSceneNode =
+	selectedSceneNode_ =
 		collMan->getSceneNodeAndCollisionPointFromRay(
 		ray,
 		intersection, // This will be the position of the collision
@@ -278,21 +279,26 @@ void player::nodeSelector()
 		// set up to be pick able are considered
 		0); // Check the entire scene (this is actually the implicit default)
 
-	if( selectedSceneNode)
+	if( selectedSceneNode_)
 	{
 
 		// We can check the flags for the scene node that was hit to see if it should be
 		// highlighted.
 		
-		if(selectedSceneNode->getID() == IDFlag_IsPickable)
+		if(selectedSceneNode_->getID() == IDFlag_IsPickable)
 		{
-			std::string nodeName = selectedSceneNode->getName();	//Need to convert from c8* into a std string
+			std::string nodeName = selectedSceneNode_->getName();	//Need to convert from c8* into a std string
 																	//so it will work with the if statement
 			std::cout << "Looking at " << nodeName << std::endl;
 			if (nodeName == "test_npc")								
 				enemyInRange_ = true;
 			else
 				enemyInRange_ = false;
+
+			if(nodeName.substr(0,4) == TYPE_CLUE)
+				clueInRange_ = true;
+			else
+				clueInRange_ = false;
 
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
@@ -307,11 +313,20 @@ void player::nodeSelector()
 		else
 		{
 			enemyInRange_ = false;
-		}
-		
+			clueInRange_ = false;
+		}		
 	}
 	else
 	{
 		enemyInRange_ = false;
+		clueInRange_ = false;
+	}
+}
+
+void player::addClue(ClueObject* clue)
+{
+	if (clue->getObjectType() == TYPE_CLUE)
+	{
+		clues_.push_back(clue);
 	}
 }

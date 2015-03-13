@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\InteractiveObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\InternalServer.cpp"
 				>
 			</File>
@@ -240,6 +244,10 @@
 			</File>
 			<File
 				RelativePath=".\ClueObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common.h"
 				>
 			</File>
 			<File

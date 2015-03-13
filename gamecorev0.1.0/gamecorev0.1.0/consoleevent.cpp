@@ -59,6 +59,27 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		{
 		case EMIE_RMOUSE_PRESSED_DOWN:
 			MouseState.RightButtonDown = true;
+
+			if (player_->isClueInRange())
+			{
+				//Iterate through the list of clues until we find the one the player is looking at
+				std::list<ClueObject*>::iterator obj = clueObjects_.begin();
+				ClueObject* clueHolder = *obj;
+				while(clueHolder->getModel()->getName() != player_->getSelectedNode()->getName() &&
+					  obj != clueObjects_.end())
+				{
+					++obj;
+					clueHolder = *obj;
+				}
+
+				if (obj != clueObjects_.end())
+				{
+					player_->addClue(clueHolder);
+					clueHolder->eraseModelFromWorld();
+				}
+			}
+			
+
 			//cout<<"Right Mouse CLick!\n";
 			break;
 
@@ -407,6 +428,9 @@ void consoleevent::drawInventory ()
 	for (int i = 0; i < 3; ++i)
 	{
 		driver_->draw2DRectangle(SColor(255, 80, 80, 80),rect<s32>(boxHorzPos,boxVertPos, boxHorzPos+clueBoxSize, boxVertPos+clueBoxSize));
+		if (player_->getFoundClues().size() > i)
+			driver_->draw2DRectangle(SColor(255,200,50,50),rect<s32>(boxHorzPos+CLUE_DRAW_OFFSET,boxVertPos+CLUE_DRAW_OFFSET, 
+															boxHorzPos+clueBoxSize-CLUE_DRAW_OFFSET, boxVertPos+clueBoxSize-CLUE_DRAW_OFFSET));
 		boxVertPos = (boxVertPos+clueBoxSize) + clueBoxSpace;
 		boxHorzPos = (boxHorzPos+clueBoxSize) + clueBoxSpace;
 	}
@@ -483,6 +507,19 @@ void consoleevent::playerNpcCollisionCheck()
 		*/
 }
 
+void consoleevent::addClueObject(ClueObject* object)
+{ 
+	if(object->getObjectType() == TYPE_CLUE)
+	{
+		string<char> nameEdit = object->getModel()->getName();
+		nameEdit += clueObjects_.size();
+		object->getModel()->setName(nameEdit);
+
+		clueObjects_.push_back(object);
+	}
+	
+}
+
 void consoleevent::update(u32 then, u32 now)//update the game throught the gameloop
 {
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
@@ -497,6 +534,11 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 		player_->animate(EMAT_RUN);
 		player_->setStepSoundPaused(true);
 	}
+
+	if (player_->isKillerKnown() && npc_->isLoaded() == NOT_LOADED)
+		npc_->isLoaded() = LOADING;
+	else if (npc_->isLoaded() == LOADING)
+		npc_->loadModel();
 
 	if(debug)
 	{

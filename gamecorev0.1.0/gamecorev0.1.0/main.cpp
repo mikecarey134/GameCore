@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include "common.h"
 #include "SAppcontext.h"
 #include "keymap.h"
 #include "console.h"
@@ -155,12 +156,10 @@ int main(void)
 
 	currentMap.loadMap();
 
-	IneractiveObject* testClue;
-	testClue = new ClueObject("models/clue/clue.md2",device,smgr,world,driver,&currentMap);
+	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap);
 
-	crecv.addInteractiveObject(testClue);
-
-	npc_tester.setID(player::selectionType::IDFlag_IsPickable);
+	//player.addClue(testClue);
+	crecv.addClueObject(&testClue);
 
 	u32 then = device->getTimer()->getTime();
 
@@ -171,14 +170,10 @@ int main(void)
 	crecv.clear_console();
 
 	while(device->run())//while the game is running
-	{	
-	
-	
+	{		
 		const u32 now = device->getTimer()->getTime();
 		const u32 frameDeltaTime = now - then;	// Time in milliseconds
-		then = now;
-
-		
+		then = now;	
 
 		if (device->isWindowActive())//if a window is running
 		{	
@@ -191,14 +186,10 @@ int main(void)
 					if (!engine->isCurrentlyPlaying("sounds/slowintro.mp3"))
 						engine->play2D("sounds/slowintro.mp3", true);//startup the main menu track
 					
-					crecv.drawMainMenu();
-
-				
+					crecv.drawMainMenu();				
 				}
 				else
 				{
-					
-
 					//if we have started our game
 					if(crecv.getStarted()){
 					if (!engine->isCurrentlyPlaying("sounds/man.mp3"))
@@ -235,14 +226,13 @@ int main(void)
 						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
 						{
 							thePlayer.moveCameraControl();
-							testClue->update();
+							testClue.update();
 
-							if(!npc_tester.isDead())
+							if(!npc_tester.isDead() && npc_tester.isLoaded() == DONE_LOADING)
 								npc_tester.moveNPC();//move our npc 
 	
 							crecv.playerNpcCollisionCheck();
-						}
-						
+						}						
 					
 						//GUI CLASS calls
 						if(font2)

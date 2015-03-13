@@ -11,6 +11,7 @@
 #include <irrlicht.h>
 #include <irrbullet.h>
 #include <irrKlang.h>
+#include <list>
 #include "console.h"
 #include "SAppcontext.h"
 #include "GUI.h"
@@ -24,7 +25,7 @@
 
 #include <iostream>
 
-
+#define CLUE_DRAW_OFFSET 10
 
 
 class consoleevent : public irr::IEventReceiver, public GUI
@@ -65,7 +66,7 @@ public:
 
 	void playerNpcCollisionCheck();
 
-	void addInteractiveObject(IneractiveObject* object) { anInteractiveObject_ = object; }
+	void addClueObject(ClueObject* object); 
 
 	void update(irr::u32 then, irr::u32 now);
 	
@@ -99,7 +100,7 @@ private:
 	irrklang::ISoundEngine* engine_;
 	mapLoader* currentMap_;
 
-	IneractiveObject* anInteractiveObject_; 
+	std::list<ClueObject*> clueObjects_; 
 
 	// We use this array to store the current state of each key
 	bool KeyIsDown[irr::KEY_KEY_CODES_COUNT];

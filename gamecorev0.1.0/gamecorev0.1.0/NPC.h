@@ -13,6 +13,7 @@
 #include<lua.hpp>
 
 #include<string>
+#include"common.h"
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
 #include"player.h"
@@ -36,6 +37,7 @@ private:
 	irr::core::vector3df AIdirection_;
 	irr::u32 directionCounter_;
 	int npcHealth_;
+	loadState isLoaded_;
 	bool isHit_;
 	bool isDead_;
 
@@ -54,13 +56,14 @@ public:
 	int  getHealth ()				{ return npcHealth_; }
 	void setHealth (int newHealth)	{ npcHealth_ = newHealth; }
 	void damage();
+	loadState& isLoaded()			{ return isLoaded_; }
 	bool& isHit()					{ return isHit_; }
-	bool isDead()					{ return isDead_; }
+	bool& isDead()					{ return isDead_; }
 	irr::core::vector3df getPosition() { return characterModel_->getPosition(); }
+
+	void loadModel();
 
 	void drawNPCHealth();
 
 	IKinematicCharacterController* getKinematicChar() { return character_; }
-
-	void setID(player::selectionType id) { characterModel_->setID(id); }
 };

@@ -241,7 +241,7 @@ bool IC_Command_RB::invoke(const array<WideString>& args, IC_Dispatcher* pDispat
 		irr::scene::ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(node);
 		node->setTriangleSelector(selector);
 
-		node->setID(player::IDFlag_IsPickable);
+		node->setID(/*player::*/IDFlag_IsPickable);
 		shape = new IBoxShape(node, node->getBoundingBox().getVolume()*(irr::f32)0.001);
 		
 		theWorld_->addRigidBody(shape);
