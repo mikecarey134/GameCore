@@ -260,11 +260,13 @@ void player::nodeSelector()
 	//Early Selection Code
 	//////////////////////////////////////////////////////////////////////////
 	scene::ISceneCollisionManager* collMan = smgr_->getSceneCollisionManager();
-	line3d<f32> ray = collMan->getRayFromScreenCoordinates(device_->getCursorControl()->getPosition(), camera_);
-	//core::line3d<f32> ray;
+	//line3d<f32> ray = collMan->getRayFromScreenCoordinates(device_->getCursorControl()->getPosition(), camera_);
+	core::line3d<f32> ray;
 
-	//ray.start = camera_->getPosition();
-	//ray.end = ray.start + (camera_->getTarget()- ray.start) * 100000.0f;
+	ray.start = camera_->getPosition();
+	ray.end = ray.start + (camera_->getTarget()- ray.start) * 100000.0f;
+	device_->getVideoDriver()->draw3DLine(ray.start,ray.end,SColor(255,255,0,0));
+
 	// Tracks the current intersection point with the level or a mesh
 	core::vector3df intersection;
 	// Used to show with triangle has been hit
@@ -296,30 +298,37 @@ void player::nodeSelector()
 				enemyInRange_ = false;
 
 			if(nodeName.substr(0,4) == TYPE_CLUE)
+			{
 				clueInRange_ = true;
+				//selectedSceneNode_->setDebugDataVisible(EDS_MESH_WIRE_OVERLAY);
+				//selectedSceneNode_->setDebugDataVisible(EDS_OFF);
+			}
 			else
+			{
 				clueInRange_ = false;
-
+			}
+		
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
 			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
 			//highlightedSceneNode = selectedSceneNode;
-
 			// Highlighting in this case means turning lighting OFF for this node,
 			// which means that it will be drawn with full brightness.
 			//highlightedSceneNode->setMaterialFlag(video::EMF_LIGHTING, false);
-			//selectedSceneNode->setDebugDataVisible(EDS_MESH_WIRE_OVERLAY);
-			//selectedSceneNode->setDebugDataVisible(EDS_OFF);
+			//selectedSceneNode_->setDebugDataVisible(EDS_MESH_WIRE_OVERLAY);
+			
 		}
 		else
 		{
 			enemyInRange_ = false;
 			clueInRange_ = false;
+			
 		}		
 	}
 	else
 	{
 		enemyInRange_ = false;
 		clueInRange_ = false;
+		
 	}
 }
 

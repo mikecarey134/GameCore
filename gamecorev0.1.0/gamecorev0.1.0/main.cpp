@@ -156,7 +156,7 @@ int main(void)
 
 	currentMap.loadMap();
 
-	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap);
+	ClueObject testClue("models/clue/clue.ms3d",device,smgr,world,driver,&currentMap);
 
 	//player.addClue(testClue);
 	crecv.addClueObject(&testClue);

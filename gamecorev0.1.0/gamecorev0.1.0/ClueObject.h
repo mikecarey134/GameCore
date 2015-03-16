@@ -46,7 +46,7 @@ private:
 	irr::core::string<char> type_;
 	
 	ICollisionShape* clueCollisionObject_;
-	irr::scene::ISceneNode* model_;
+	irr::scene::IAnimatedMeshSceneNode* model_;
 
 	irr::IrrlichtDevice* device_;
 	irr::scene::ISceneManager* smgr_;

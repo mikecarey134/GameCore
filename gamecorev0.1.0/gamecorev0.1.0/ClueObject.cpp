@@ -14,17 +14,17 @@ ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device,
 	type_ = TYPE_CLUE;
 	prepareClue();
 
-	model_ = smgr->addMeshSceneNode(smgr->getMesh(filename),0,-1,clueProperties_.location_,
+	model_ = smgr->addAnimatedMeshSceneNode(smgr->getMesh(filename),0,-1,clueProperties_.location_,
 									vector3df(90.0f, 0.0f, 0.0f));
 	
-	model_->setMaterialFlag(EMF_LIGHTING,0);
+	model_->setMaterialFlag(EMF_LIGHTING,1);
 
 	model_->setID(IDFlag_IsPickable);
 
 	//clueCollisionObject_ = new IBoxShape(model_, model_->getBoundingBox().getVolume()*(f32)0.001);
 
 	//world_->addRigidBody(clueCollisionObject_);
-	model_->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
+	//model_->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 
 	//model_->setPosition(clueProperties_.location_);
 

@@ -1,4 +1,5 @@
 #include "mapLoader.h"
+#include "common.h"
 
 using namespace irr;
 using namespace core;
@@ -57,9 +58,9 @@ void mapLoader::loadMap()
 				IRigidBody* body = world_->addRigidBody(shape);
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
-				//node->setID(player::IDFlag_IsPickable);
+				//node->setID(IDFlag_IsPickable);
 
-				//selector = smgr->createTriangleSelectorFromBoundingBox(node);
+				//selector = smgr_->createTriangleSelectorFromBoundingBox(node);
 				//node->setTriangleSelector(selector);
 
 			}
