@@ -57,7 +57,11 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
-
+	//add the remote player shadow
+	rem_player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
+	rem_player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
+	rem_player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+	//rem_player_shadow_->setScale(vector3df(.85,.85,.85));
 
 	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
 	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
@@ -91,7 +95,12 @@ void remotePlayer::animate(EMD2_ANIMATION_TYPE animation)
 	characterModel_->setMD2Animation(animation);
 }
 
-
+void remotePlayer::setposition(irr::core::vector3df pos)
+{
+	 character_->warp(pos); 
+	 characterModel_->setPosition(character_->getWorldTransform().getTranslation());//set the player at the correct pos
+	 rem_player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
+}
 /*
 void remotePlayer::jump()
 {

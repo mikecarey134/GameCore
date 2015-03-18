@@ -39,7 +39,7 @@ public:
 	
 	void setRotation(irr::core::vector3df pos)    {characterModel_->setRotation(pos);}
 	void setTexture    (const char* filename)     {characterModel_->setMaterialTexture(0,driver_->getTexture(filename));}
-	void setposition   (irr::core::vector3df pos) { character_->warp(pos); characterModel_->setPosition(character_->getWorldTransform().getTranslation());}//set the player at the correct pos
+	void setposition   (irr::core::vector3df pos);
 	void setGravity    (irr::f32 newGravity)      {character_->setGravity(newGravity);}
 	void setSpeed      (float newSpeed)           {playerSpeed_ = newSpeed;}
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
@@ -64,6 +64,7 @@ private:
 	void idle();
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
+	irr::scene::IMeshSceneNode* rem_player_shadow_;
 
 	irrBulletWorld* world_;
 	irr::IrrlichtDevice* device_;

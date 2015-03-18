@@ -126,6 +126,8 @@ private:
 
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
+	irr::scene::IMeshSceneNode* player_shadow_;
+
     irr::scene::ICameraSceneNode* camera_;
 	irr::scene::ICameraSceneNode* fpsCam_;
 

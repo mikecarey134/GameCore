@@ -65,7 +65,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	//player attributes
 	//////////////////////////////////////////////////////////////////////////
 
-	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
+	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(filename));
 
 	setTexture("characters/playerskin3.jpg");
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
@@ -75,7 +75,11 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	character_->setGravity(PLAYER_EARTH_GRAVITY);
 
 	character_->setJumpForce(PLAYER_JUMP_FORCE);
-	
+
+	//add the player shadow
+	player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
+	player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
+
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
 	character_->setMaxSlope(PI / 1.8);
@@ -92,6 +96,9 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	
 	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
 	characterModel_->setPosition(vector3df(-155.0f, 20.0f, -58.0f));
+	//setup the player shadow
+	player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -126,6 +133,7 @@ void player::jump()
 	if (character_->isOnGround()){
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
+		
 	}
 }
 
@@ -174,6 +182,9 @@ void player::moveCameraControl()
 	irr::core::vector3df cameraPos = camera_->getAbsolutePosition();
 
 	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+	//manage shadow
+	player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
+	//player_shadow_->setScale(vector3df(.85,.85,.85));
 
 	camera_->setPosition(calculateCameraPos());	
 
