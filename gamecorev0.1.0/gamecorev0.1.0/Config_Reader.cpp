@@ -48,7 +48,7 @@ Config_Reader::Config_Reader(char* filename)
 	while(readLine(file_reader_, read_string))
 	{
 		if(read_string[0] == '#')//ignore comment lines
-			read_string = "";
+			read_string = "\0";
 		else
 			ini_vals.push_back(read_string);
 	}

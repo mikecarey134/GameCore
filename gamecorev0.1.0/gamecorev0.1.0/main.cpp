@@ -137,8 +137,8 @@ int main(void)
 
 	theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
 
-	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip(),
-							config_reader.get_rem_port(), config_reader.get_port(),&chat_queue);
+	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
+		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue);
 	
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);	
 

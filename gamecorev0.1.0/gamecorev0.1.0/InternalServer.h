@@ -39,6 +39,7 @@
 #define CLIENT_PORT "1000"
 #define ADDRESS "108.15.178.29"
 #define MAX_MESSAGE_SIZE 2080
+#define MAX_IP_SIZE 50
 
 class InternalServer
 {

@@ -32,6 +32,7 @@
 
 
 using namespace RakNet;
+using namespace std;
 
 InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
 							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
@@ -42,17 +43,22 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 {
 	if(online_)
 	{
+		//convert value passed in to block style c_string 
+		//because racknet connect only works with that form of c_string
+		char ip_[MAX_IP_SIZE];
+		
+		int index =0;
+		while(ip[index])
+		{
+			ip_[index] = ip[index];
+			++index;
+		}
+		ip_[index-1]='\0';//insert the null terminator 
+		
 
 		//////////////////////////////////////////////////////////////////////////
 		//current server info the user will specify this later
 		//////////////////////////////////////////////////////////////////////////
-		char ip[] = "mikesmcs.ddns.net";
-		//char ip[] = "192.168.1.12";
-		//char serverPort[] = "1080";
-		//char serverPort[] = "25585";//raspberrypi server
-		//char clientPort[]= "1000";
-		//////////////////////////////////////////////////////////////////////////
-
 
 		client_=RakNet::RakPeerInterface::GetInstance();
 		// Connecting the client is very simple.  0 means we don't care about
@@ -78,7 +84,7 @@ device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),netw
 			client_->Startup(8,&socketDescriptor,1);
 			client_->SetOccasionalPing(true);
 
-			RakNet::ConnectionAttemptResult car = client_->Connect(ip, remote_port, "0", (int) strlen("0"));
+			RakNet::ConnectionAttemptResult car = client_->Connect(ip_, remote_port, "0", (int) strlen("0"));
 			bool b = (car==RakNet::CONNECTION_ATTEMPT_STARTED);
 
 			if (b)
