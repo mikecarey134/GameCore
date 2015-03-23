@@ -3,7 +3,6 @@
 /*Config_Reader.h
   purpose: load in game configurations in order to change hardcoded variables
   by:Michael Carey
-
 */
 /************************************************************************/
 
