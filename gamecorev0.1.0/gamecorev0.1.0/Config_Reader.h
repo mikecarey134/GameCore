@@ -21,7 +21,7 @@ class Config_Reader
 public:
 	//locations for data in our vector
 	enum config_vals{ DRIVER_TYPE=0,DEBUG,STENCIL_BUFF, 
-		VSINC, FULL_SCREEN, ONLINE,REMOTE_PORT, PORT,IP ,PLAYER_NAME};
+		VSINC, FULL_SCREEN, ONLINE,REMOTE_PORT, PORT,IP ,PLAYER_MODEL,PLAYER_NAME};
 	
 	Config_Reader(char* filename);
 	~Config_Reader(void);
@@ -38,9 +38,10 @@ public:
 	int                       get_rem_port    () {return atoi(ini_vals[REMOTE_PORT].c_str());}
 	char*                     get_ip          () {return const_cast<char*>(ini_vals[IP].c_str());}
 	std::string               get_player_name () {return ini_vals[PLAYER_NAME];}
+	int                       get_model       () {return atoi(ini_vals[PLAYER_MODEL].c_str());} 
 
 private:
-	irr::IrrlichtDevice* device_;
+	irr::IrrlichtDevice* device_;  
 	irr::io::IFileSystem* fs_;
 	irr::io::IReadFile*   file_reader_;
 	char* filename_;                    //our config file
