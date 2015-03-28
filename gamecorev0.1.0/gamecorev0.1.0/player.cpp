@@ -274,8 +274,16 @@ void player::nodeSelector()
 	//line3d<f32> ray = collMan->getRayFromScreenCoordinates(device_->getCursorControl()->getPosition(), camera_);
 	core::line3d<f32> ray;
 
-	ray.start = camera_->getPosition();
-	ray.end = ray.start + (camera_->getTarget()- ray.start) * 100000.0f;
+	//ray.start = camera_->getPosition();
+	ray.start = vector3df(characterModel_->getPosition().X, 
+						  characterModel_->getPosition().Y + 5.0f, 
+						  characterModel_->getPosition().Z);
+	//ray.end = ray.start + (camera_->getTarget() - ray.start) * 100000.0f;
+	//f32 rayEndX = abs(characterModel_->getPosition()) - abs(camera_->getPosition())
+	ray.end =	vector3df (characterModel_->getPosition().X + (cos(mouseCursorX_ * PI / 180.0f) * REACH_DIST),
+						   characterModel_->getPosition().Y + (sin(mouseCursorY_ * PI / 180.0f) * REACH_DIST),
+						   characterModel_->getPosition().Z - (sin(mouseCursorX_ * PI / 180.0f) * REACH_DIST));//ray.start + (characterModel_->getRotation()) * 10.0f;
+
 	device_->getVideoDriver()->draw3DLine(ray.start,ray.end,SColor(255,255,0,0));
 
 	// Tracks the current intersection point with the level or a mesh
@@ -320,7 +328,7 @@ void player::nodeSelector()
 			}
 		
 			driver_->setTransform(video::ETS_WORLD, core::matrix4());
-			driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
+			//driver_->draw3DTriangle(hitTriangle, video::SColor(100,255,0,0));
 			//highlightedSceneNode = selectedSceneNode;
 			// Highlighting in this case means turning lighting OFF for this node,
 			// which means that it will be drawn with full brightness.

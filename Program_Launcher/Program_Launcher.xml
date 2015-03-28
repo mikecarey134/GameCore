@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<iasettings>
+  <projectproperties>
+    <manufacturer>Daniel</manufacturer>
+    <productname>Program_Launcher</productname>
+    <productversion>1.0.0</productversion>
+    <productcode>{e1671512-680f-4216-98b4-21178eb75020}</productcode>
+    <upgradecode>{bb0e4e49-32f4-4db2-ba93-2783a6d2eb9b}</upgradecode>
+    <language>0</language>
+    <languagename>English</languagename>
+  </projectproperties>
+  <summary>
+    <title>Program_Launcher</title>
+    <subject>Program_Launcher</subject>
+    <author>Daniel</author>
+    <summarycomments>Program_Launcher</summarycomments>
+    <revisioncode>{fe3339f3-61ac-4e26-afd3-68be732dd18b}</revisioncode>
+    <uacelevation>asInvoker</uacelevation>
+  </summary>
+  <addremove>
+    <publishername>Daniel</publishername>
+    <contactname>Daniel</contactname>
+    <helplink>http://www.mywebsite.com</helplink>
+    <productupdatelink>http://www.mywebsite.com</productupdatelink>
+    <addremovecomments>All Rights Reserved</addremovecomments>
+    <iconfile />
+  </addremove>
+  <codegen>
+    <generateincludefiles>1</generateincludefiles>
+    <generatefeatures>0</generatefeatures>
+    <refreshscript>0</refreshscript>
+  </codegen>
+  <compilervariables>
+    <variables />
+  </compilervariables>
+  <build>
+    <buildtype>0</buildtype>
+  </build>
+  <files>
+    <filedetails filename="c:\Users\Daniel\Desktop\CS_Folder\Senior_Project\bitbucketReps\Program_Launcher\Debug\Program_Launcher.exe" targetlocation="$TARGETDIR$" generatenativeimage="0" registerassembly="0" runinstallerclass="0" createshortcut="1" runprogram="1" installfilecommand="1" />
+  </files>
+  <dependencies />
+  <dialogtheme>
+    <themetype>4</themetype>
+    <themename>Bluewave</themename>
+  </dialogtheme>
+  <authenticode>
+    <sign>0</sign>
+    <certificatefile />
+    <keyfile />
+    <productinfourl />
+    <authpassword />
+    <timestampurl />
+  </authenticode>
+  <compression>
+    <compressiontype>4</compressiontype>
+    <encrypt>0</encrypt>
+    <compressionpassword />
+  </compression>
+  <output>
+    <outputtype>0</outputtype>
+    <location />
+    <filename />
+    <calculatefilehash>0</calculatefilehash>
+    <refreshrevisioncode>1</refreshrevisioncode>
+  </output>
+</iasettings>

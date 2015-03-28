@@ -33,6 +33,7 @@
 #define PLAYER_HEALTH 100
 #define MAX_CLUES 3
 #define CLUES_TO_FIND 1
+#define REACH_DIST 100.0f
 ///////////////////////////////////
 
 

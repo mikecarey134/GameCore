@@ -76,8 +76,8 @@ int main(void)
 	,config_reader.get_s_buffer(),config_reader.get_vsinc());
 	
 
-	GUI theGui;//create an instance of gui
-	theGui.drawIntro(device);//draw our intro 
+	GUI theGui(device);//create an instance of gui
+	theGui.drawIntro();//draw our intro 
 
 
 	
@@ -149,7 +149,7 @@ int main(void)
 	//currentMap->setMap("dungeon2.irr");
 	
 		//takes care of all input devices and events calls update during the gameloop
-	consoleevent crecv(device,guienv,driver,context,theGui, engine, &thePlayer, world, &npc_tester, &currentMap);//event handeler
+	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap);//event handeler
 	device->setEventReceiver(&crecv);
 
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");
@@ -237,11 +237,11 @@ int main(void)
 						//GUI CLASS calls
 						if(font2)
 						{
-							gui::IGUIFont* font = device->getGUIEnvironment()->getBuiltInFont();
 							//draw the current gui related items
-							theGui.drawHealth(font2,core::rect<s32>(10,565,450,100),thePlayer.getHealth());
+							//theGui.drawHealth(font2,core::rect<s32>(10,565,450,100),&thePlayer);
 							//theGui.drawCrosshair(font2,core::rect<s32>(400,300,450,100));
 							//theGui.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),"");
+							theGui.drawHUD(&thePlayer);
 						}
 
 				    chat_queue.draw();

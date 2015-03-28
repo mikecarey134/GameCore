@@ -37,7 +37,7 @@ public:
 	enum{ESC = 101, GUI_ID_START = 0, GUI_ID_OPTIONS, GUI_ID_CREDITS, GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU};
 
 	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
-		irr::video::IVideoDriver* driver,SAppContext & Context,GUI gui, 
+		irr::video::IVideoDriver* driver,SAppContext & Context,GUI* gui, 
 		/*irr::scene::ICameraSceneNode* camera,*/ irrklang::ISoundEngine* engine, 
 		player* thePlayer, irrBulletWorld* world, NPC* npc, mapLoader* currentMap);
 	
@@ -87,7 +87,7 @@ private:
 	irr::IrrlichtDevice * device_;
 	irr::video::IVideoDriver* driver_;
 	SAppContext & Context_;
-	GUI gui_;
+	GUI* gui_;
 	player* player_;
 	NPC* npc_;
 	irrBulletWorld* world_;

@@ -20,8 +20,6 @@ using namespace io;
 using namespace gui;
 
 
-
-
 GUI::~GUI(void)
 {
 }
@@ -43,20 +41,17 @@ void GUI::drawCrosshair(irr::gui::IGUIFont* font,irr::core::rect<irr::s32> locat
 		location,theColor_);//set to private member color
 
 }
-void GUI::drawHealth(IGUIFont* font,rect<s32> location,int currhealth)
-{	core::stringw h;
+void GUI::drawHealth(IGUIFont* font, player* thePlayer)
+{	//core::stringw h;
 	SColor color;
 	//draw health color based on how much health they have
-	if(currhealth >=60 && currhealth < 101){color = green;}
-	else if(currhealth >=30 && currhealth < 60){color = yellow;}
-	else if(currhealth >=1 && currhealth < 30){color = red;}
+	if(thePlayer->getHealth() >=60 && thePlayer->getHealth() < 101){color = green;}
+	else if(thePlayer->getHealth() >=30 && thePlayer->getHealth() < 60){color = yellow;}
+	else if(thePlayer->getHealth() >=1 && thePlayer->getHealth() < 30){color = red;}
 	else color = blue;
 
-	h+="Health: ";
-	h+= currhealth;
-	font->draw(h,//draw health icon
-	location,color);
-
+	device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(290,530, 560,570));
+	device_->getVideoDriver()->draw2DRectangle(color, rect<s32>(300,540, 350+(thePlayer->getHealth()*2),560));
 }
 void GUI::drawDebug(IGUIFont* font,IVideoDriver* driver,vector3df nodePosition)
 {
@@ -146,15 +141,28 @@ void GUI::drawloading(irr::video::IVideoDriver*& driver, irr::gui::IGUIEnvironme
 
 
 //temporary function in order to draw a loading screen whilst loading data
-void GUI::drawIntro(irr::IrrlichtDevice* device)
+void GUI::drawIntro()
 {
-	device->getVideoDriver()->beginScene(true, false, irr::video::SColor(255,0,0,0));
+	device_->getVideoDriver()->beginScene(true, false, irr::video::SColor(255,0,0,0));
 
-	ITexture* backgroundImage = device->getVideoDriver()->getTexture("bill/intro.jpg");
+	ITexture* backgroundImage = device_->getVideoDriver()->getTexture("bill/intro.jpg");
 
-	device->getVideoDriver()->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
-	device->getGUIEnvironment()->drawAll();
-	device->getVideoDriver()->endScene();
+	device_->getVideoDriver()->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
+	device_->getGUIEnvironment()->drawAll();
+	device_->getVideoDriver()->endScene();
 
 
+}
+
+void GUI::drawHUD(player* thePlayer)
+{
+	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
+	drawHealth(font, thePlayer);
+
+	device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(660,458, 760,570));
+	//device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), position2d<s32>(660,460), rect<s32>(0,0, 120,120));
+
+	ITexture* currentWeapon = device_->getVideoDriver()->getTexture("bill/icons/hand-small.jpg");
+	device_->getVideoDriver()->draw2DImage(currentWeapon, position2d<s32>(670,470),rect<s32>(0,0,80,90));
+	//device->getVideoDriver()->draw2DRectangle(SColor(255,0,0,0),rect<s32>(50,50, 50+menuWidth,500));
 }

@@ -27,7 +27,7 @@ using namespace irrklang;
 
 
 consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
-						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI gui,
+						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI* gui,
 						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
 						   NPC* npc, mapLoader* currentMap):
 							device_(device),guienv_(guienv),driver_(driver),Context_(Context),gui_(gui),debug(false),							
@@ -542,12 +542,12 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 
 	if(debug)
 	{
-		gui_.drawDebug(font ,driver_,player_->getPosition());
+		gui_->drawDebug(font ,driver_,player_->getPosition());
 		world_->debugDrawWorld(true);
 	}
 	if(pauseMenu)drawPauseMenu();
 		
-	if(chatshown){gui_.drawchat(guienv_);}
+//	if(chatshown){gui_->drawchat(guienv_);}
 	
 	if(inventory) drawInventory();
 	if(!started)
