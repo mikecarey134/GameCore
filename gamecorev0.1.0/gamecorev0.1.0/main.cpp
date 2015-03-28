@@ -7,7 +7,7 @@
 /************************************************************************/
 
 #define _IRR_WINDOWS_
-#define CONSOLE
+//#define CONSOLE
 
 
 #include "exampleframework.h"

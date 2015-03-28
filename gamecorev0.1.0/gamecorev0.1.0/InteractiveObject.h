@@ -8,7 +8,7 @@ class InteractiveObject
 {
 public:
 	InteractiveObject () {};
-	virtual ~InteractiveObject() = 0;
+	virtual ~InteractiveObject();
 
 	virtual const irr::core::string<char> getObjectType() const = 0;
 	virtual void update() = 0;
