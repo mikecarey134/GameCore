@@ -41,23 +41,9 @@ class player
 {
 
 public:
-/*
-	enum selectionType
-	{
-		// I use this ISceneNode ID to indicate a scene node that is
-		// not pickable by getSceneNodeAndCollisionPointFromRay()
-		ID_IsNotPickable = 0,
 
-		// I use this flag in ISceneNode IDs to indicate that the
-		// scene node can be picked by ray selection.
-		IDFlag_IsPickable = 1 << 0,
+	enum State{IDLE,JUMP,ATTACK,WALK};
 
-		// I use this flag in ISceneNode IDs to indicate that the
-		// scene node can be highlighted.  In this example, the
-		// hominids can be highlighted, but the level mesh can't.
-		IDFlag_IsHighlightable = 1 << 1
-	};
-*/
 
 	player(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
@@ -104,6 +90,7 @@ public:
 	int                                 getHealth     () { return playerHealth_; }
 	//playerData&                         getPlayerData () {return data_;}
 	int                                 get_model_type() { return player_model_type_;}
+	int                                 get_curr_state() { return current_state_;}
 	bool                                getIsLamp     () { return lamp_->isVisible(); }
 	std::string                         getname       () { return player_name_; }
 	std::vector<ClueObject*>			getFoundClues () { return clues_; }
@@ -117,7 +104,7 @@ public:
 	void                  left      ();
 	void                  right     ();
 	void                  idle      ();
-	void                  attack    (){characterModel_->setFrameLoop(32,44); characterModel_->setAnimationSpeed(15);player_punch_= engine_->play2D("sounds/swing.mp3");}
+	void                  attack    ();
 
 
 	bool isStepSoundPaused() { return playerSteps_->getIsPaused(); }
@@ -168,5 +155,6 @@ private:
 	bool enemyInRange_;
 	bool clueInRange_;
 	int player_model_type_;	
+	int current_state_;
 	std::vector<ClueObject*> clues_;
 };

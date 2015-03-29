@@ -48,7 +48,8 @@ void NetworkData::setString(player& thereInput)
 	ourNetworkData.str(""); 
 	ourNetworkData << "0 " << thereInput.getname() << " " <<thereInput.getPosition().X 
 		<< " " << thereInput.getPosition().Y << " " << thereInput.getPosition().Z << " " <<thereInput.getRotation().X 
-		<< " " << thereInput.getRotation().Y << " " << thereInput.getRotation().Z << " " <<thereInput.get_model_type();
+		<< " " << thereInput.getRotation().Y << " " << thereInput.getRotation().Z << " " <<thereInput.get_model_type()
+		<< " " << thereInput.get_curr_state();
 }
 
 
@@ -63,9 +64,10 @@ void NetworkData::setRemote(const char* ourData)
 	std::stringstream ourID;
 	
 	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
-	int model_type;
+	int model_type,current_state;
 	ourID.str(ourData);
-	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ >> model_type;//set up incoming variables
+	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z 
+		>> rem_rotX >> rem_rotY >> rem_rotZ >> model_type >> current_state;//set up incoming variables
 
 
 	//is it playerData
@@ -82,6 +84,7 @@ void NetworkData::setRemote(const char* ourData)
 			players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
 			players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
 			players_[ID].drawName();
+			players_[ID].setState(current_state);
 			notFound = false;//set the player not found to false to indicate an existing player
 		}
 

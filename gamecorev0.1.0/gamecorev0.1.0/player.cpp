@@ -138,7 +138,7 @@ void player::jump()
 		player_jump_= engine_->play2D("sounds/jump.mp3");
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
-		
+		current_state_=State::JUMP;
 	}
 }
 
@@ -252,6 +252,7 @@ void player::forward()
 	}
 	
 	characterModel_->setCurrentFrame(walkframe_);
+	current_state_=State::WALK;
 }
 void player::backwards()
 {	
@@ -268,6 +269,7 @@ void player::idle()
 {
 	characterModel_->setAnimationSpeed(4);
 	characterModel_->setFrameLoop(206,250);
+	current_state_=State::IDLE;
 }
 
 void player::nodeSelector()
@@ -362,4 +364,11 @@ void player::addClue(ClueObject* clue)
 	{
 		clues_.push_back(clue);
 	}
+}
+void player::attack()
+{
+	characterModel_->setFrameLoop(32,44);
+	characterModel_->setAnimationSpeed(15);
+	player_punch_= engine_->play2D("sounds/swing.mp3");
+	current_state_= State::ATTACK;
 }

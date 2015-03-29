@@ -105,7 +105,7 @@ void remotePlayer::setposition(irr::core::vector3df pos)
 	 characterModel_->setPosition(character_->getWorldTransform().getTranslation());//set the player at the correct pos
 	 rem_player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
 }
-/*
+
 void remotePlayer::jump()
 {
 	if (character_->isOnGround()){
@@ -114,7 +114,7 @@ void remotePlayer::jump()
 	}
 }
 
-
+/*
 void remotePlayer::forward()
 {	
 	characterModel_->setFrameLoop(301,318);
@@ -169,5 +169,34 @@ void remotePlayer::setName(const std::string& name)
 	}
 	name_+=">";//postfix 
 	//create < player_name >
+
+}
+void remotePlayer::attack()
+{
+	characterModel_->setFrameLoop(32,44);
+	characterModel_->setAnimationSpeed(15);
+	//player_punch_= engine_->play2D("sounds/swing.mp3");
+
+}
+void remotePlayer::setState(int state)
+{
+	switch(state)
+	{
+	case 0:
+		break;
+	case 1:
+		jump();
+		break;
+	case 2:
+		attack();
+		break;
+	case 3:
+		
+		break;
+	default:
+		idle();
+		break;
+
+	}
 
 }

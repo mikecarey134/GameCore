@@ -28,8 +28,9 @@ public:
 
 	~remotePlayer(void);
 
-
+	void                 setState           (int state);
 	void                 jump				();
+	void                 attack				();
 	void                 rotate				(irr::core::vector3df rotation){ characterModel_->setRotation(rotation); }
 	void                 animate			(irr::scene::EMD2_ANIMATION_TYPE animation);
 	void                 moveCameraControl	();
