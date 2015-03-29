@@ -18,9 +18,10 @@ using namespace gui;
 
 
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
-			   irrBulletWorld* world, std::string player_name):
+			   irrBulletWorld* world, std::string player_name,int model_type):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
+player_model_type_(model_type)
 {
 	player_name_ += "_";
 	for (int i=0;i<4;++i)
@@ -64,10 +65,13 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	//////////////////////////////////////////////////////////////////////////
 	//player attributes
 	//////////////////////////////////////////////////////////////////////////
+	common_paths model_path;
 
-	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(filename));
+	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(model_path.model_paths[player_model_type_].c_str()));
 
-	setTexture("characters/playerskin3.jpg");
+	//setTexture("characters/playerskin3.jpg");
+	setTexture(model_path.skin_paths[player_model_type_].c_str());
+
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
@@ -85,7 +89,7 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 	character_->setMaxSlope(PI / 1.8);
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
-	playerSteps_->setVolume(.25f);
+	playerSteps_->setVolume(.65f);
 	//////////////////////////////////////////////////////////////////////////	
 
 	//////////////////////////////////////////////////////////////////////////
@@ -131,6 +135,7 @@ void player::animate(EMD2_ANIMATION_TYPE animation)
 void player::jump()
 {
 	if (character_->isOnGround()){
+		player_jump_= engine_->play2D("sounds/jump.mp3");
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
 		

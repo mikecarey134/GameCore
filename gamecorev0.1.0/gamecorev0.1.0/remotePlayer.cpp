@@ -27,8 +27,8 @@ using namespace io;
 using namespace gui;
 
 
-remotePlayer::remotePlayer(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
-irrBulletWorld* world):
+remotePlayer::remotePlayer(IrrlichtDevice* device,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
+						   ISoundEngine* engine, irrBulletWorld* world,int model_type):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 {
@@ -39,9 +39,13 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH)
 	character_ = new IKinematicCharacterController(world_);
 	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
 
-	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
+	//characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
 	
-	setTexture("characters/playerskin_m2.jpg");
+	//setTexture("characters/playerskin_m2.jpg");
+	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(paths_.model_paths[model_type].c_str()));
+
+	//setTexture("characters/playerskin3.jpg");
+	setTexture(paths_.skin_paths[model_type].c_str());
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);

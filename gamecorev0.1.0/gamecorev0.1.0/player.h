@@ -61,7 +61,7 @@ public:
 
 	player(irr::IrrlichtDevice* device,char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world, std::string player_name);
+		irrklang::ISoundEngine* engine, irrBulletWorld* world, std::string player_name,int model_type);
 	
 	
 	~player(void);
@@ -103,10 +103,12 @@ public:
 	irr::scene::ICameraSceneNode*       getCamera     () { return camera_; }
 	int                                 getHealth     () { return playerHealth_; }
 	//playerData&                         getPlayerData () {return data_;}
+	int                                 get_model_type() { return player_model_type_;}
 	bool                                getIsLamp     () { return lamp_->isVisible(); }
 	std::string                         getname       () { return player_name_; }
 	std::vector<ClueObject*>			getFoundClues () { return clues_; }
 	bool								isKillerKnown () { return (clues_.size() >= CLUES_TO_FIND); }
+
 	
 
 	//directional 
@@ -115,7 +117,7 @@ public:
 	void                  left      ();
 	void                  right     ();
 	void                  idle      ();
-	void                  attack    (){characterModel_->setFrameLoop(32,44); characterModel_->setAnimationSpeed(15);}
+	void                  attack    (){characterModel_->setFrameLoop(32,44); characterModel_->setAnimationSpeed(15);player_punch_= engine_->play2D("sounds/swing.mp3");}
 
 
 	bool isStepSoundPaused() { return playerSteps_->getIsPaused(); }
@@ -139,7 +141,8 @@ private:
 	
 	irrklang::ISoundEngine* engine_;
 	irrklang::ISound* playerSteps_;
-	
+	irrklang::ISound* player_punch_;
+	irrklang::ISound* player_jump_;
 	
 	irr::u32 then;
 
@@ -164,6 +167,6 @@ private:
 	
 	bool enemyInRange_;
 	bool clueInRange_;
-	
+	int player_model_type_;	
 	std::vector<ClueObject*> clues_;
 };

@@ -118,7 +118,8 @@ int main(void)
 	context.counter = 0;
 	
 	//load our player into the scene
-	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name());
+	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
+		,config_reader.get_model());
 	NPC npc_tester(device,smgr,world,driver);
 
 	if(!device)//if device fails to load exit

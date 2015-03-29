@@ -18,6 +18,7 @@ By: Michael Carey
 #include "player.h"
 #include "remotePlayer.h"
 #include <vector>
+#include"common.h"
 
 
 class NetworkData
@@ -61,6 +62,7 @@ private:
 	irrklang::ISoundEngine* engine_;
 	irrBulletWorld* world_;
 	ChatQueue* message_buffer_;
+	common_paths paths_;
 
 };
 

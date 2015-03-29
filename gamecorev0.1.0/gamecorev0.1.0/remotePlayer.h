@@ -16,14 +16,15 @@
 #include<string>
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
+#include"common.h"
 
 class remotePlayer
 {
 public:
 	remotePlayer(){}
-	remotePlayer(irr::IrrlichtDevice* device,char* filename,
+	remotePlayer(irr::IrrlichtDevice* device,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world);
+		irrklang::ISoundEngine* engine, irrBulletWorld* world, int model_type);
 
 	~remotePlayer(void);
 
@@ -34,8 +35,8 @@ public:
 	void                 moveCameraControl	();
 	irr::core::vector3df calculateCameraPos	();
 	void				 nodeSelector		();
-	void                 delete_player      (){characterModel_->remove();delete character_; 
-												nameDisplay_->remove(); delete rem_player_shadow_;}
+	void                 delete_player      (){characterModel_->remove(); rem_player_shadow_->remove();
+												delete character_; nameDisplay_->remove(); }
     void                 drawName();
 	
 	void setRotation(irr::core::vector3df pos)    {characterModel_->setRotation(pos);}
@@ -74,6 +75,7 @@ private:
 
 	irrklang::ISoundEngine* engine_;
 	irrklang::ISound* playerSteps_;
+	irrklang::ISound* player_punch;
 
 
 	irr::u32 then;
@@ -89,6 +91,7 @@ private:
 	int playerHealth_;
 	irr::scene::IBillboardTextSceneNode* nameDisplay_;
 	irr::core::stringw name_;
+	common_paths paths_;
 
 
 };

@@ -48,7 +48,7 @@ void NetworkData::setString(player& thereInput)
 	ourNetworkData.str(""); 
 	ourNetworkData << "0 " << thereInput.getname() << " " <<thereInput.getPosition().X 
 		<< " " << thereInput.getPosition().Y << " " << thereInput.getPosition().Z << " " <<thereInput.getRotation().X 
-		<< " " << thereInput.getRotation().Y << " " << thereInput.getRotation().Z;
+		<< " " << thereInput.getRotation().Y << " " << thereInput.getRotation().Z << " " <<thereInput.get_model_type();
 }
 
 
@@ -63,8 +63,9 @@ void NetworkData::setRemote(const char* ourData)
 	std::stringstream ourID;
 	
 	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
+	int model_type;
 	ourID.str(ourData);
-	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ;//set up incoming variables
+	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z >> rem_rotX >> rem_rotY >> rem_rotZ >> model_type;//set up incoming variables
 
 
 	//is it playerData
@@ -96,7 +97,8 @@ void NetworkData::setRemote(const char* ourData)
 			//add new player to map
 			//printf("New Player Joined\n");
 			std::cout<<ID<<" Joined\n";
-			remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
+			//remotePlayer newPlayer(device_,"characters/stick_mike.ms3d",smgr_,driver_,engine_,world_);
+			remotePlayer newPlayer(device_,smgr_,driver_,engine_,world_,model_type);
 			players_[ID]= newPlayer;
 			players_[ID].setName(ID);
 			++currentPlayers_;//update the current amount of players
