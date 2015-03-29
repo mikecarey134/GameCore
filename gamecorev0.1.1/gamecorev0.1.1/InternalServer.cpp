@@ -145,13 +145,12 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 			}
 		}
 		
-		if(thePlayer.getHealth() < 1)
+		if(thePlayer.getCurrentState() == DEAD)
 		{
 			std::string damageMsg = "4 ";
 			damageMsg += thePlayer.getname();
 			client_->Send(damageMsg.c_str(), damageMsg.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-		
-		
+			thePlayer.setState(SPECTATOR);		
 		}
 
 		//Only send if we have a new message

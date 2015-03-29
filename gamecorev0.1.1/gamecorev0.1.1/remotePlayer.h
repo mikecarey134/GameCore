@@ -45,8 +45,9 @@ public:
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
 	void setName       (const std::string& name);  
-	void damage		   ()						  { playerHealth_ -= 5; beingDamaged_ = true; }
+	void damage		   ();						  
 	void makeHealthy	()						  { beingDamaged_ = false; }
+	bool isDead()								  { return dead_; }
 	
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
@@ -94,4 +95,5 @@ private:
 	common_paths paths_;
 
 	bool beingDamaged_;
+	bool dead_;
 };

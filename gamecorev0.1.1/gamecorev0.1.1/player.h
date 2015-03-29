@@ -69,7 +69,9 @@ public:
 	void setCamDist    (float increment)          {cameradist_+= increment;}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
 	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
-	void damage		   ()						  {playerHealth_ -= 5;}
+	void damage		   ();
+	void kill();
+	void setState(int state)					  { current_state_ = state; }
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
@@ -78,6 +80,7 @@ public:
 	bool enemyNPCInRange   ()			{ return enemyNPCInRange_; }
 	bool enemyPlayerInRange()			{ return enemyPlayerInRange_; }
 	bool isClueInRange	   ()			{ return clueInRange_; }
+	bool isDead()						{ return (current_state_ == DEAD || current_state_ == SPECTATOR); }
 	void isAttackingSomeone(bool& attacking, std::string& enemyName);
 	irr::scene::ISceneNode* getSelectedNode(){ return selectedSceneNode_; }
 	void addClue (ClueObject* clue);

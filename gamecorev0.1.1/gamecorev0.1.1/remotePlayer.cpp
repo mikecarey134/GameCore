@@ -30,7 +30,7 @@ using namespace gui;
 remotePlayer::remotePlayer(IrrlichtDevice* device,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
 						   ISoundEngine* engine, irrBulletWorld* world,int model_type):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_(false)
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_(false), dead_(false)
 {
 	
 	float height = 5.0;
@@ -208,4 +208,13 @@ void remotePlayer::setState(int state)
 
 	}
 
+}
+
+void remotePlayer::damage()
+{ 
+	playerHealth_ -= 5; 
+	beingDamaged_ = true; 
+
+	if (playerHealth_ <= 0)
+		dead_ = true;
 }

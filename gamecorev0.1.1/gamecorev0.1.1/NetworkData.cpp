@@ -79,10 +79,14 @@ void NetworkData::setRemote(const char* ourData)
 		//update the player based off the player_key from the server
 		if(players_.find(ID) != players_.end())
 		{
-			players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
-			players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
-			players_[ID].drawName();
-			players_[ID].setState(current_state);
+			if (!players_[ID].isDead())
+			{
+				players_[ID].setposition(irr::core::vector3df(rem_x,rem_y,rem_z));
+				players_[ID].setRotation(irr::core::vector3df(rem_rotX,rem_rotY,rem_rotZ));
+				players_[ID].drawName();
+				players_[ID].setState(current_state);
+			}
+			
 			notFound = false;//set the player not found to false to indicate an existing player
 
 		}

@@ -53,7 +53,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		case EMIE_RMOUSE_PRESSED_DOWN:
 			MouseState.RightButtonDown = true;
 
-			if (player_->isClueInRange())
+			if (player_->isClueInRange() && !player_->isDead())
 			{
 				//Iterate through the list of clues until we find the one the player is looking at
 				std::list<ClueObject*>::iterator obj = clueObjects_.begin();
@@ -83,17 +83,21 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		//handle mouse events  
 		case EMIE_LMOUSE_PRESSED_DOWN:
 			MouseState.LeftButtonDown = true;
-			player_->attack();
+			if (!player_->isDead())
+			{
+				player_->attack();
+				
+				if(player_->enemyNPCInRange()/* && !npc_->isDead()*/)
+				{
+					npc_->damage();
+					//nodeName = npc_->characterModel_->getName();
+				}
+				else if (player_->enemyPlayerInRange())
+				{
+					findRemotePlayer(player_->getSelectedNodeName())->damage();
+				}
+			}
 			
-			if(player_->enemyNPCInRange()/* && !npc_->isDead()*/)
-			{
-				npc_->damage();
-				//nodeName = npc_->characterModel_->getName();
-			}
-			else if (player_->enemyPlayerInRange())
-			{
-				findRemotePlayer(player_->getSelectedNodeName())->damage();
-			}
 
 			//cout<<"Left Mouse CLick!\n";
 			break;
@@ -123,7 +127,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 	{
 		KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
 
-		if(!console.isVisible()&& !pauseMenu )//handle player movement keyboard controls
+		if(!console.isVisible() && !pauseMenu && !player_->isDead())//handle player movement keyboard controls
 		{
 			if (IsKeyDown(KEY_SPACE))
 				player_->jump();
@@ -157,7 +161,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		
 		}
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_F && 
-			event.KeyInput.PressedDown == true && !console.isVisible())
+			event.KeyInput.PressedDown == true && !console.isVisible() && !player_->isDead())
 		{
 			if(player_->getIsLamp())
 				player_->setlamp(false);
@@ -541,16 +545,19 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 {
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 
-	if ((player_->getXDir() != 0.0f || player_->getZDir() != 0.0f) && player_->isOnGround())
+	if (!player_->isDead())
 	{
-		player_->animate(EMAT_STAND);
-		player_->setStepSoundPaused(false);
-	}
-	else
-	{
-		player_->animate(EMAT_RUN);
-		player_->setStepSoundPaused(true);
-	}
+		if ((player_->getXDir() != 0.0f || player_->getZDir() != 0.0f) && player_->isOnGround())
+		{
+			player_->animate(EMAT_STAND);
+			player_->setStepSoundPaused(false);
+		}
+		else
+		{
+			player_->animate(EMAT_RUN);
+			player_->setStepSoundPaused(true);
+		}
+	}	
 
 	if (player_->isKillerKnown() && npc_->isLoaded() == NOT_LOADED)
 		npc_->isLoaded() = LOADING;

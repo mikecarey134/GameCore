@@ -22,7 +22,7 @@
 	};
 
 	enum loadState { NOT_LOADED = 0, LOADING, DONE_LOADING };
-	enum State{IDLE,JUMP,ATTACK,WALK,DAMAGED};
+	enum State{IDLE,JUMP,ATTACK,WALK,DAMAGED,DEAD,SPECTATOR};
 
 	//enum char_models{DAN=0,MIKE,ZOMBIE};
 	//enum char_skins{DAN_S=0,MIKE_S,ZOMBIE_S};

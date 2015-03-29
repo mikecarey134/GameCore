@@ -149,60 +149,59 @@ void player::jump()
 
 void player::moveCameraControl()
 {
-
-	//////////////////////////////////////////////////////////////////////////
-	//early fps camera switching
-	//////////////////////////////////////////////////////////////////////////
-	/*if(floor(cameradist_) == 1)
+/*
+	if (current_state_ == DEAD)
 	{
-		smgr_->setActiveCamera(fpsCam_);
-		characterModel_->setPosition(fpsCam_->getPosition());
-		characterModel_->setVisible(false);
+		//////////////////////////////////////////////////////////////////////////
+		//early fps camera switching
+		//////////////////////////////////////////////////////////////////////////
+		if(floor(cameradist_) == 1)
+		{
+			characterModel_->setPosition(fpsCam_->getPosition());
+			characterModel_->setVisible(false);
 
-	}*/
-	//////////////////////////////////////////////////////////////////////////
+		}
+		//////////////////////////////////////////////////////////////////////////
+	}
+	else*/
+	if (!isDead())
+	{
+		smgr_->setActiveCamera(camera_);
+		
+		characterModel_->setVisible(true);
 
-	//else{
+		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
-	smgr_->setActiveCamera(camera_);
-	
-	characterModel_->setVisible(true);
+		vector3df rot(0, camera_->getRotation().Y, 0);
+		characterModel_->setRotation(rot);
 
-	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+		vector3df direction(xDirection_, 0.0f, zDirection_);
 
-	vector3df rot(0, camera_->getRotation().Y, 0);
-	characterModel_->setRotation(rot);
+		irr::core::matrix4 m;
 
-	vector3df direction(xDirection_, 0.0f, zDirection_);
+		m.setRotationDegrees(vector3df(0, camera_->getRotation().Y-180.0f, 0));
 
-	irr::core::matrix4 m;
+		m.transformVect(direction);
 
-	m.setRotationDegrees(vector3df(0, camera_->getRotation().Y-180.0f, 0));
+		character_->setPositionIncrementPerSimulatorStep(direction*0.3f);
 
-	m.transformVect(direction);
+		camera_->setTarget(characterModel_->getPosition());
 
-	character_->setPositionIncrementPerSimulatorStep(direction*0.3f);
+		// Step the simulation with our delta time
 
-	camera_->setTarget(characterModel_->getPosition());
+		irr::core::position2d<f32> cursorPos = device_->getCursorControl()->getRelativePosition();
+		camera_ = device_->getSceneManager()->getActiveCamera();
+		irr::core::vector3df cameraPos = camera_->getAbsolutePosition();
 
-	// Step the simulation with our delta time
+		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+		//manage shadow
+		player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
+		//player_shadow_->setScale(vector3df(.85,.85,.85));
 
-	irr::core::position2d<f32> cursorPos = device_->getCursorControl()->getRelativePosition();
-	camera_ = device_->getSceneManager()->getActiveCamera();
-	irr::core::vector3df cameraPos = camera_->getAbsolutePosition();
+		camera_->setPosition(calculateCameraPos());	
 
-	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
-	//manage shadow
-	player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
-	//player_shadow_->setScale(vector3df(.85,.85,.85));
-
-	camera_->setPosition(calculateCameraPos());	
-
-	nodeSelector(); //highlights nodes within a certain range of the player
-
-	
-	
-	//}
+		nodeSelector(); //highlights nodes within a certain range of the player	
+	}
 
 
 	vector3df lamppos;
@@ -395,4 +394,24 @@ void player::isAttackingSomeone(bool& attacking, std::string& enemyName)
 {
 	attacking = current_state_ == ATTACK;
 	enemyName = selectedSceneNode_->getName();
+}
+
+void player::damage()
+{
+	playerHealth_ -= 5;
+
+	if (playerHealth_ <= 0)
+	{
+		current_state_ = DEAD;
+		kill();
+	}
+}
+
+void player::kill()
+{
+	characterModel_->setVisible(false); 
+	player_shadow_->setVisible(false);
+	delete character_;
+	smgr_->setActiveCamera(fpsCam_);
+	camera_->remove();	
 }
