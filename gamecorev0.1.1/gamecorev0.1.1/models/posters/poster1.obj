@@ -1,0 +1,36 @@
+# Wavefront OBJ file
+# Exported by Misfit Model 3D 1.3.8
+# Tue Jan 13 01:51:07 2015
+
+mtllib poster1.mtl
+
+# 4 Vertices
+v -12.641975 0.0 -9.08642
+v -12.641975 -0.0 10.666667
+v 11.061728 0.0 -9.08642
+v 11.061728 -0.0 10.666667
+
+# 6 Texture Coordinates
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+vt 0.0 1.0
+vt 0.0 0.0
+vt 1.0 0.0
+
+# 6 Vertex Normals
+vn 0.0 1.0 0.0
+vn 0.0 1.0 0.0
+vn 0.0 1.0 0.0
+vn 0.0 1.0 0.0
+vn 0.0 1.0 0.0
+vn 0.0 1.0 0.0
+
+# body, 2 grouped triangles
+
+usemtl skin
+o body
+g body
+
+f 1/1/1 2/2/2 4/3/3
+f 4/4/4 3/5/5 1/6/6

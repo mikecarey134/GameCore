@@ -145,6 +145,19 @@ void NetworkData::setRemote(const char* ourData)
 		else if (players_.find(ID) != players_.end())
 			players_[ID].damage();
 	}
+
+	else if(mType == "4")
+	{
+		//tell the players someone has left
+		std::string quit_msg = "<";
+		quit_msg+= ID;
+		quit_msg+="> ";
+		quit_msg+="Died";
+		message_buffer_->addMessage(quit_msg.c_str(),irr::video::SColor(255,255,0,0));
+		players_[ID].delete_player();
+		players_.erase(ID);
+	}
+
 	else if (mType == "99")//quit message
 	{
 		//tell the players someone has left

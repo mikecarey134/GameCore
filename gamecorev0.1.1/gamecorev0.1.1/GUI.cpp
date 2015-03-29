@@ -169,6 +169,7 @@ void GUI::drawHUD(player* thePlayer)
 }
 void GUI::addDialogBox(wchar_t* message)
 {
+	/*
 	stringw msg;
 	msg+= message;
 	device_->getGUIEnvironment()->drawAll();
@@ -176,5 +177,5 @@ void GUI::addDialogBox(wchar_t* message)
 	//IGUIEditBox* ebox = device_->getGUIEnvironment()->addEditBox(L"",rect<s32>(10,400, 260,550));
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 	font->draw(msg,rect<s32>(70,100,400,200),theColor_);
-	
+	*/
 }

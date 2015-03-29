@@ -133,15 +133,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 		buffered_message+= "> ";
 		buffered_message+= thePlayer.getChatMessage();
 
-		//Only send if we have a new message
-
-		if(!emptyMess(thePlayer.getChatMessage())) //if we have more than just the messageID aka its empty send
-		{
-			client_->Send(myMessage.c_str(), myMessage.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-			thePlayer.setChatMessage("\0");
-			message_buffer_->addMessage(buffered_message.c_str());
-		}
-
+		//if player in our player's list is damaged send it to the server
 		std::vector<remotePlayer*> damagedPlayers = networkData_.findDamagedPlayers();
 		if (!damagedPlayers.empty())
 		{
@@ -152,6 +144,25 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 				client_->Send(damageMsg.c_str(), damageMsg.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 			}
 		}
+		
+		if(thePlayer.getHealth() < 1)
+		{
+			std::string damageMsg = "4 ";
+			damageMsg += thePlayer.getname();
+			client_->Send(damageMsg.c_str(), damageMsg.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+		
+		
+		}
+
+		//Only send if we have a new message
+
+		if(!emptyMess(thePlayer.getChatMessage())) //if we have more than just the messageID aka its empty send
+		{
+			client_->Send(myMessage.c_str(), myMessage.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			thePlayer.setChatMessage("\0");
+			message_buffer_->addMessage(buffered_message.c_str());
+		}
+
 		
 
 		//Sends our network info about our player.
@@ -239,7 +250,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 				
 				default:// It's a client
 
-					if(p->data[0]!= '0' && p->data[0]!= '9' && p->data[0]!= '1'){//if the packet id is 0 or 99 do not print it
+					if(p->data[0]!= '0' && p->data[0]!= '9' && p->data[0]!= '1' && p->data[0]!= '3'){//if the packet id is 0 or 99 do not print it
 						printf("%s", p->data);
 						puts("\n");
 						message_buffer_->addMessage(p->data);//print out server messages on the message buffer
