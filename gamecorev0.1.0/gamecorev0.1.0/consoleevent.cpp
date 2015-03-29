@@ -181,6 +181,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			else
 				chatshown = true;
 			std::cout<<"T_Pressed!\n"<<"Value:"<<chatshown<<"\n";
+			
 		}
 
 		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_F3 && 
@@ -385,7 +386,8 @@ void consoleevent::drawPauseMenu ()// render the pause menu
 {
 	if (inventory)
 		inventory = false;
-	
+	//guienv_->drawAll();
+
 	IGUISkin* skin = guienv_->getSkin();
 	//guienv_ = device_->getGUIEnvironment();
 	//guienv_->drawAll();
@@ -564,6 +566,8 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 	else if (npc_->isLoaded() == LOADING)
 		npc_->loadModel();
 
+	if(chatshown)
+		drawMessage(L"T Was Pressed!");
 	if(debug)
 	{
 		gui_->drawDebug(font ,driver_,player_->getPosition());
@@ -577,5 +581,13 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 	if(!started)
 		drawMainMenu();//guienv_->drawAll();
 
+	
+
+	
+}
+
+void consoleevent::drawMessage(wchar_t* message)
+{
+	gui_->addDialogBox(message);
 	
 }

@@ -165,4 +165,16 @@ void GUI::drawHUD(player* thePlayer)
 	ITexture* currentWeapon = device_->getVideoDriver()->getTexture("bill/icons/hand-small.jpg");
 	device_->getVideoDriver()->draw2DImage(currentWeapon, position2d<s32>(670,470),rect<s32>(0,0,80,90));
 	//device->getVideoDriver()->draw2DRectangle(SColor(255,0,0,0),rect<s32>(50,50, 50+menuWidth,500));
+
+}
+void GUI::addDialogBox(wchar_t* message)
+{
+	/*stringw msg;
+	msg+= message;
+	device_->getGUIEnvironment()->drawAll();
+	//device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(20,400, 400,550));
+	IGUIEditBox* ebox = device_->getGUIEnvironment()->addEditBox(L"",rect<s32>(10,400, 260,550));
+	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
+	font->draw(msg,rect<s32>(70,100,400,200),theColor_);
+	*/
 }

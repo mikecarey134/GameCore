@@ -40,6 +40,7 @@ public:
 	void drawloading(irr::video::IVideoDriver*& driver, irr::gui::IGUIEnvironment*& guienv);
 	void drawIntro();
 	void drawHUD(player* thePlayer); 
+	void addDialogBox(wchar_t*);
 	/*void drawchat(irr::gui::IGUIEnvironment*& guienv)
 	{
 	

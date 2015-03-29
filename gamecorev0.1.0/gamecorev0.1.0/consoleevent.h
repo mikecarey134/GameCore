@@ -61,7 +61,7 @@ public:
 	void drawMainMenu  ();
 
 	void drawPauseMenu ();
-
+	void drawMessage   (wchar_t* message);
 	void drawInventory ();
 
 	void playerNpcCollisionCheck();
