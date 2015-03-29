@@ -4,9 +4,6 @@
 	By: Michael Carey
 */
 /************************************************************************/
-
-
-
 #pragma once
 #include<irrlicht.h>
 #include<irrKlang.h>
@@ -47,23 +44,21 @@ public:
 	void setSpeed      (float newSpeed)           {playerSpeed_ = newSpeed;}
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
-	void setName       (const std::string& name);         
+	void setName       (const std::string& name);  
+	void damage		   ()						  { playerHealth_ -= 5; }
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
-	bool isOnGround        ()           {return character_->isOnGround();  }
+	bool isOnGround        ()           { return character_->isOnGround();  }
 
 	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () {return characterModel_;}
 	irr::core::vector3df                getPosition   () {return characterModel_->getPosition();}
 	irr::core::vector3df                getRotation   () {return characterModel_->getRotation();}
 	irr::scene::IAnimatedMeshSceneNode* getPlayerNode () { return characterModel_; }
 	float                               getPlayerSpeed() {return playerSpeed_;}
-	int                                 getHealth     () {return playerHealth_;}
-	
+	int                                 getHealth     () {return playerHealth_;}	
 
 private:
-	
-
 	void idle();
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
@@ -77,7 +72,6 @@ private:
 	irrklang::ISoundEngine* engine_;
 	irrklang::ISound* playerSteps_;
 	irrklang::ISound* player_punch;
-
 
 	irr::u32 then;
 
@@ -93,6 +87,5 @@ private:
 	irr::scene::IBillboardTextSceneNode* nameDisplay_;
 	irr::core::stringw name_;
 	common_paths paths_;
-
 
 };

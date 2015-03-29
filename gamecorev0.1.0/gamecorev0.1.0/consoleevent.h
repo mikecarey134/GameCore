@@ -68,6 +68,10 @@ public:
 
 	void addClueObject(ClueObject* object); 
 
+	void addRemotePlayer(remotePlayer* rp);
+
+	remotePlayer* findRemotePlayer(std::string nodeName);
+
 	void update(irr::u32 then, irr::u32 now);
 	
 	void clear_console(){console.clearMessages();}
@@ -89,6 +93,7 @@ private:
 	SAppContext & Context_;
 	GUI* gui_;
 	player* player_;
+	std::list<remotePlayer*> remotePlayers_;
 	NPC* npc_;
 	irrBulletWorld* world_;
 	bool debug;

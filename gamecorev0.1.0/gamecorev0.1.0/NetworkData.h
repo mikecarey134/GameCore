@@ -19,7 +19,8 @@ By: Michael Carey
 #include "remotePlayer.h"
 #include <vector>
 #include"common.h"
-
+#include <iostream>
+#include <irrlicht.h>
 
 class NetworkData
 {

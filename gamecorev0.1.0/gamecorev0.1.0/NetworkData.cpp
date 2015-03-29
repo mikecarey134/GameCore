@@ -9,10 +9,10 @@ By: Michael Carey
 
 
 #include "NetworkData.h"
-#include "remotePlayer.h"
-#include <string.h>
-#include <iostream>
-#include <irrlicht.h>
+//#include "remotePlayer.h"
+//#include <string.h>
+//#include <iostream>
+//#include <irrlicht.h>
 
 NetworkData::NetworkData(irr::IrrlichtDevice* device,char* filename,
 						 irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
@@ -69,11 +69,9 @@ void NetworkData::setRemote(const char* ourData)
 	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z 
 		>> rem_rotX >> rem_rotY >> rem_rotZ >> model_type >> current_state;//set up incoming variables
 
-
 	//is it playerData
 	if( mType == "0")
-	{
-	
+	{	
 		bool notFound = true;
 		std::stringstream otherPlayer;
 		otherPlayer << ourData;
@@ -104,8 +102,7 @@ void NetworkData::setRemote(const char* ourData)
 			remotePlayer newPlayer(device_,smgr_,driver_,engine_,world_,model_type);
 			players_[ID]= newPlayer;
 			players_[ID].setName(ID);
-			++currentPlayers_;//update the current amount of players
-	
+			++currentPlayers_;//update the current amount of players	
 		}
 		else
 		{

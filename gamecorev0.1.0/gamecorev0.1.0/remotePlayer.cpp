@@ -168,6 +168,9 @@ void remotePlayer::setName(const std::string& name)
 
 	}
 	name_+=">";//postfix 
+	string<char> modelName = TYPE_PLAYER;
+	modelName += name_;
+	characterModel_->setName(modelName);
 	//create < player_name >
 
 }

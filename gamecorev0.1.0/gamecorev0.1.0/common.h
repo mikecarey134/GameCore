@@ -48,10 +48,8 @@
 		std::vector<std::string> skin_paths;
 	};
 
-
-
-
 	#define TYPE_CLUE "clue"
+	#define TYPE_PLAYER "player"
 
 #endif 
 //}

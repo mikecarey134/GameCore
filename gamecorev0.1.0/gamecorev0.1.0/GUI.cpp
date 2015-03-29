@@ -7,10 +7,10 @@
 /************************************************************************/
 
 #include "GUI.h"
-#include "windows.h"
+/*#include "windows.h"
 #include "psapi.h"
 #include"gl/gl.h"
-
+*/
 
 using namespace irr;
 using namespace core;

@@ -44,8 +44,6 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 	for (u32 i=0; i < KEY_KEY_CODES_COUNT; ++i)
 		KeyIsDown[i] = false;
 
-
-
 }
 consoleevent::~consoleevent(){}
 
@@ -91,8 +89,16 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		case EMIE_LMOUSE_PRESSED_DOWN:
 			MouseState.LeftButtonDown = true;
 			player_->attack();
-			if(player_->isEnemyInRange() && !npc_->isDead())
+			
+			if(player_->enemyNPCInRange()/* && !npc_->isDead()*/)
+			{
 				npc_->damage();
+				//nodeName = npc_->characterModel_->getName();
+			}
+			else if (player_->enemyPlayerInRange())
+			{
+				findRemotePlayer(player_->getSelectedNodeName())->damage();
+			}
 
 			//cout<<"Left Mouse CLick!\n";
 			break;
@@ -518,6 +524,24 @@ void consoleevent::addClueObject(ClueObject* object)
 		clueObjects_.push_back(object);
 	}
 	
+}
+
+void consoleevent::addRemotePlayer(remotePlayer* rp)
+{
+	remotePlayers_.push_back(rp);
+}
+
+remotePlayer* consoleevent::findRemotePlayer (std::string nodeName)
+{
+	std::list<remotePlayer*>::iterator it = remotePlayers_.begin();
+	remotePlayer* rm;
+	while (rm->getPSceneNode()->getName() != nodeName && it != remotePlayers_.end())
+	{
+		rm = *it;
+		++it;
+	}
+
+	return rm;
 }
 
 void consoleevent::update(u32 then, u32 now)//update the game throught the gameloop

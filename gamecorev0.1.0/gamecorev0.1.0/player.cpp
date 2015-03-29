@@ -80,6 +80,9 @@ player_model_type_(model_type)
 
 	character_->setJumpForce(PLAYER_JUMP_FORCE);
 
+	//const c8 modelName = player_name_;
+	//characterModel_->setName(&modelName);
+
 	//add the player shadow
 	player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
 	player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
@@ -108,6 +111,8 @@ player_model_type_(model_type)
 
 	enemyInRange_ = false;
 	clueInRange_ = false;
+	enemyNPCInRange_ = false;
+	enemyPlayerInRange_ = false;
 	
 	idle();
 
@@ -318,10 +323,21 @@ void player::nodeSelector()
 			std::string nodeName = selectedSceneNode_->getName();	//Need to convert from c8* into a std string
 																	//so it will work with the if statement
 			std::cout << "Looking at " << nodeName << std::endl;
-			if (nodeName == "test_npc")								
-				enemyInRange_ = true;
+			if (nodeName == "test_npc")	
+			{
+				enemyNPCInRange_ = true;
+				enemyPlayerInRange_ = false;
+			}
+			else if (nodeName.substr(0,5) == TYPE_PLAYER)
+			{
+				enemyPlayerInRange_ = true;
+				enemyNPCInRange_ = false;
+			}
 			else
-				enemyInRange_ = false;
+			{
+				enemyNPCInRange_ = false;
+				enemyPlayerInRange_ = false;
+			}
 
 			if(nodeName.substr(0,4) == TYPE_CLUE)
 			{
@@ -347,14 +363,16 @@ void player::nodeSelector()
 		{
 			enemyInRange_ = false;
 			clueInRange_ = false;
-			
+			enemyNPCInRange_ = false;
+			enemyPlayerInRange_ = false;			
 		}		
 	}
 	else
 	{
 		enemyInRange_ = false;
 		clueInRange_ = false;
-		
+		enemyNPCInRange_ = false;
+		enemyPlayerInRange_ = false;
 	}
 }
 

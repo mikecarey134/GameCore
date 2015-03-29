@@ -10,6 +10,9 @@
 #pragma once
 #include<irrlicht.h>
 #include "player.h"
+#include "windows.h"
+#include "psapi.h"
+#include"gl/gl.h"
 
 class GUI
 {

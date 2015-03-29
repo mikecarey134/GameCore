@@ -57,7 +57,7 @@ using namespace RakNet;
 
 #ifdef CONSOLE//if we want the console displayed
 #else
-#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")//comment out if you want to see the Debug console
+//#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")//comment out if you want to see the Debug console
 #pragma comment(lib,"IrrConsole-DEBUG")
 #endif
 #endif

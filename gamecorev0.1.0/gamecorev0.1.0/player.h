@@ -19,6 +19,8 @@
 #include "ClueObject.h"
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
+//#include "NPC.h"
+#include "remotePlayer.h"
 
 
 
@@ -70,11 +72,14 @@ public:
 	void setCamDist    (float increment)          {cameradist_+= increment;}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
 	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
+	void damage		   ()						  {playerHealth_ -= 5;}
 
 	const irr::f32 getXDir () const		{ return xDirection_; }
 	const irr::f32 getZDir () const		{ return zDirection_; }
 	bool isOnGround        ()           { return character_->isOnGround();  }
 	bool isEnemyInRange	   ()			{ return enemyInRange_; }
+	bool enemyNPCInRange  ()			{ return enemyNPCInRange_; }
+	bool enemyPlayerInRange()			{ return enemyPlayerInRange_; }
 	bool isClueInRange	   ()			{ return clueInRange_; }
 	irr::scene::ISceneNode* getSelectedNode(){ return selectedSceneNode_; }
 	void addClue (ClueObject* clue);
@@ -95,7 +100,7 @@ public:
 	std::string                         getname       () { return player_name_; }
 	std::vector<ClueObject*>			getFoundClues () { return clues_; }
 	bool								isKillerKnown () { return (clues_.size() >= CLUES_TO_FIND); }
-
+	const irr::c8*						getSelectedNodeName() { return selectedSceneNode_->getName(); }
 	
 
 	//directional 
@@ -153,6 +158,8 @@ private:
 	std::string player_name_;
 	
 	bool enemyInRange_;
+	bool enemyNPCInRange_;
+	bool enemyPlayerInRange_;
 	bool clueInRange_;
 	int player_model_type_;	
 	int current_state_;

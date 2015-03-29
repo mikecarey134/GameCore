@@ -16,7 +16,7 @@
 #include"common.h"
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
-#include"player.h"
+//#include"player.h"
 #include"GUI.h"
 
 #define NPC_EARTH_GRAVITY 150.0f
