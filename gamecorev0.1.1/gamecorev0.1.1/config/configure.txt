@@ -56,7 +56,8 @@
 #remote port number      #
 ##########################
 #
-25515
+#25515
+1080
 #
 ##########################
 #local port number       #
@@ -81,4 +82,4 @@ mikesmcs.ddns.net
 #user name               #
 ##########################
 #
-Mikey
+Dan
