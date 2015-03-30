@@ -202,6 +202,8 @@ void player::moveCameraControl()
 
 		nodeSelector(); //highlights nodes within a certain range of the player	
 	}
+	else
+		fpsCam_->setInputReceiverEnabled(true);
 
 
 	vector3df lamppos;
@@ -413,5 +415,5 @@ void player::kill()
 	player_shadow_->setVisible(false);
 	delete character_;
 	smgr_->setActiveCamera(fpsCam_);
-	camera_->remove();	
+	camera_->remove();
 }

@@ -46,7 +46,9 @@ public:
 
 	bool OnEvent(const irr::SEvent& event);
 
-	bool isvis(){return console.isVisible();}
+	bool isConsoleVisible(){return console.isVisible();}
+
+	bool isPaused()		{ return (pauseMenu || inventory || chatshown); }
 
 	virtual bool IsKeyDown(irr::EKEY_CODE keyCode) const;
 

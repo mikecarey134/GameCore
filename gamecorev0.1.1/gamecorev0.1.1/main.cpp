@@ -225,7 +225,7 @@ int main(void)
 
 						//we dont want the camera to update while the player is stationary
 						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
-						{
+						{			
 							thePlayer.moveCameraControl();
 							testClue.update();
 
@@ -233,7 +233,9 @@ int main(void)
 								npc_tester.moveNPC();//move our npc 
 	
 							crecv.playerNpcCollisionCheck();
-						}						
+						}
+						else
+							thePlayer.haltCamera();
 					
 						//GUI CLASS calls
 						if(font2)

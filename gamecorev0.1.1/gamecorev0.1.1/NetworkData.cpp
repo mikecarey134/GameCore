@@ -159,7 +159,6 @@ void NetworkData::setRemote(const char* ourData)
 		quit_msg+="Died";
 		message_buffer_->addMessage(quit_msg.c_str(),irr::video::SColor(255,255,0,0));
 		players_[ID].delete_player();
-		players_.erase(ID);
 	}
 
 	else if (mType == "99")//quit message
@@ -172,7 +171,8 @@ void NetworkData::setRemote(const char* ourData)
 		message_buffer_->addMessage(quit_msg.c_str(),irr::video::SColor(255,255,0,0));
 
 		std::cout<< ID <<" left\n";
-		players_[ID].delete_player();
+		if (!players_[ID].isDead())
+			players_[ID].delete_player();
 		players_.erase(ID);
 	}
 

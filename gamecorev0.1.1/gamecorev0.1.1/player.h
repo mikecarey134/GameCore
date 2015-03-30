@@ -84,6 +84,7 @@ public:
 	void isAttackingSomeone(bool& attacking, std::string& enemyName);
 	irr::scene::ISceneNode* getSelectedNode(){ return selectedSceneNode_; }
 	void addClue (ClueObject* clue);
+	void haltCamera()					{ fpsCam_->setInputReceiverEnabled(false); }
 				  
 
 	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () { return characterModel_; }

@@ -104,7 +104,8 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 
 		case EMIE_LMOUSE_LEFT_UP:
 			MouseState.LeftButtonDown = false;
-			player_->idle();
+			if (!player_->isDead())
+				player_->idle();
 			break;
 		case EMIE_MOUSE_MOVED:
 			MouseState.Position.X = event.MouseInput.X;
