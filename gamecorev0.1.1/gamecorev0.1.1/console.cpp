@@ -421,6 +421,9 @@ void IC_Console::loadDefaultCommands(irr::IrrlichtDevice* device)
 	cmd = new IC_Command_C(thePlayer_);
 	registerCommand(cmd);
 
+	cmd = new IC_Command_H(thePlayer_);
+	registerCommand(cmd);
+
 	cmd = new IC_Command_CLS();
 	registerCommand(cmd);
 

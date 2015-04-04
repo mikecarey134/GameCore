@@ -496,3 +496,24 @@ bool IC_Command_LM::invoke(const array<WideString>& args, IC_Dispatcher* pDispat
 	else//otherwise display an error
 		throw IC_Error(L"No Valid Argument! <New Health>");
 }
+
+//////////////////////////////////////////////////////////////////////////
+//hurt the current player (Debugging Purposes)
+IC_Command_H::IC_Command_H(player* thePlayer) : IC_Command(L"h")
+{
+	thePlayer_= thePlayer;
+
+	setUsage(L"\h ");
+
+	addDescLine("Hurt Current Player");
+}
+IC_Command_H::~IC_Command_H()
+{
+}
+
+//change the player speed for debugging
+bool IC_Command_H::invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput)
+{
+	thePlayer_->damage();
+	return true;
+}

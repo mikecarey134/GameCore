@@ -57,13 +57,6 @@ void NetworkData::setString(player& thereInput)
 //by the client 
 void NetworkData::setRemote(const char* ourData)
 {
-	for (std::map<std::string, remotePlayer>::iterator it = players_.begin();
-		 it != players_.end();
-		 ++it)
-	{
-		std::cout << it->second.getName() << ": " << it->second.getHealth() << std::endl;
-	}
-	std::cout << std::endl;
 
 	//get our remote information from the server
 	std::string ID;//player_key

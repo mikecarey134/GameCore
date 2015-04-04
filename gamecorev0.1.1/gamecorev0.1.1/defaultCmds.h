@@ -166,6 +166,17 @@ private:
 };
 
 
+class IC_Command_H : public IC_Command
+{
+public:
+	IC_Command_H(player* thePlayer);
+	virtual ~IC_Command_H();
+	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
+private:
+	player* thePlayer_;
+};
+
+
 
 class IC_Command_LM : public IC_Command
 {

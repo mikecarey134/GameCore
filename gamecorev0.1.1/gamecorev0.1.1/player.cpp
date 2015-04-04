@@ -30,8 +30,21 @@ player_model_type_(model_type)
 		player_name_+= id;
 	}
 	
-
 	chat_message_="\0";
+
+
+	SKeyMap keyMap[8];
+	keyMap[1].Action = EKA_MOVE_FORWARD;
+	keyMap[1].KeyCode = KEY_KEY_W;
+
+	keyMap[3].Action = EKA_MOVE_BACKWARD;
+	keyMap[3].KeyCode = KEY_KEY_S;
+
+	keyMap[5].Action = EKA_STRAFE_LEFT;
+	keyMap[5].KeyCode = KEY_KEY_A;
+
+	keyMap[7].Action = EKA_STRAFE_RIGHT;
+	keyMap[7].KeyCode = KEY_KEY_D;
 
 	//////////////////////////////////////////////////////////////////////////
 	//player cameras
@@ -39,7 +52,7 @@ player_model_type_(model_type)
 	camera_ = device->getSceneManager()->addCameraSceneNode();
 	camera_->bindTargetAndRotation(true);
 	camera_->setID(ID_IsNotPickable);
-	fpsCam_ = smgr_->addCameraSceneNodeFPS();
+	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap,8);
 	fpsCam_->setID(ID_IsNotPickable);
 	smgr_->setActiveCamera(camera_);
 	//set up the camera clipping planes in order to render the scene faster
@@ -56,16 +69,15 @@ player_model_type_(model_type)
 
 	character_ = new IKinematicCharacterController(world_);
 
-	
 	//dungeon example
 	//character_->warp(vector3df(-217.0f, 3.8f, 390.0f));
 	//character_->warp(vector3df(-17.0f, 15.8f, -217.0f));
-
 
 	//////////////////////////////////////////////////////////////////////////
 	//player attributes
 	//////////////////////////////////////////////////////////////////////////
 	common_paths model_path;
+    house_spawn spawn_loc;
 
 	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(model_path.model_paths[player_model_type_].c_str()));
 
@@ -101,8 +113,10 @@ player_model_type_(model_type)
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	//characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 	
-	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
-	characterModel_->setPosition(vector3df(-155.0f, 20.0f, -58.0f));
+	vector3df spawn(spawn_loc.get_spawn());
+	fpsCam_->setPosition(spawn);
+	character_->warp(spawn);//set the init player pos on the map
+	characterModel_->setPosition(spawn);
 	//setup the player shadow
 	player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
 

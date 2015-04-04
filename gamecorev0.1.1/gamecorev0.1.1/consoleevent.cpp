@@ -539,7 +539,7 @@ remotePlayer* consoleevent::findRemotePlayer (std::string nodeName)
 	if (!rm->isDead())
 		rmName = rm->getPSceneNode()->getName();
 
-	while (rm->getPSceneNode()->getName() != nodeName && it != client_->getNetworkData()->getRemotePlayers().end())
+	while (rmName != nodeName && it != client_->getNetworkData()->getRemotePlayers().end())
 	{
 		rm = &it->second;
 		if (!rm->isDead())
