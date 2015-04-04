@@ -95,6 +95,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 				else if (player_->enemyPlayerInRange())
 				{
 					findRemotePlayer(player_->getSelectedNodeName())->damage();
+					//findRemotePlayer(player_->getSelectedNodeName())->damage();
 				}
 			}
 			
@@ -533,9 +534,17 @@ remotePlayer* consoleevent::findRemotePlayer (std::string nodeName)
 	//std::map<std::string,remotePlayer> rms = client_->getNetworkData()->getRemotePlayers();
 	std::map<std::string,remotePlayer>::iterator it = client_->getNetworkData()->getRemotePlayers().begin();
 	remotePlayer* rm = &it->second;
+
+	std::string rmName;
+	if (!rm->isDead())
+		rmName = rm->getPSceneNode()->getName();
+
 	while (rm->getPSceneNode()->getName() != nodeName && it != client_->getNetworkData()->getRemotePlayers().end())
 	{
 		rm = &it->second;
+		if (!rm->isDead())
+			rmName = rm->getPSceneNode()->getName();
+
 		++it;
 	}
 

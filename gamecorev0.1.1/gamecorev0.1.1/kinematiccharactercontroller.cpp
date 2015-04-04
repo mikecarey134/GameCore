@@ -32,7 +32,7 @@ void IKinematicCharacterController::reset()
 
 void IKinematicCharacterController::warp(const irr::core::vector3df& origin)
 {
-    Character->warp(irrlichtToBulletVector(origin));
+     Character->warp(irrlichtToBulletVector(origin));
 }
 
 void IKinematicCharacterController::setFallSpeed(irr::f32 fallSpeed)

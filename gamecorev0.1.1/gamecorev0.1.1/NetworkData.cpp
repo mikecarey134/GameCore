@@ -57,6 +57,14 @@ void NetworkData::setString(player& thereInput)
 //by the client 
 void NetworkData::setRemote(const char* ourData)
 {
+	for (std::map<std::string, remotePlayer>::iterator it = players_.begin();
+		 it != players_.end();
+		 ++it)
+	{
+		std::cout << it->second.getName() << ": " << it->second.getHealth() << std::endl;
+	}
+	std::cout << std::endl;
+
 	//get our remote information from the server
 	std::string ID;//player_key
 	std::string mType;//code from server 0 = player data 1 = chat 99 = quit
@@ -144,10 +152,10 @@ void NetworkData::setRemote(const char* ourData)
 	}
 	else if (mType == "3") //sever sending data to clients
 	{
-		if (ID == player_->getname())
+		if (!player_->isDead() && ID == player_->getname())
 			player_->damage();
-		else if (players_.find(ID) != players_.end())
-			players_[ID].damage();
+		//else if (players_.find(ID) != players_.end())
+			//players_[ID].damage();
 	}
 
 	else if(mType == "4")
@@ -208,19 +216,19 @@ const std::string NetworkData::getThereChatMessage()
 	return temp;
 }
 
-std::vector<remotePlayer*> NetworkData::findDamagedPlayers()
+std::vector<remotePlayer> NetworkData::findDamagedPlayers()
 {
-	std::vector<remotePlayer*> damagedPlayers;
-	remotePlayer* rp;// = &players_.begin()->second;
+	std::vector<remotePlayer> damagedPlayers;
+	//remotePlayer* rp;// = &players_.begin()->second;
 	for (std::map<std::string,remotePlayer>::iterator it = players_.begin();
 		 it != players_.end();
 		 ++it)
 	{
-		rp = &it->second;
-		if (rp->isBeingDamaged())
+		//rp = &it->second;
+		if (it->second.isBeingDamaged())
 		{
-			rp->makeHealthy();
-			damagedPlayers.push_back(rp);
+			it->second.makeHealthy();
+			damagedPlayers.push_back(it->second);
 		}
 	}
 

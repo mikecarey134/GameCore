@@ -33,8 +33,8 @@ public:
 	void                 moveCameraControl	();
 	irr::core::vector3df calculateCameraPos	();
 	void				 nodeSelector		();
-	void                 delete_player      (){characterModel_->remove(); rem_player_shadow_->remove();
-												delete character_; nameDisplay_->remove(); }
+	void                 delete_player      ();
+
     void                 drawName();
 	
 	void setRotation(irr::core::vector3df pos)    {characterModel_->setRotation(pos);}

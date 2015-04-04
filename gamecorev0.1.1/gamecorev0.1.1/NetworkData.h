@@ -39,7 +39,7 @@ public:
 	void  setChatMessage  (char* chat);
 	void  setString       (player& thereInput);
 	void  setRemote       (const char* ourData);
-	std::vector<remotePlayer*> findDamagedPlayers();
+	std::vector<remotePlayer> findDamagedPlayers();
 	
 	//getters
     const char*       getNetworkData      ()const;// get the remote data

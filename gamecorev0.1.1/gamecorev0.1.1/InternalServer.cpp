@@ -134,13 +134,14 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 		buffered_message+= thePlayer.getChatMessage();
 
 		//if player in our player's list is damaged send it to the server
-		std::vector<remotePlayer*> damagedPlayers = networkData_.findDamagedPlayers();
+		std::vector<remotePlayer> damagedPlayers = networkData_.findDamagedPlayers();
+		std::cout << damagedPlayers.empty() << std::endl;
 		if (!damagedPlayers.empty())
 		{
 			for (int i = 0; i < damagedPlayers.size(); ++i)
 			{
 				std::string damageMsg = "3 ";
-				damageMsg += damagedPlayers[i]->getName();
+				damageMsg += damagedPlayers[i].getName();
 				client_->Send(damageMsg.c_str(), damageMsg.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 			}
 		}

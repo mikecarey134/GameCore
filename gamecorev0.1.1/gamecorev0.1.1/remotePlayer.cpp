@@ -149,6 +149,17 @@ void remotePlayer::right()
 
 
 */
+void remotePlayer::delete_player ()
+{
+	dead_ = true;
+	characterModel_->setVisible(false);
+	rem_player_shadow_->setVisible(false);
+	delete character_; 
+	characterModel_->remove(); 
+	rem_player_shadow_->remove();	
+	nameDisplay_->remove(); 
+}
+
 void remotePlayer::idle()
 {
 	characterModel_->setFrameLoop(206,250);
