@@ -375,7 +375,7 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 	if(font)
 		skin->setFont(font);
 	
-	font->draw("v0.1.1",rect<s32>(20,570,20,590),SColor(255,255,255,255));
+	font->draw("v0.1.1 (alpha)",rect<s32>(20,570,20,590),SColor(255,255,255,255));
 
 	device_->getCursorControl()->setVisible(true);
 	device_->getCursorControl()->setPosition(device_->getCursorControl()->getPosition());

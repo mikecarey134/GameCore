@@ -425,7 +425,7 @@ void player::isAttackingSomeone(bool& attacking, std::string& enemyName)
 void player::damage()
 {
 	
-
+	player_punch_= engine_->play2D("sounds/damage.mp3");
 	gore_.setPosition(vector3df(getPosition().X,getPosition().Y-40,getPosition().Z));
 	gore_.setUpMaterials("textures/blood.png");
 	gore_.set_min_max_amounts(100,1000);
@@ -450,4 +450,14 @@ void player::kill()
 	delete character_;
 	smgr_->setActiveCamera(fpsCam_);
 	camera_->remove();
+}
+
+void player::switch_weap(int type)
+{
+	characterModel_->setVisible(false);
+
+	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(smgr_->getMesh("characters/stick_mike_knife.ms3d"),
+		0,-1,getPosition());
+	characterModel_->setScale(vector3df(3.0f,3.0f,3.0f));
+
 }

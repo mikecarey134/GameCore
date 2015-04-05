@@ -107,13 +107,14 @@ public:
 	const int&							getCurrentState(){ return current_state_; }
 
 	//directional 
-	void                  forward   ();
-	void                  backwards ();
-	void                  left      ();
-	void                  right     ();
-	void                  idle      ();
-	void                  attack    ();
-	void                  update    (){gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();}
+	void                  forward    ();
+	void                  backwards  ();
+	void                  left       ();
+	void                  right      ();
+	void                  idle       ();
+	void                  attack     ();
+	void                  update     (){gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();}
+	void                  switch_weap(int type);
 
 	bool isStepSoundPaused() { return playerSteps_->getIsPaused(); }
 	void setStepSoundPaused(bool setting) { playerSteps_->setIsPaused(setting); }

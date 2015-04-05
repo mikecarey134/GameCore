@@ -190,6 +190,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 				case ID_ALREADY_CONNECTED:
 					// Connection lost normally
 					printf("Already Connected with guid %" PRINTF_64_BIT_MODIFIER "u\n", p->guid);
+					message_buffer_->addMessage("[info] Already Connected!",SColor(255,0,255,0));
 					break;
 
 				case ID_INCOMPATIBLE_PROTOCOL_VERSION:
@@ -215,7 +216,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					printf("Connection attempt failed\n");
-					
+					message_buffer_->addMessage("[info] Connection Attempt Failed!",SColor(255,255,0,0));
 					online_= false;
 					
 					break;
@@ -235,11 +236,13 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 					// Couldn't deliver a reliable packet - i.e. the other system was abnormally
 					// terminated
 					printf("Connection Lost!\n");
+					message_buffer_->addMessage("[info] Connection Lost!",SColor(255,255,0,0));
 					break;
 
 				case ID_CONNECTION_REQUEST_ACCEPTED:
 					// This tells the client they have connected
 					printf("Connected To Server\n");
+					message_buffer_->addMessage("[info] Connected To Server",SColor(255,0,255,0));
 					//printf("external address is %s\n", client_->GetExternalID(p->systemAddress).ToString(true));
 					break;
 				case ID_CONNECTED_PING:
@@ -261,7 +264,23 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 		}
 
+	else
+	{
+		if(!emptyMess(thePlayer.getChatMessage())) //if we have more than just the messageID aka its empty send
+		{
+			
+			//display the current player's message in the buffer
+			std::string buffered_message = "<";
+			buffered_message+= thePlayer.getname();
+			buffered_message+= "> ";
+			buffered_message+= thePlayer.getChatMessage();
 
+			thePlayer.setChatMessage("\0");
+			message_buffer_->addMessage(buffered_message.c_str());
+		}
+
+
+	}
 	//}
 }
 

@@ -89,24 +89,7 @@ int main(void)
 
 	//load our scene manager and set up the shadow color with an alpha channel
 	ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
-	keymap userkeys;
-
-	//////////////////////////////////////////////////////////////////////////
-	//Alpha Particle class Tester
-	//////////////////////////////////////////////////////////////////////////
-	/*
-	ParticleSystem particle_system(smgr,driver);
-	particle_system.setPosition(vector3df(-13,48,-296));
-	particle_system.setUpMaterials("textures/brightfire.jpg");
-	particle_system.setUpEmitter();
-
-	ParticleSystem blood_particle_system(smgr,driver,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.0f,0.1f),178,45
-		,SColor(100,90,67,184),SColor(150,252,8,215),1000,200,20,dimension2df(0.2,0.2),dimension2df(10.0,10.0));
-	blood_particle_system.setPosition(vector3df(-22,-35,166));
-	blood_particle_system.setUpMaterials("textures/particle_red.bmp");
-	blood_particle_system.setUpEmitter();*/
-	//////////////////////////////////////////////////////////////////////////
-	
+	//keymap userkeys;
 
 	//set up the bullet physics here for our world
 	irrBulletWorld* world;//the irrbullet world 
@@ -139,7 +122,7 @@ int main(void)
 
 	theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
 
-	InternalServer Client(true,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
+	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 	
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);	
@@ -149,7 +132,7 @@ int main(void)
 	currentMap.setMap("subbs.irr");
 	//currentMap->setMap("arena.irr");
 	//currentMap->setMap("dungeon2.irr");
-	WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
+	//WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
 		//takes care of all input devices and events calls update during the gameloop
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	device->setEventReceiver(&crecv);
@@ -170,7 +153,8 @@ int main(void)
 	
 	//clear the console before the game starts
 	crecv.clear_console();
-
+	
+	thePlayer.switch_weap(1);
 	while(device->run())//while the game is running
 	{		
 		const u32 now = device->getTimer()->getTime();
@@ -208,7 +192,7 @@ int main(void)
 
 					//driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
 
-					//make cursor temp visible until a better menu is in place
+					//make cursor temp visible
 						if (!crecv.getPaused() && !crecv.getIsInventory())
 						{
 							device->getCursorControl()->setVisible(false);
@@ -238,16 +222,9 @@ int main(void)
 						else
 							thePlayer.haltCamera();
 					
-						//GUI CLASS calls
-						if(font2)
-						{
-							//draw the current gui related items
-							//theGui.drawHealth(font2,core::rect<s32>(10,565,450,100),&thePlayer);
-							//theGui.drawCrosshair(font2,core::rect<s32>(400,300,450,100));
-							//theGui.drawMessage(font,irr::core::rect<irr::s32>(325,275,475,325),"");
-							theGui.drawHUD(&thePlayer);
-						}
-
+					
+				
+					theGui.drawHUD(&thePlayer);
 				    chat_queue.draw();
 					crecv.displayconsole(frameDeltaTime);
 					
