@@ -21,7 +21,8 @@ player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* 
 			   irrBulletWorld* world, std::string player_name,int model_type):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
-player_model_type_(model_type)
+player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
+									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2,0.2),dimension2df(4.0,4.0))
 {
 	player_name_ += "_";
 	for (int i=0;i<4;++i)
@@ -45,6 +46,7 @@ player_model_type_(model_type)
 
 	keyMap[7].Action = EKA_STRAFE_RIGHT;
 	keyMap[7].KeyCode = KEY_KEY_D;
+
 
 	//////////////////////////////////////////////////////////////////////////
 	//player cameras
@@ -135,6 +137,11 @@ player_model_type_(model_type)
 	setlamp(false);
 
 	clues_.clear();
+
+
+
+
+
 }
 
 player::~player(void)
@@ -252,6 +259,8 @@ vector3df player::calculateCameraPos()
 	newCamPos.Y = characterModel_->getPosition().Y - (sin(mouseCursorY_ * PI / 180.0f) * cameradist_);
 	newCamPos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * cameradist_);
 
+	gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();
+
 	return newCamPos;
 }
 
@@ -290,6 +299,7 @@ void player::idle()
 	characterModel_->setAnimationSpeed(4);
 	characterModel_->setFrameLoop(206,250);
 	current_state_=State::IDLE;
+	
 }
 
 void player::nodeSelector()
@@ -414,6 +424,13 @@ void player::isAttackingSomeone(bool& attacking, std::string& enemyName)
 
 void player::damage()
 {
+	
+
+	gore_.setPosition(vector3df(getPosition().X,getPosition().Y-40,getPosition().Z));
+	gore_.setUpMaterials("textures/blood.png");
+	gore_.set_min_max_amounts(100,1000);
+	gore_.setUpEmitter();
+
 	playerHealth_ -= 5;
 
 	if (playerHealth_ <= 0)
@@ -421,10 +438,13 @@ void player::damage()
 		current_state_ = DEAD;
 		kill();
 	}
+	
+	
 }
 
 void player::kill()
-{
+{	
+	gore_.hide(true);
 	characterModel_->setVisible(false); 
 	player_shadow_->setVisible(false);
 	delete character_;

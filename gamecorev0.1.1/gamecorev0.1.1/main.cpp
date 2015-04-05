@@ -32,6 +32,7 @@
 #include "ClueObject.h"
 #include "Config_Reader.h"	
 #include <winsock2.h>
+#include "WeaponObject.h"
 
 
 //standard irrlicht namespaces
@@ -148,7 +149,7 @@ int main(void)
 	currentMap.setMap("subbs.irr");
 	//currentMap->setMap("arena.irr");
 	//currentMap->setMap("dungeon2.irr");
-	
+	WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
 		//takes care of all input devices and events calls update during the gameloop
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	device->setEventReceiver(&crecv);

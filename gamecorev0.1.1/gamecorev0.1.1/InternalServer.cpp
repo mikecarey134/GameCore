@@ -135,7 +135,6 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 		//if player in our player's list is damaged send it to the server
 		std::vector<remotePlayer> damagedPlayers = networkData_.findDamagedPlayers();
-		std::cout << damagedPlayers.empty() << std::endl;
 		if (!damagedPlayers.empty())
 		{
 			for (int i = 0; i < damagedPlayers.size(); ++i)

@@ -66,6 +66,7 @@
 
 	#define TYPE_CLUE "clue"
 	#define TYPE_PLAYER "player"
+    #define TYPE_WEAPON "weapon"
 
 #endif 
 //}

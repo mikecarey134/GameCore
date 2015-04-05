@@ -205,14 +205,14 @@ void IC_Dispatcher::registerCommand(IC_Command* cmd)
 //! check if a command is already registered
 bool IC_Dispatcher::hasCommand(const WideString cmdName)
 {
-	map<WideString,IC_Command*>::iterator iter = commandTable.find(cmdName);
+	std::map<WideString,IC_Command*>::iterator iter = commandTable.find(cmdName);
 	return iter != commandTable.end();
 }
 //=========================================================================================
 //! dispatch a command with the name and the supplied args
 void IC_Dispatcher::dispatch(const WideString cmdName, const array<WideString>& args, IC_MessageSink* pOutput)
 {
-	map<WideString,IC_Command*>::iterator iter = commandTable.find(cmdName);
+	std::map<WideString,IC_Command*>::iterator iter = commandTable.find(cmdName);
 	if(iter != commandTable.end())
 	{
 		try
@@ -252,7 +252,7 @@ void IC_Dispatcher::dispatch(const WideString cmdName, const array<WideString>& 
 //! deregister (remove) a command
 void IC_Dispatcher::deregisterCommand(const WideString cmdName)
 {
-	map<WideString,IC_Command*>::iterator iter = commandTable.find(cmdName);
+	std::map<WideString,IC_Command*>::iterator iter = commandTable.find(cmdName);
 	if(iter != commandTable.end())
 	{
 		delete iter->second;
@@ -263,7 +263,7 @@ void IC_Dispatcher::deregisterCommand(const WideString cmdName)
 //! deregister all commands
 void IC_Dispatcher::deregisterAllCommands()
 {
-	map<WideString,IC_Command*>::iterator iter = commandTable.begin();
+	std::map<WideString,IC_Command*>::iterator iter = commandTable.begin();
 	while(iter != commandTable.end())
 	{
 		delete iter->second;
@@ -276,7 +276,7 @@ void IC_Dispatcher::deregisterAllCommands()
 u32  IC_Dispatcher::getRegisteredCommands(array<WideString>& cmdNames)
 {
 	cmdNames.clear();
-	map<WideString,IC_Command*>::iterator iter = commandTable.begin();
+	std::map<WideString,IC_Command*>::iterator iter = commandTable.begin();
 	while(iter != commandTable.end())
 	{
 		

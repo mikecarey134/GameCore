@@ -27,6 +27,12 @@ public:
 		u32 maxAngle = 0, dimension2df startSize= dimension2df(5.0f,5.0f),
 		dimension2df endSize= dimension2df(8.0f,8.0f));
 
+	ParticleSystem(const ParticleSystem& other):smgr_(other.smgr_),driver_(other.driver_),box_(other.box_),direction_(other.direction_)
+		,maxStartAmount_(other.maxStartAmount_),minStartAmount_(other.minStartAmount_),startColor_(other.startColor_)
+		,endColor_(other.endColor_),maxLifetime_(other.maxLifetime_),
+	minLifetime_(other.minLifetime_),maxAngle_(other.maxAngle_),startSize_(other.startSize_),endSize_(other.endSize_)
+	{}
+
 	~ParticleSystem(void);
 	//set up where you want the particle system to be
 	void setPosition   (irr::core::vector3df pos)     {particleNode_->setPosition(pos);}
@@ -39,10 +45,11 @@ public:
 		particleNode_->setMaterialFlag(irr::video::EMF_ZWRITE_ENABLE,false);
 		particleNode_->setAutomaticCulling(EAC_OFF);
 		particleNode_->setMaterialTexture(0,driver_->getTexture(file_path));
-		particleNode_->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+		particleNode_->setMaterialType(irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL);
 
 	}
 	//init the emitter 
+	void set_min_max_amounts(irr::u32 newmin,irr::u32 newmax){minStartAmount_=newmin;maxStartAmount_=newmax;}
 	void setUpEmitter()
 	{
 	

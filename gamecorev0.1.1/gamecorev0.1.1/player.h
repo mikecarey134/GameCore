@@ -21,6 +21,7 @@
 #include"exampleframework.h"
 //#include "NPC.h"
 #include "remotePlayer.h"
+#include "ParticleSystem.h"
 
 
 
@@ -112,6 +113,7 @@ public:
 	void                  right     ();
 	void                  idle      ();
 	void                  attack    ();
+	void                  update    (){gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();}
 
 	bool isStepSoundPaused() { return playerSteps_->getIsPaused(); }
 	void setStepSoundPaused(bool setting) { playerSteps_->setIsPaused(setting); }
@@ -162,4 +164,5 @@ private:
 	int player_model_type_;	
 	int current_state_;
 	std::vector<ClueObject*> clues_;
+	ParticleSystem gore_;
 };

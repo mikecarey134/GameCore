@@ -354,30 +354,33 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 	
 	//add a button to our gui here
 	
-	ITexture* backgroundImage = driver_->getTexture("bill/creepyman-alt.jpg");
-	ITexture* titleImage = driver_->getTexture("bill/logo.png");
+	ITexture* backgroundImage = driver_->getTexture("bill/creepymansion.jpg");
+	//ITexture* titleImage = driver_->getTexture("bill/logo.png");
 
 	driver_->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
-	driver_->draw2DImage(titleImage,position2d<s32>(0,0),rect<s32>(0,0,424,127),NULL,SColor(255,255,255,255), true);
+	//driver_->draw2DImage(titleImage,position2d<s32>(0,0),rect<s32>(0,0,424,127),NULL,SColor(255,255,255,255), true);
 
-	guienv_->addButton(rect<s32>(30,420,145,450), 0, GUI_ID_START,
+	guienv_->addButton(rect<s32>(330,200,450,240), 0, GUI_ID_START,
 		L"Start", L"Starts the game");
-	guienv_->addButton(rect<s32>(30,460,145,490), 0, GUI_ID_OPTIONS,
+	guienv_->addButton(rect<s32>(330,260,450,300), 0, GUI_ID_OPTIONS,
 		L"Options", L"Adjust game settings");
-	guienv_->addButton(rect<s32>(30,500,145,530), 0, GUI_ID_CREDITS,
+	guienv_->addButton(rect<s32>(330,320,450,360), 0, GUI_ID_CREDITS,
 		L"Credits", L"Click to see who made the game");
-	guienv_->addButton(rect<s32>(30,540,145,570), 0, GUI::GUI_ID_QUIT_BUTTON,
+	guienv_->addButton(rect<s32>(330,380,450,420), 0, GUI::GUI_ID_QUIT_BUTTON,
 		L"Exit", L"Exit to the Desktop");
 
 
 	//2 types of gui fonts
-	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
+	gui::IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/console.bmp");
 	if(font)
 		skin->setFont(font);
-	skin->setFont(guienv_->getBuiltInFont(),EGDF_TOOLTIP);
+	
+	font->draw("v0.1.1",rect<s32>(20,570,20,590),SColor(255,255,255,255));
+
 	device_->getCursorControl()->setVisible(true);
 	device_->getCursorControl()->setPosition(device_->getCursorControl()->getPosition());
 	guienv_->drawAll();
+	
 }
 
 

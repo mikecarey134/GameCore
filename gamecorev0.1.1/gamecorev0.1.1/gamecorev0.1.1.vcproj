@@ -198,10 +198,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\InteractiveObject.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\InternalServer.cpp"
 				>
 			</File>
@@ -231,6 +227,10 @@
 			</File>
 			<File
 				RelativePath=".\remotePlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\WeaponObject.cpp"
 				>
 			</File>
 		</Filter>
@@ -305,6 +305,10 @@
 			</File>
 			<File
 				RelativePath=".\SAppcontext.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WeaponObject.h"
 				>
 			</File>
 		</Filter>
