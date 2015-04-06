@@ -21,6 +21,7 @@ By: Michael Carey
 #include"common.h"
 #include <iostream>
 #include <irrlicht.h>
+#include "InteractiveObject.h"
 
 class NetworkData
 {

@@ -54,6 +54,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	camera_ = device->getSceneManager()->addCameraSceneNode();
 	camera_->bindTargetAndRotation(true);
 	camera_->setID(ID_IsNotPickable);
+
 	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap,8);
 	fpsCam_->setID(ID_IsNotPickable);
 	smgr_->setActiveCamera(camera_);
@@ -138,8 +139,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 
 	clues_.clear();
 
-
-
+	camera_->setPosition(characterModel_->getPosition());
 
 
 }
@@ -166,6 +166,71 @@ void player::jump()
 		characterModel_->setFrameLoop(103,111);
 		current_state_=State::JUMP;
 	}
+}
+
+//Camera Collision code from irrlicht collisions example
+void player::setUpCameraCollisions()
+{
+	scene::IMetaTriangleSelector * meta = device_->getSceneManager()->createMetaTriangleSelector();
+
+	/*
+	Now we will find all the nodes in the scene and create triangle
+	selectors for all suitable nodes.  Typically, you would want to make a
+	more informed decision about which nodes to performs collision checks
+	on; you could capture that information in the node name or Id.
+	*/
+	core::array<scene::ISceneNode *> nodes;
+	device_->getSceneManager()->getSceneNodesFromType(scene::ESNT_ANY, nodes); // Find all nodes
+
+	for (u32 i=0; i < nodes.size(); ++i)
+	{
+		scene::ISceneNode * node = nodes[i];
+		scene::ITriangleSelector * selector = 0;
+
+		switch(node->getType())
+		{
+		case scene::ESNT_CUBE:
+		case scene::ESNT_ANIMATED_MESH:
+			// Because the selector won't animate with the mesh,
+			// and is only being used for camera collision, we'll just use an approximate
+			// bounding box instead of ((scene::IAnimatedMeshSceneNode*)node)->getMesh(0)
+			selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(node);
+		break;
+
+		case scene::ESNT_MESH:
+		case scene::ESNT_SPHERE: // Derived from IMeshSceneNode
+			selector = device_->getSceneManager()->createTriangleSelector(((scene::IMeshSceneNode*)node)->getMesh(), node);
+			break;
+
+		case scene::ESNT_TERRAIN:
+			selector = device_->getSceneManager()->createTerrainTriangleSelector((scene::ITerrainSceneNode*)node);
+			break;
+
+		case scene::ESNT_OCTREE:
+			selector = device_->getSceneManager()->createOctreeTriangleSelector(((scene::IMeshSceneNode*)node)->getMesh(), node);
+			break;
+
+		default:
+			// Don't create a selector for this node type
+			break;
+		}
+
+		if(selector)
+		{
+			// Add it to the meta selector, which will take a reference to it
+			meta->addTriangleSelector(selector);
+			// And drop my reference to it, so that the meta selector owns it.
+			selector->drop();
+		}
+	}
+
+	scene::ISceneNodeAnimator* anim = device_->getSceneManager()->createCollisionResponseAnimator(
+		meta, camera_, core::vector3df(1,1,1),
+		core::vector3df(0,0,0));
+	meta->drop(); // I'm done with the meta selector now
+
+	camera_->addAnimator(anim);
+	anim->drop(); // I'm done with the animator now
 }
 
 void player::moveCameraControl()

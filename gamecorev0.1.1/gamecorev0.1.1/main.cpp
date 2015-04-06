@@ -100,11 +100,6 @@ int main(void)
 	SAppContext context;//guiEvent stuff
 	context.device = device;
 	context.counter = 0;
-	
-	//load our player into the scene
-	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
-		,config_reader.get_model());
-	NPC npc_tester(device,smgr,world,driver);
 
 	if(!device)//if device fails to load exit
 	{
@@ -121,9 +116,6 @@ int main(void)
 	chat_queue.setFont(device->getGUIEnvironment()->getFont("bill/console.bmp"));
 
 	theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
-
-	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
-		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 	
 	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);	
 
@@ -134,12 +126,22 @@ int main(void)
 	//currentMap->setMap("dungeon2.irr");
 	//WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
 		//takes care of all input devices and events calls update during the gameloop
+
+	//load our player into the scene
+	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
+		,config_reader.get_model());
+	NPC npc_tester(device,smgr,world,driver);
+
+	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
+		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
+
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	device->setEventReceiver(&crecv);
 
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");
 
 	currentMap.loadMap();
+	//thePlayer.setUpCameraCollisions();
 
 	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap);
 
