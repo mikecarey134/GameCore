@@ -12,7 +12,7 @@
 #include <fstream>
 #include"Win_Launcher.h"
 #pragma comment(lib,"Irrlicht.lib")
-//#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")//comment out if you want to see the Debug console
+#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")//comment out if you want to see the Debug console
 #else
 #endif
 
@@ -46,22 +46,12 @@ int main(int argc, char **argv)
 	ITexture* logo =driver->getTexture("banner.png");
 	//driver->draw2DImage(logo,rect<s32>(10,10,190,100),rect<s32>(10,10,190,100));
 
-	IGUIFont* font = env->getFont("caption.bmp");
+	IGUIFont* font = env->getFont("fonts/newsfont.xml");
 	skin->setColor(EGDC_BUTTON_TEXT, SColor(255,255,255,255));
 	if (font)
 		skin->setFont(font);
 	
-	//skin->setFont(env->getFont(), EGDF_TOOLTIP);
-/*
-	env->addButton(rect<s32>(10,240,110,240 + 32), 0,Event::GUI_ID_START_BUTTON,
-		L"Game Launch", L"Launches the Game");
-	env->addButton(rect<s32>(10,280,110,280 + 32), 0, Event::GUI_ID_SERVER_BUTTON,
-		L"Run Server", L"Starts the Server");
-	env->addButton(rect<s32>(10,320,110,320 + 32), 0, Event::GUI_ID_CONFIG_BUTTON,
-		L"Configuration", L"Edit Configuration File");
-	env->addButton(rect<s32>(10,360,110,360 + 32), 0, Event::GUI_ID_QUIT_BUTTON,
-		L"Quit", L"Exits Program");
-*/
+
 	int YPos = 440;
 	int YHeight = YPos + 45;
 
@@ -76,7 +66,7 @@ int main(int argc, char **argv)
 		L"Run Server", L"Starts the Server");
 	XPos += XWidth + XOffset;
 	env->addButton(rect<s32>(XPos,YPos,XPos+XWidth,YHeight), 0, Event::GUI_ID_CONFIG_BUTTON,
-		L"Configuration", L"Edit Configuration File");
+		L"Configure", L"Edit Configuration File");
 	XPos += XWidth + XOffset;
 	env->addButton(rect<s32>(XPos,YPos,XPos+XWidth,YHeight), 0, Event::GUI_ID_QUIT_BUTTON,
 		L"Quit", L"Exits Program");
@@ -114,7 +104,7 @@ int main(int argc, char **argv)
 	device->setEventReceiver(&receiver);
 
 
-	device->setWindowCaption(L"Game Launcher v0.1");
+	device->setWindowCaption(L"Game Launcher v0.2");
 	while(device->run())
 	{
 		driver->beginScene(true,true, SColor(255,0,0,0));

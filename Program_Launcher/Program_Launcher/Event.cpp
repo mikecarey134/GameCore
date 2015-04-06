@@ -65,7 +65,7 @@ bool Event::OnEvent(const SEvent& event)
 				#elif _WIN32
 				win_launch.run_server();
 				printf("Server Launching...\n");
-				Context.device->closeDevice();
+				//Context.device->closeDevice();
 				
 
 				return true;
