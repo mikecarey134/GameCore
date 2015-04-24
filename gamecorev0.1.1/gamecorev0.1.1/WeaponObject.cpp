@@ -1,3 +1,12 @@
+
+/************************************************************************/
+/* WeaponObject.cpp
+	purpose: character weapons 
+	By: Michael Carey
+*/
+/************************************************************************/
+
+
 #include "WeaponObject.h"
 
 using namespace irr;

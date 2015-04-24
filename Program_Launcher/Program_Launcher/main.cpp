@@ -43,10 +43,10 @@ int main(int argc, char **argv)
 
 	IGUISkin* skin = env->getSkin();
 	
-	ITexture* logo =driver->getTexture("banner.png");
+	ITexture* logo =driver->getTexture("launcher/banner.png");
 	//driver->draw2DImage(logo,rect<s32>(10,10,190,100),rect<s32>(10,10,190,100));
 
-	IGUIFont* font = env->getFont("fonts/newsfont.xml");
+	IGUIFont* font = env->getFont("launcher/newsfont.xml");
 	skin->setColor(EGDC_BUTTON_TEXT, SColor(255,255,255,255));
 	if (font)
 		skin->setFont(font);
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 
 	std::ifstream news_file;
 	std::string news;
-	news_file.open("newsfile.txt");
+	news_file.open("launcher/newsfile.txt");
 	if (news_file.fail())
 		context.listbox->addItem(L"News read fail");
 	else

@@ -7,10 +7,6 @@
 /************************************************************************/
 
 #include "GUI.h"
-/*#include "windows.h"
-#include "psapi.h"
-#include"gl/gl.h"
-*/
 
 using namespace irr;
 using namespace core;
@@ -55,7 +51,7 @@ void GUI::drawHealth(IGUIFont* font, player* thePlayer)
 }
 void GUI::drawDebug(IGUIFont* font,IVideoDriver* driver,vector3df nodePosition)
 {
-
+	//add all the info to the screen
 	int GUIFps = driver->getFPS();
 	int pDrawn = driver->getPrimitiveCountDrawn();
 
@@ -159,9 +155,11 @@ void GUI::drawHUD(player* thePlayer)
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 	drawHealth(font, thePlayer);
 
+	//draw the health bar
 	device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(660,458, 760,570));
 	//device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), position2d<s32>(660,460), rect<s32>(0,0, 120,120));
 
+	//draw the current weapon
 	ITexture* currentWeapon = device_->getVideoDriver()->getTexture("bill/icons/hand-small.jpg");
 	device_->getVideoDriver()->draw2DImage(currentWeapon, position2d<s32>(670,470),rect<s32>(0,0,80,90));
 	//device->getVideoDriver()->draw2DRectangle(SColor(255,0,0,0),rect<s32>(50,50, 50+menuWidth,500));

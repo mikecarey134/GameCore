@@ -1,3 +1,11 @@
+/************************************************************************/
+/* WeaponObject.cpp
+	purpose: character weapons 
+	By: Michael Carey
+*/
+/************************************************************************/
+
+
 #pragma once
 #include "InteractiveObject.h"
 #include <irrlicht.h>

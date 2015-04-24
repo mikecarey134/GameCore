@@ -7,8 +7,8 @@
 /************************************************************************/
 
 #define _IRR_WINDOWS_
-#define CONSOLE
-
+//#define CONSOLE
+//comment out if you don't want to see the Debug console
 
 #include "exampleframework.h"
 #include "ChatQueue.h"
@@ -58,7 +58,7 @@ using namespace RakNet;
 
 #ifdef CONSOLE//if we want the console displayed
 #else
-//#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")//comment out if you want to see the Debug console
+#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #pragma comment(lib,"IrrConsole-DEBUG")
 #endif
 #endif
@@ -132,6 +132,7 @@ int main(void)
 		,config_reader.get_model());
 	NPC npc_tester(device,smgr,world,driver);
 
+	//init the client side of the server
 	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
@@ -156,7 +157,7 @@ int main(void)
 	//clear the console before the game starts
 	crecv.clear_console();
 	
-	thePlayer.switch_weap(1);
+	//thePlayer.switch_weap(1);
 	while(device->run())//while the game is running
 	{		
 		const u32 now = device->getTimer()->getTime();
@@ -166,7 +167,7 @@ int main(void)
 		if (device->isWindowActive())//if a window is running
 		{	
 				
-				if (!crecv.getStarted())
+				if (!crecv.getStarted())//draw the main menu
 				{
 					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a black background
 					
@@ -176,7 +177,7 @@ int main(void)
 					
 					crecv.drawMainMenu();				
 				}
-				else
+				else //otherwise play the game
 				{
 					//if we have started our game
 					if(crecv.getStarted()){
@@ -184,8 +185,7 @@ int main(void)
 						engine->play2D("sounds/man.mp3", true);//startup the main track				
 					}
 
-					//internal client sends data to the server
-	
+					//internal client loops for input
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
 					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a white background
 
@@ -194,10 +194,10 @@ int main(void)
 
 					//driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
 
-					//make cursor temp visible
-						if (!crecv.getPaused() && !crecv.getIsInventory())
+					
+						if (!crecv.getPaused() && !crecv.getIsInventory())//is the game paused
 						{
-							device->getCursorControl()->setVisible(false);
+							device->getCursorControl()->setVisible(false);//make cursor temp visible
 							device->getCursorControl()->setPosition( 0.5f, 0.5f );
 						}
 						else

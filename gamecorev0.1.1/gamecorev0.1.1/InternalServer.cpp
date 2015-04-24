@@ -86,6 +86,7 @@ InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* fil
 			client_->Startup(8,&socketDescriptor,1);
 			client_->SetOccasionalPing(true);
 
+			//start the connection
 			RakNet::ConnectionAttemptResult car = client_->Connect(ip_, remote_port, "0", (int) strlen("0"));
 			bool b = (car==RakNet::CONNECTION_ATTEMPT_STARTED);
 
@@ -222,8 +223,8 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 					break;
 
 				case ID_NO_FREE_INCOMING_CONNECTIONS:
-					// Sorry, the server is full.  I don't do anything here but
-					// A real app should tell the user
+					// Sorry, the server is full. 
+		
 					printf("Server is Full\n");
 					online_ = false;
 					break;

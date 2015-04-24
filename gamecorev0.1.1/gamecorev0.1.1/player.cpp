@@ -24,6 +24,8 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
 									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2,0.2),dimension2df(4.0,4.0))
 {
+	//append number to players to make 
+	//sure the same player id is not created
 	player_name_ += "_";
 	for (int i=0;i<4;++i)
 	{
@@ -31,9 +33,11 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 		player_name_+= id;
 	}
 	
+	//set the init chat message to an empty string
 	chat_message_="\0";
 
-
+	//hacky key mapping for the 
+	//observer camera
 	SKeyMap keyMap[8];
 	keyMap[1].Action = EKA_MOVE_FORWARD;
 	keyMap[1].KeyCode = KEY_KEY_W;
@@ -160,6 +164,7 @@ void player::animate(EMD2_ANIMATION_TYPE animation)
 
 void player::jump()
 {
+	//animate the player on jump
 	if (character_->isOnGround()){
 		player_jump_= engine_->play2D("sounds/jump.mp3");
 		character_->jump();
@@ -291,7 +296,7 @@ void player::moveCameraControl()
 	else
 		fpsCam_->setInputReceiverEnabled(true);
 
-
+	//setup the player lamp position
 	vector3df lamppos;
 	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4 )* -1 ;
 	lamppos.Y = characterModel_->getPosition().Y ;
@@ -331,7 +336,8 @@ vector3df player::calculateCameraPos()
 
 void player::forward()
 {	
-	
+	//early walk animations 
+	//choppy
 	characterModel_->setFrameLoop(301,318);
 	characterModel_->setAnimationSpeed(4);
 	
@@ -361,6 +367,7 @@ void player::right()
 
 void player::idle()
 {
+	//setup the frame loop for when the player idles
 	characterModel_->setAnimationSpeed(4);
 	characterModel_->setFrameLoop(206,250);
 	current_state_=State::IDLE;
@@ -509,6 +516,7 @@ void player::damage()
 
 void player::kill()
 {	
+	//remove all player model attributes
 	gore_.hide(true);
 	characterModel_->setVisible(false); 
 	player_shadow_->setVisible(false);
@@ -517,6 +525,7 @@ void player::kill()
 	camera_->remove();
 }
 
+//early player weapon switching system
 void player::switch_weap(int type)
 {
 	characterModel_->setVisible(false);

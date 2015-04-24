@@ -9,10 +9,7 @@ By: Michael Carey
 
 
 #include "NetworkData.h"
-//#include "remotePlayer.h"
-//#include <string.h>
-//#include <iostream>
-//#include <irrlicht.h>
+
 
 NetworkData::NetworkData(irr::IrrlichtDevice* device,char* filename,
 						 irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
@@ -23,6 +20,7 @@ NetworkData::~NetworkData(){}
 
 const char* NetworkData::getNetworkData() const
 {
+	//concatenate all data for sending
 	char* sendingString = new char [ourNetworkData.str().length() + 1];
 	strcpy(sendingString, ourNetworkData.str().c_str()); 
 	return sendingString;
@@ -45,6 +43,7 @@ int NetworkData::chatLength()
 void NetworkData::setString(player& thereInput)
 {
 	//set to 0 at start tell clients its PlayerData not chat
+	//add all data to send here
 	ourNetworkData.str(""); 
 	ourNetworkData << "0 " << thereInput.getname() << " " <<thereInput.getPosition().X 
 		<< " " << thereInput.getPosition().Y << " " << thereInput.getPosition().Z << " " <<thereInput.getRotation().X 
