@@ -121,7 +121,8 @@ int main(void)
 
 	//Loading map now handled in its own class
 	mapLoader currentMap(device,driver,smgr,world);
-	currentMap.setMap("subbs.irr");
+	//currentMap.setMap("subbs.irr");
+	currentMap.setMap("arena.irr");
 	//currentMap->setMap("arena.irr");
 	//currentMap->setMap("dungeon2.irr");
 	//WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
