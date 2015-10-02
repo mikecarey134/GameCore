@@ -33,6 +33,7 @@
 #include "Config_Reader.h"	
 #include <winsock2.h>
 #include "WeaponObject.h"
+#include "SolarCycle.h"
 
 
 //standard irrlicht namespaces
@@ -58,7 +59,7 @@ using namespace RakNet;
 
 #ifdef CONSOLE//if we want the console displayed
 #else
-#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
+//#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #pragma comment(lib,"IrrConsole-DEBUG")
 #endif
 #endif
@@ -121,8 +122,8 @@ int main(void)
 
 	//Loading map now handled in its own class
 	mapLoader currentMap(device,driver,smgr,world);
-	//currentMap.setMap("subbs.irr");
-	currentMap.setMap("arena.irr");
+	currentMap.setMap("mountains.irr");
+	
 	//currentMap->setMap("arena.irr");
 	//currentMap->setMap("dungeon2.irr");
 	//WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
@@ -131,6 +132,9 @@ int main(void)
 	//load our player into the scene
 	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
 		,config_reader.get_model());
+
+	SolarCycle sun(device,thePlayer.getPosition());
+
 	NPC npc_tester(device,smgr,world,driver);
 
 	//init the client side of the server

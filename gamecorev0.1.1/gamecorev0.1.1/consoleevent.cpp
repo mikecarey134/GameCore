@@ -354,7 +354,7 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 	
 	//add a button to our gui here
 	
-	ITexture* backgroundImage = driver_->getTexture("bill/creepymansion.jpg");
+	ITexture* backgroundImage = driver_->getTexture("bill/logo.jpg");
 	//ITexture* titleImage = driver_->getTexture("bill/logo.png");
 
 	driver_->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));

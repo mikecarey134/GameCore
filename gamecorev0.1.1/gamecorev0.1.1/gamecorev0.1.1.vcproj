@@ -230,6 +230,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SolarCycle.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WeaponObject.cpp"
 				>
 			</File>
@@ -305,6 +309,10 @@
 			</File>
 			<File
 				RelativePath=".\SAppcontext.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SolarCycle.h"
 				>
 			</File>
 			<File

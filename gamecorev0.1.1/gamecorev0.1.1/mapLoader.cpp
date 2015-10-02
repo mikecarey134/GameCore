@@ -17,7 +17,8 @@ device_(device), driver_(driver), smgr_(smgr), world_(world)
 void mapLoader::loadMap()
 {
 	device_->getSceneManager()->loadScene(mapName_);
-	driver_->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
+	//driver_->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
+	driver_->setFog(SColor(200,0,0,0),EFT_FOG_EXP2,300,400,.001,true,false);
 
 	array<ISceneNode*> nodes;
 	smgr_->getSceneNodesFromType(ESNT_ANY,nodes);
@@ -84,7 +85,7 @@ void mapLoader::loadMap()
 
 		}
 		//node->setDebugDataVisible(EDS_BBOX);
-		//node->setMaterialFlag(EMF_LIGHTING,0);
+		node->setMaterialFlag(EMF_LIGHTING,1);
 		node->setAutomaticCulling(EAC_BOX);//cull unneeded primitives 
 	
 		vector3df clueLocation(167, -4, 67);

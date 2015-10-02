@@ -138,7 +138,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	idle();
 
 	lamp_= device_->getSceneManager()->addLightSceneNode(0,characterModel_->getPosition(),
-		SColor(255,0,0,255),12);//add our lamp here
+		SColor(255,255,255,255),12);//add our lamp here
 	setlamp(false);
 
 	clues_.clear();
