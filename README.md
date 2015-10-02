@@ -76,5 +76,9 @@ Version 0.1.0 (alpha-build)
 	-added remote player rendering
 	-added stl map to store players
 	-remote player leave and join messages
-
 	
+Version 0.1.1 (alpha-build)
+
+-added SolarEvent class to add dynamic light
+-new large scale map
+-new logo screen
