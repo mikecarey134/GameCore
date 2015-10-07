@@ -194,6 +194,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GrassNode.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GUI.cpp"
 				>
 			</File>
@@ -265,6 +269,10 @@
 			</File>
 			<File
 				RelativePath=".\exampleframework.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GrassNode.h"
 				>
 			</File>
 			<File

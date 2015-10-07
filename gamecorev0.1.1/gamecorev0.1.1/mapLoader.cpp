@@ -1,5 +1,9 @@
 #include "mapLoader.h"
 #include "common.h"
+#include "GrassNode.h"
+#include <vector>
+
+#define MAX_GRASS = 2000
 
 using namespace irr;
 using namespace core;
@@ -7,6 +11,7 @@ using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
+
 
 mapLoader::mapLoader (IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, irrBulletWorld* world): 
 device_(device), driver_(driver), smgr_(smgr), world_(world)
@@ -61,6 +66,24 @@ void mapLoader::loadMap()
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(IDFlag_IsPickable);
 
+				if(suffix == "landscape")
+				{
+					
+					GrassNode* grass_node;
+					std::vector<GrassNode*> grass;
+
+					
+					for(int g = 0; g < 1000;++g){
+						grass_node = new GrassNode(device_,vector3df(0,0,0));
+						grass_node->set_position(vector3df(rand()%200 ,rand()%40, rand()% 200));
+						grass.push_back(grass_node);
+					}
+
+
+				}
+	
+
+
 				//selector = smgr_->createTriangleSelectorFromBoundingBox(node);
 				//node->setTriangleSelector(selector);
 
@@ -92,6 +115,20 @@ void mapLoader::loadMap()
 		clueLocations_.push_back(clueLocation);
 		clueLocation = vector3df(114, -4, 80);
 		clueLocations_.push_back(clueLocation);
+
+
+		device_->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+
+
+		//temp skybox later we will have one based off the time of day
+		irr::scene::ISceneNode* skybox = smgr_->addSkyBoxSceneNode(
+			driver_->getTexture("map/sky/bstop.jpg"),
+			driver_->getTexture("map/sky/bstop.jpg"),
+			driver_->getTexture("map/sky/bsleft.jpg"),
+			driver_->getTexture("map/sky/bsright.jpg"),
+			driver_->getTexture("map/sky/bsfront.jpg"),
+			driver_->getTexture("map/sky/bsback.jpg"));
+
 	}
 }
 

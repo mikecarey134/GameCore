@@ -18,12 +18,14 @@ using namespace gui;
 
 SolarCycle::SolarCycle(IrrlichtDevice* device, vector3df location):location_(location)
 {
+	
 	solar_entity_ = device->getSceneManager()->addMeshSceneNode(device->getSceneManager()->getMesh("models/nature/sun.md2"));
-	solar_emitter_= device->getSceneManager()->addLightSceneNode(0,vector3df(0,0,0),video::SColorf(1.0f,1.0f,1.0f),1000);
+	solar_entity_->setMaterialFlag(EMF_LIGHTING,0);
+	solar_emitter_= device->getSceneManager()->addLightSceneNode(0,vector3df(0,0,0),video::SColorf(1.0f,1.0f,1.0f),2000);
 	solar_entity_->setPosition(location_);
 	solar_emitter_->setPosition(solar_entity_->getPosition());
 	solar_entity_->setMaterialTexture(0,device->getVideoDriver()->getTexture("models/nature/suns.jpg"));
-	solar_entity_->setMaterialFlag(EMF_LIGHTING,0);
+	
 
 }
 

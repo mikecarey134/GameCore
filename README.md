@@ -82,3 +82,8 @@ Version 0.1.1 (alpha-build)
 -added SolarEvent class to add dynamic light
 -new large scale map
 -new logo screen
+-added grass scene node
+-added skybox
+-added player Hunger level
+-added player Water level
+-updated player scale

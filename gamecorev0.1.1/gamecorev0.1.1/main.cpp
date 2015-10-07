@@ -156,7 +156,7 @@ int main(void)
 
 	u32 then = device->getTimer()->getTime();
 
-	ISound* intro = engine->play2D("sounds/slowintro.mp3", true);	
+	ISound* intro = engine->play2D("sounds/discovery.mp3", true);	
 
 	
 	//clear the console before the game starts
@@ -177,8 +177,8 @@ int main(void)
 					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a black background
 					
 
-					if (!engine->isCurrentlyPlaying("sounds/slowintro.mp3"))
-						engine->play2D("sounds/slowintro.mp3", true);//startup the main menu track
+					if (!engine->isCurrentlyPlaying("sounds/discovery.mp3"))
+						engine->play2D("sounds/discovery.mp3", true);//startup the main menu track
 					
 					crecv.drawMainMenu();				
 				}
@@ -186,16 +186,16 @@ int main(void)
 				{
 					//if we have started our game
 					if(crecv.getStarted()){
-					if (!engine->isCurrentlyPlaying("sounds/man.mp3"))
-						engine->play2D("sounds/man.mp3", true);//startup the main track				
+					if (!engine->isCurrentlyPlaying("sounds/pinewood.mp3"))
+						engine->play2D("sounds/pinewood.mp3", true);//startup the main track				
 					}
 
 					//internal client loops for input
 					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
 					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a white background
 
-					if (engine->isCurrentlyPlaying("sounds/slowintro.mp3"))//if we are starting
-							engine->removeSoundSource("sounds/slowintro.mp3");//remove the main menu sounds
+					if (engine->isCurrentlyPlaying("sounds/discovery.mp3"))//if we are starting
+							engine->removeSoundSource("sounds/discovery.mp3");//remove the main menu sounds
 
 					//driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
 

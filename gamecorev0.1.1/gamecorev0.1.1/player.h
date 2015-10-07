@@ -27,13 +27,15 @@
 
 //Player Variables/////////////
 #define DEFAULT_PLAYER_SPEED 3.0f
-#define CAMERA_DISTANCE_BACK 30.0f
+#define CAMERA_DISTANCE_BACK 10.0f
 #define CAMERA_OFFSET 15.0f
 #define CAMERA_MOVE_SPEED 50.0f
 #define PLAYER_JUMP_FORCE 60.0f
 #define PLAYER_EARTH_GRAVITY 150.0f
 #define PLAYER_ANIMATION_SPEED 12.0f
 #define PLAYER_HEALTH 100
+#define PLAYER_HUNGER 100
+#define PLAYER_WATER 100
 #define MAX_CLUES 3
 #define CLUES_TO_FIND 1
 #define REACH_DIST 100.0f
@@ -70,6 +72,8 @@ public:
 	void setCamDist    (float increment)          {cameradist_+= increment;}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
 	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
+	void setHunger     (int newHunger)            {playerHunger_ = newHunger;}
+	void setWater      (int newWater)             {playerWater_ = newWater;}
 	void damage		   ();
 	void kill();
 	void setState(int state)					  { current_state_ = state; }
@@ -97,6 +101,9 @@ public:
 	char*                               getChatMessage() { return chat_message_; }
 	irr::scene::ICameraSceneNode*       getCamera     () { return camera_; }
 	int                                 getHealth     () { return playerHealth_; }
+	int                                 getHunger     () { return playerHunger_; }
+	int                                 getWater      () { return playerWater_; }
+
 	//playerData&                         getPlayerData () {return data_;}
 	int                                 get_model_type() { return player_model_type_;}
 	int                                 get_curr_state() { return current_state_;}
@@ -149,6 +156,8 @@ private:
 	float playerSpeed_;
 	char* chat_message_;
 	int playerHealth_;
+	int playerHunger_;
+	int playerWater_;
 	int walkframe_;
 	
 	irr::scene::ISceneNode* selectedSceneNode_;
@@ -167,4 +176,6 @@ private:
 	int current_state_;
 	std::vector<ClueObject*> clues_;
 	ParticleSystem gore_;
+
+
 };

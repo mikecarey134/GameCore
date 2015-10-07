@@ -164,6 +164,26 @@ void GUI::drawHUD(player* thePlayer)
 	device_->getVideoDriver()->draw2DImage(currentWeapon, position2d<s32>(670,470),rect<s32>(0,0,80,90));
 	//device->getVideoDriver()->draw2DRectangle(SColor(255,0,0,0),rect<s32>(50,50, 50+menuWidth,500));
 
+	irr::gui::IGUIFont* font2 = device_->getGUIEnvironment()->getFont("bill/console.bmp");
+	core::stringw fpsstr;//draw the current hunger and water levels
+	fpsstr += "Water:";
+	
+	font2->draw(fpsstr,//draw current fps for debugging
+		rect<s32>(370,480, 470 ,560),theColor_);//set up the color
+
+	SColor color;
+	//draw health color based on how much health they have
+	if(thePlayer->getWater() >=60 && thePlayer->getWater() < 101){color = blue;}
+	else if(thePlayer->getWater() >=30 && thePlayer->getWater() < 60){color = yellow;}
+	else if(thePlayer->getWater() >=1 && thePlayer->getWater() < 30){color = red;}
+	fpsstr="";
+	fpsstr += thePlayer->getWater();
+	font2->draw(fpsstr,//draw current fps for debugging
+		rect<s32>(410,480, 510 ,560),color);//set up the color
+
+	//fpsstr = "";
+	//fpsstr+= thePlayer->getHunger();
+
 }
 void GUI::addDialogBox(wchar_t* message)
 {

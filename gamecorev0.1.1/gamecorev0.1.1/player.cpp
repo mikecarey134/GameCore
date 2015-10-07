@@ -20,7 +20,7 @@ using namespace gui;
 player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world, std::string player_name,int model_type):
 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
 									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2,0.2),dimension2df(4.0,4.0))
 {
@@ -91,7 +91,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//setTexture("characters/playerskin3.jpg");
 	setTexture(model_path.skin_paths[player_model_type_].c_str());
 
-	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));
+	characterModel_->setScale(vector3df(1.0, 1.0, 1.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
 	
@@ -111,7 +111,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	character_->setMaxSlope(PI / 1.8);
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
-	playerSteps_->setVolume(.65f);
+	playerSteps_->setVolume(.55f);
 	//////////////////////////////////////////////////////////////////////////	
 
 	//////////////////////////////////////////////////////////////////////////
@@ -286,8 +286,8 @@ void player::moveCameraControl()
 
 		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 		//manage shadow
-		player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
-		//player_shadow_->setScale(vector3df(.85,.85,.85));
+		player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-3.8f,getPosition().Z));
+		player_shadow_->setScale(vector3df(.35,.35,.35));
 
 		camera_->setPosition(calculateCameraPos());	
 
