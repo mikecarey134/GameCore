@@ -7,6 +7,7 @@
 
 #include <irrbullet.h>
 #include "player.h"
+#include <fstream>
 
 using namespace irr;
 using namespace irrklang;
@@ -103,8 +104,8 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//characterModel_->setName(&modelName);
 
 	//add the player shadow
-	player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
-	player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
+	//player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
+	//player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
 
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
@@ -118,14 +119,14 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
 	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
-	//characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
+	
 	
 	vector3df spawn(spawn_loc.get_spawn());
 	fpsCam_->setPosition(spawn);
 	character_->warp(spawn);//set the init player pos on the map
 	characterModel_->setPosition(spawn);
 	//setup the player shadow
-	player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+	//player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -144,8 +145,9 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	clues_.clear();
 
 	camera_->setPosition(characterModel_->getPosition());
-
-
+	
+	//good CPU feature
+	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
 }
 
 player::~player(void)
@@ -286,8 +288,8 @@ void player::moveCameraControl()
 
 		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 		//manage shadow
-		player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-3.8f,getPosition().Z));
-		player_shadow_->setScale(vector3df(.35,.35,.35));
+		//player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-3.8f,getPosition().Z));
+		//player_shadow_->setScale(vector3df(.35,.35,.35));
 
 		camera_->setPosition(calculateCameraPos());	
 
@@ -306,6 +308,9 @@ void player::moveCameraControl()
 	
 	lamp_->setPosition(lamppos);
 
+	
+
+	
 	
 }
 vector3df player::calculateCameraPos()
@@ -331,6 +336,8 @@ vector3df player::calculateCameraPos()
 
 	gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();
 
+	
+
 	return newCamPos;
 }
 
@@ -353,6 +360,12 @@ void player::forward()
 	
 	characterModel_->setCurrentFrame(walkframe_);
 	current_state_=State::WALK;
+
+	
+	
+
+
+
 }
 void player::backwards()
 {	

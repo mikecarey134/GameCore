@@ -191,9 +191,10 @@ void GUI::addDialogBox(wchar_t* message)
 	stringw msg;
 	msg+= message;
 	device_->getGUIEnvironment()->drawAll();
-	device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(20,400, 400,550));
-	//IGUIEditBox* ebox = device_->getGUIEnvironment()->addEditBox(L"",rect<s32>(10,400, 260,550));
+	//device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(20,400, 400,550));
+	IGUIEditBox* ebox = device_->getGUIEnvironment()->addEditBox(L"",rect<s32>(10,400, 260,550));
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
-	font->draw(msg,rect<s32>(70,100,400,200),theColor_);
+	
+	//font->draw(msg,rect<s32>(70,100,400,200),theColor_);
 	*/
 }

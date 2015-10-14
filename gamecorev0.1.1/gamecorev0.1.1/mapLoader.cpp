@@ -21,9 +21,14 @@ device_(device), driver_(driver), smgr_(smgr), world_(world)
 
 void mapLoader::loadMap()
 {
+
+	
+
 	device_->getSceneManager()->loadScene(mapName_);
 	//driver_->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
 	driver_->setFog(SColor(200,0,0,0),EFT_FOG_EXP2,300,400,.001,true,false);
+
+
 
 	array<ISceneNode*> nodes;
 	smgr_->getSceneNodesFromType(ESNT_ANY,nodes);
@@ -60,6 +65,7 @@ void mapLoader::loadMap()
 
 			else if(prefix == "static")
 			{
+			
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
 				IRigidBody* body = world_->addRigidBody(shape);
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
@@ -73,9 +79,9 @@ void mapLoader::loadMap()
 					std::vector<GrassNode*> grass;
 
 					
-					for(int g = 0; g < 1000;++g){
+					for(int g = 0; g < 100;++g){
 						grass_node = new GrassNode(device_,vector3df(0,0,0));
-						grass_node->set_position(vector3df(rand()%200 ,rand()%40, rand()% 200));
+						grass_node->set_position(vector3df(rand()%200 ,rand() % 1 + (-9), rand()% 200));
 						grass.push_back(grass_node);
 					}
 
@@ -117,7 +123,7 @@ void mapLoader::loadMap()
 		clueLocations_.push_back(clueLocation);
 
 
-		device_->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+		device_->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
 
 		//temp skybox later we will have one based off the time of day

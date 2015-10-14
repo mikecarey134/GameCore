@@ -8,6 +8,7 @@
 /************************************************************************/
 
 #pragma once
+#include <fstream>
 #include <irrlicht.h>
 #include <irrbullet.h>
 #include <irrKlang.h>
@@ -106,9 +107,14 @@ private:
 	irrklang::ISoundEngine* engine_;
 	mapLoader* currentMap_;
 	InternalServer* client_;
+	irr::gui::IGUIEditBox* ebox_;
 
 	std::list<ClueObject*> clueObjects_; 
 
 	// We use this array to store the current state of each key
 	bool KeyIsDown[irr::KEY_KEY_CODES_COUNT];
+
+
+	//debugging get rid of this at some point
+	std::ofstream coords;
 };

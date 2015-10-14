@@ -29,9 +29,11 @@
 
     #define PATH_DAN "characters/stick_dan.ms3d"
     #define PATH_MIKE "characters/stick_mike.ms3d"
+	//#define PATH_MIKE "characters/proto/proto.ms3d"
     #define PATH_ZOMB "characters/stick_mike.ms3d"//"characters/zombie.ms3d"
 	#define PATH_DAN_SKIN "characters/playerskin_d1.bmp"
 	#define PATH_MIKE_SKIN "characters/playerskin_m1.jpg"
+	//#define PATH_MIKE_SKIN "characters/proto/pskin.png"
 	#define PATH_ZOMB_SKIN "characters/zombieskin.jpg"
 	#define PATH_SLENDER_SKIN "characters/sm.jpg"
 	struct common_paths{

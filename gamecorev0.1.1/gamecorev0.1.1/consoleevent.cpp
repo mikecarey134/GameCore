@@ -29,7 +29,8 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 							pauseMenu(false), started(false), chatshown(false),creditsDisplayed(false), inventory(false), engine_(engine), 
 							player_(thePlayer), world_(world), npc_(npc), currentMap_(currentMap), client_(client)
 {
-	
+	//open up the file to get set up the coords
+	//coords.open("coords.txt");
 	console.addExtensions(thePlayer,world,device,currentMap_);//register the player in the console
 									//add world psychics to the console
 	console.loadDefaultCommands(device);//load the default commands help echo etc
@@ -39,8 +40,10 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 	for (u32 i=0; i < KEY_KEY_CODES_COUNT; ++i)
 		KeyIsDown[i] = false;
 
+
+
 }
-consoleevent::~consoleevent(){}
+consoleevent::~consoleevent(){ coords.close();}
 
 bool consoleevent::OnEvent(const irr::SEvent& event)
 {
@@ -125,11 +128,11 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		player_->setCamDist(event.MouseInput.Wheel);
 	}
 
-	if(event.EventType == irr::EET_KEY_INPUT_EVENT  )
+	if(event.EventType == irr::EET_KEY_INPUT_EVENT )
 	{
 		KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
 
-		if(!console.isVisible() && !pauseMenu && !player_->isDead())//handle player movement keyboard controls
+		if(!console.isVisible() && !pauseMenu && !player_->isDead()&&!chatshown)  //handle player movement keyboard controls
 		{
 			if (IsKeyDown(KEY_SPACE))
 				player_->jump();
@@ -152,12 +155,16 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		{//handle the ESC key to display the pause menu
 			if(pauseMenu || console.isVisible())
 			{
+				chatshown = false;
 				pauseMenu = false;
 				console.setVisible(false);
+				
 			}
 		
 			else
+				
 				pauseMenu = true;
+				
 
 			engine_->play2D("sounds/button-20.wav",false);
 		
@@ -176,7 +183,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 		{//handle f3 key to display the debugging information
 			if (chatshown)
 			{
-				chatshown = false;
+				//chatshown = false;
 
 			}
 			else
@@ -252,6 +259,13 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 
 			switch(event.GUIEvent.EventType)
 			{
+			case EGET_EDITBOX_ENTER:
+				{
+					player_->setChatMessage("");
+					chatshown = false;
+					
+				}
+				break;
 
 			case EGET_SCROLL_BAR_CHANGED:
 				if (id == GUI_ID_TRANSPARENCY_SCROLL_BAR)
@@ -296,7 +310,9 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 					started = false;
 					pauseMenu = false;
 					guienv_->clear();
+					engine_->stopAllSounds();
 					engine_->play2D("sounds/button-25.wav",false);
+					
 					return true;
 
 				case GUI_ID_RESUME:
@@ -328,6 +344,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 					Context_.listbox->addItem(dialog->getFileName());
 				}
 				break;
+			
 
 			default:
 				break;
@@ -354,7 +371,7 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 	
 	//add a button to our gui here
 	
-	ITexture* backgroundImage = driver_->getTexture("bill/logo.jpg");
+	ITexture* backgroundImage = driver_->getTexture("bill/theuninvitedlogo.jpg");
 	//ITexture* titleImage = driver_->getTexture("bill/logo.png");
 
 	driver_->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
@@ -593,12 +610,27 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 		drawMainMenu();//guienv_->drawAll();
 
 	
-
+	//add the coords to a log in order to get positions for grass nodes
+	//coords << player_->getPosition().X << " " << player_->getPosition().Y << " " << player_->getPosition().Z << "\n" ;
 	
 }
 
 void consoleevent::drawMessage(wchar_t* message)
 {
-	gui_->addDialogBox(message);
+	/*stringw msg;
+	msg+= message;
+	device_->getGUIEnvironment()->drawAll();
+	//device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(20,400, 400,550));
+	ebox_ = device_->getGUIEnvironment()->addEditBox(L"",rect<s32>(10,400, 260,550),true,0,10);
+	//gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
+
+	ebox_->getActiveFont();
+	ebox_->setEnabled(true);
+	ebox_->setMax(40);
+	guienv_->setFocus(ebox_);*/
+	
+	
+
+	//gui_->addDialogBox(message);
 	
 }

@@ -20,6 +20,7 @@ SolarCycle::SolarCycle(IrrlichtDevice* device, vector3df location):location_(loc
 {
 	
 	solar_entity_ = device->getSceneManager()->addMeshSceneNode(device->getSceneManager()->getMesh("models/nature/sun.md2"));
+	solar_entity_->setScale(vector3df(3,3,3));
 	solar_entity_->setMaterialFlag(EMF_LIGHTING,0);
 	solar_emitter_= device->getSceneManager()->addLightSceneNode(0,vector3df(0,0,0),video::SColorf(1.0f,1.0f,1.0f),2000);
 	solar_entity_->setPosition(location_);

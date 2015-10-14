@@ -123,9 +123,7 @@ int main(void)
 	//Loading map now handled in its own class
 	mapLoader currentMap(device,driver,smgr,world);
 	currentMap.setMap("mountains.irr");
-	
-	//currentMap->setMap("arena.irr");
-	//currentMap->setMap("dungeon2.irr");
+	//currentMap.setMap("nm.irr");
 	//WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
 		//takes care of all input devices and events calls update during the gameloop
 
@@ -133,7 +131,7 @@ int main(void)
 	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
 		,config_reader.get_model());
 
-	SolarCycle sun(device,thePlayer.getPosition());
+	SolarCycle sun(device,vector3df(thePlayer.getPosition().X,thePlayer.getPosition().Y+400,thePlayer.getPosition().Z));
 
 	NPC npc_tester(device,smgr,world,driver);
 
@@ -186,8 +184,8 @@ int main(void)
 				{
 					//if we have started our game
 					if(crecv.getStarted()){
-					if (!engine->isCurrentlyPlaying("sounds/pinewood.mp3"))
-						engine->play2D("sounds/pinewood.mp3", true);//startup the main track				
+					if (!engine->isCurrentlyPlaying("sounds/sunshine.mp3"))
+						engine->play2D("sounds/sunshine.mp3", true);//startup the main track				
 					}
 
 					//internal client loops for input
