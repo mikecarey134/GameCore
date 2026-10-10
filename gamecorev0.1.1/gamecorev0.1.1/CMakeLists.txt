@@ -80,6 +80,28 @@ add_library(lua51 STATIC ${LUA_SOURCES})
 target_include_directories(lua51 SYSTEM PUBLIC "${THIRD_PARTY}/lua-5.1.5/src")
 target_compile_options(lua51 PRIVATE ${QUIET_THIRD_PARTY})
 
+add_library(gamecore_inventory STATIC inventory/Catalog.cpp inventory/Inventory.cpp)
+target_include_directories(gamecore_inventory PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/inventory")
+
+add_library(gamecore_inventory_ui STATIC inventory_ui/InventoryLayout.cpp)
+target_include_directories(gamecore_inventory_ui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/inventory_ui")
+target_link_libraries(gamecore_inventory_ui PUBLIC gamecore_inventory)
+
+enable_testing()
+add_executable(inventory_ui_tests inventory_ui/tests/main.cpp inventory_ui/tests/layout_test.cpp)
+target_include_directories(inventory_ui_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+target_link_libraries(inventory_ui_tests PRIVATE gamecore_inventory_ui)
+add_test(NAME inventory_ui_tests COMMAND inventory_ui_tests)
+
+foreach(target gamecore_inventory gamecore_inventory_ui inventory_ui_tests)
+  if(MSVC)
+    target_compile_options(${target} PRIVATE /W4)
+  else()
+    target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic)
+  endif()
+  set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+endforeach()
+
 set(GAMECORE_SOURCES
   ChatQueue.cpp ClueObject.cpp Config_Reader.cpp console.cpp consoleevent.cpp
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
