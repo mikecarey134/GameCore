@@ -33,7 +33,7 @@ if(NOT IRRLICHT_INCLUDE_DIR OR NOT IRRLICHT_LINK)
     "vcpkg irrlicht) or set IRRLICHT_INCLUDE_DIR and IRRLICHT_LIBRARY.")
 endif()
 add_library(irrlicht_engine INTERFACE)
-target_include_directories(irrlicht_engine INTERFACE "${IRRLICHT_INCLUDE_DIR}")
+target_include_directories(irrlicht_engine SYSTEM INTERFACE "${IRRLICHT_INCLUDE_DIR}")
 target_link_libraries(irrlicht_engine INTERFACE ${IRRLICHT_LINK})
 
 set(BULLET_ROOT "${THIRD_PARTY}/bullet-2.77")
@@ -111,6 +111,11 @@ set(GAMECORE_SOURCES
 
 add_executable(gamecore ${GAMECORE_SOURCES})
 target_include_directories(gamecore PRIVATE "${IRRKLANG_INCLUDE_DIR}")
+if(MSVC)
+  target_compile_options(gamecore PRIVATE /W4)
+else()
+  target_compile_options(gamecore PRIVATE -Wall -Wextra -pedantic)
+endif()
 target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet lua51 irrlicht_engine ${IRRKLANG_LIBRARY} ${CMAKE_DL_LIBS})
 
 if(WIN32)
