@@ -8,8 +8,8 @@ using namespace io;
 using namespace gui;
 
 ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-					   irrBulletWorld* world, irr::video::IVideoDriver* driver, mapLoader* theMap) : 
-						device_(device), smgr_(smgr), world_(world), driver_(driver), theMap_(theMap) 
+					   irrBulletWorld*, irr::video::IVideoDriver* driver, mapLoader* theMap) : 
+						device_(device), driver_(driver), theMap_(theMap) 
 {
 	type_ = TYPE_CLUE;
 	prepareClue();
@@ -120,12 +120,12 @@ void ClueObject::drawClueMessage()
 	int i = lineLength;
 	int j = 0;
 	string<char> line;
-	while (i < clueProperties_.clueMessage_.size())
+	while (i < (int)clueProperties_.clueMessage_.size())
 	{
 		j = 0;	
 		if (clueProperties_.clueMessage_[i] != ' ')
 		{					
-			while ((i+j < clueProperties_.clueMessage_.size()) && clueProperties_.clueMessage_[i-j] != ' ')
+			while ((i+j < (int)clueProperties_.clueMessage_.size()) && clueProperties_.clueMessage_[i-j] != ' ')
 				++j;
 		}
 		

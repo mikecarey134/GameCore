@@ -27,10 +27,10 @@ public:
 		u32 maxAngle = 0, dimension2df startSize= dimension2df(5.0f,5.0f),
 		dimension2df endSize= dimension2df(8.0f,8.0f));
 
-	ParticleSystem(const ParticleSystem& other):smgr_(other.smgr_),driver_(other.driver_),box_(other.box_),direction_(other.direction_)
-		,maxStartAmount_(other.maxStartAmount_),minStartAmount_(other.minStartAmount_),startColor_(other.startColor_)
-		,endColor_(other.endColor_),maxLifetime_(other.maxLifetime_),
-	minLifetime_(other.minLifetime_),maxAngle_(other.maxAngle_),startSize_(other.startSize_),endSize_(other.endSize_)
+	ParticleSystem(const ParticleSystem& other):box_(other.box_),startColor_(other.startColor_),endColor_(other.endColor_),maxStartAmount_(other.maxStartAmount_)
+		,minStartAmount_(other.minStartAmount_),maxLifetime_(other.maxLifetime_),minLifetime_(other.minLifetime_)
+		,maxAngle_(other.maxAngle_),startSize_(other.startSize_),
+	endSize_(other.endSize_),direction_(other.direction_),driver_(other.driver_),smgr_(other.smgr_)
 	{}
 
 	~ParticleSystem(void);
@@ -39,7 +39,7 @@ public:
 	//set the scale of the created particle system
 	void setScale      (irr::core::vector3df scalar) {particleNode_->setScale(scalar);}
 	
-	void setUpMaterials(char* file_path)//set up the texture of the particle system
+	void setUpMaterials(const char* file_path)//set up the texture of the particle system
 	{
 		particleNode_->setMaterialFlag(irr::video::EMF_LIGHTING,false);//no lighting applied to the texture
 		particleNode_->setMaterialFlag(irr::video::EMF_ZWRITE_ENABLE,false);

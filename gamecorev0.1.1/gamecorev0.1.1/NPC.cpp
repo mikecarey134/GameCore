@@ -59,7 +59,6 @@ void NPC::drawNPCHealth()
 {
 	healthText_ = "";
 	healthText_ += npcHealth_;
-	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
 
 	healthDisplay_->setText(healthText_.c_str());
 	healthDisplay_->setSize(dimension2d<f32>(11,5));

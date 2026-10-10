@@ -45,12 +45,9 @@ private:
 	properties clueProperties_;
 	irr::core::string<char> type_;
 	
-	ICollisionShape* clueCollisionObject_;
 	irr::scene::ISceneNode* model_;
 
 	irr::IrrlichtDevice* device_;
-	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
-	irrBulletWorld* world_;
 	mapLoader* theMap_;
 };

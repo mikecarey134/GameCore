@@ -8,7 +8,7 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-GrassNode::GrassNode(irr::IrrlichtDevice* device,irr::core::vector3df location)
+GrassNode::GrassNode(irr::IrrlichtDevice* device,irr::core::vector3df)
 {
 
 	grass_entity_ = device->getSceneManager()->addMeshSceneNode(device->getSceneManager()->getMesh("models/nature/grass/grass.md2"));

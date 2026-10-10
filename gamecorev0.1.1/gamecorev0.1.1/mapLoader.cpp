@@ -32,7 +32,6 @@ void mapLoader::loadMap()
 
 	array<ISceneNode*> nodes;
 	smgr_->getSceneNodesFromType(ESNT_ANY,nodes);
-	ITriangleSelector* selector = 0;
 
 	for (u32 i=0; i < nodes.size(); ++i)//create collision response and psychics for our scene nodes
 	{
@@ -69,7 +68,7 @@ void mapLoader::loadMap()
 			{
 			
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
-				IRigidBody* body = world_->addRigidBody(shape);
+				world_->addRigidBody(shape);
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(IDFlag_IsPickable);
