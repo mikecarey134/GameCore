@@ -21,9 +21,8 @@ NetworkData::~NetworkData(){}
 const char* NetworkData::getNetworkData() const
 {
 	//concatenate all data for sending
-	char* sendingString = new char [ourNetworkData.str().length() + 1];
-	strcpy(sendingString, ourNetworkData.str().c_str()); 
-	return sendingString;
+	sendBuffer_ = ourNetworkData.str();
+	return sendBuffer_.c_str();
 }
 
 
@@ -66,8 +65,12 @@ void NetworkData::setRemote(const char* ourData)
 	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
 	int model_type,current_state;
 	ourID.str(ourData);
-	ourID >> mType >> ID >>rem_x >>rem_y >>rem_z 
-		>> rem_rotX >> rem_rotY >> rem_rotZ >> model_type >> current_state;//set up incoming variables
+	ourID >> mType >> ID;
+	if (ID.empty())
+		return;
+	if (mType == "0" && !(ourID >> rem_x >>rem_y >>rem_z 
+		>> rem_rotX >> rem_rotY >> rem_rotZ >> model_type >> current_state))//set up incoming variables
+		return;
 
 	//is it playerData
 	if( mType == "0")
@@ -118,17 +121,10 @@ void NetworkData::setRemote(const char* ourData)
 	else if(mType == "1")//it is chat data
 	{
 		//chat message
-		char* temp = new char[100];
-		int foundSpace = 0;
-		
-
-		int start = ID.length() + mType.length()+ 2;//start where the message is
-		int length = strlen(ourData);
-		
-		for(int i=start;i < length;i++)//copy the message contents 
-		{
-			temp[i-start]=ourData[i];
-		}
+		std::string temp;
+		size_t start = ID.length() + mType.length()+ 2;//start where the message is
+		if (start < strlen(ourData))
+			temp = std::string(ourData + start).substr(0, 200);
 
 		//ourData
 		ourNetworkChatTheres = "";
@@ -158,7 +154,8 @@ void NetworkData::setRemote(const char* ourData)
 		quit_msg+="> ";
 		quit_msg+="Died";
 		message_buffer_->addMessage(quit_msg.c_str(),irr::video::SColor(255,255,0,0));
-		players_[ID].delete_player();
+		if (players_.find(ID) != players_.end())
+			players_[ID].delete_player();
 	}
 
 	else if (mType == "99")//quit message
@@ -171,9 +168,11 @@ void NetworkData::setRemote(const char* ourData)
 		message_buffer_->addMessage(quit_msg.c_str(),irr::video::SColor(255,255,0,0));
 
 		std::cout<< ID <<" left\n";
-		if (!players_[ID].isDead())
+		if (players_.find(ID) != players_.end())
+		{
 			players_[ID].delete_player();
-		players_.erase(ID);
+			players_.erase(ID);
+		}
 	}
 
 }

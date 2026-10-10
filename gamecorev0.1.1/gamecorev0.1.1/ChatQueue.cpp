@@ -43,7 +43,8 @@ void ChatQueue::addMessage(core::stringw text, SColor chatColor, SColor chatColo
 void ChatQueue::addMessage(const wchar_t* text, SColor chatColor, SColor chatColorShadow)
 {
 	ChatQueueMessage lmsg;
-	wcscpy(lmsg.message,text);
+	wcsncpy(lmsg.message,text,ChatQueue_STRINGLENGTH - 1);
+	lmsg.message[ChatQueue_STRINGLENGTH - 1] = L'\0';
 	lmsg.chatColor = chatColor;
 	lmsg.chatColorShadow = chatColorShadow;
 	lmsg.fade = 0;

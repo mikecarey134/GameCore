@@ -56,6 +56,7 @@ private:
 	int currentPlayers_;
 	int maxPlayers_;
 	std::ostringstream ourNetworkData;
+	mutable std::string sendBuffer_;
 	std::string ourNetworkChatMine;
 	std::string ourNetworkChatTheres;
 	std::map<std::string,remotePlayer> players_;

@@ -50,12 +50,14 @@ InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* fil
 		char ip_[MAX_IP_SIZE];
 		
 		int index =0;
-		while(ip[index])
+		while(ip[index] && index < MAX_IP_SIZE - 1)
 		{
 			ip_[index] = ip[index];
 			++index;
 		}
-		ip_[index-1]='\0';//insert the null terminator 
+		while(index > 0 && (ip_[index-1] == '\r' || ip_[index-1] == '\n' || ip_[index-1] == ' ' || ip_[index-1] == '\t'))
+			--index;
+		ip_[index]='\0';//insert the null terminator 
 		
 
 		//////////////////////////////////////////////////////////////////////////
@@ -95,7 +97,10 @@ InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* fil
 			else
 			{
 				puts("Connection Failed Bad Connection Attempt!");
-				exit(1);
+				message_buffer_->addMessage("[info] Could not start connecting, playing offline",SColor(255,255,0,0));
+				RakNet::RakPeerInterface::DestroyInstance(client_);
+				client_ = 0;
+				online_ = false;
 			}
 		}
 	}
@@ -190,7 +195,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 
 				case ID_ALREADY_CONNECTED:
 					// Connection lost normally
-					printf("Already Connected with guid %" PRINTF_64_BIT_MODIFIER "u\n", p->guid);
+					printf("Already Connected with guid %s\n", p->guid.ToString());
 					message_buffer_->addMessage("[info] Already Connected!",SColor(255,0,255,0));
 					break;
 
@@ -253,12 +258,15 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 				
 				default:// It's a client
 
-					if(p->data[0]!= '0' && p->data[0]!= '9' && p->data[0]!= '1' && p->data[0]!= '3'&& p->data[0]!= '4'){//if the packet id is 0 or 99 do not print it
-						printf("%s", p->data);
+				{
+					std::string packet((const char*)p->data, p->length);
+					if(packet[0]!= '0' && packet[0]!= '9' && packet[0]!= '1' && packet[0]!= '3'&& packet[0]!= '4'){//if the packet id is 0 or 99 do not print it
+						printf("%s", packet.c_str());
 						puts("\n");
-						message_buffer_->addMessage(p->data);//print out server messages on the message buffer
+						message_buffer_->addMessage(packet.c_str());//print out server messages on the message buffer
 					}
-					networkData_.setRemote((char*)p->data);
+					networkData_.setRemote(packet.c_str());
+				}
 					break;
 				}
 			}
@@ -288,7 +296,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 bool InternalServer::emptyMess(char* message)
 {	
 	int length=0;
-	while(*message!= NULL)
+	while(*message!= '\0')
 	{
 		++length;
 		++message;

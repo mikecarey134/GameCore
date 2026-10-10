@@ -151,10 +151,13 @@ void remotePlayer::right()
 */
 void remotePlayer::delete_player ()
 {
+	if (!character_)
+		return;
 	dead_ = true;
 	characterModel_->setVisible(false);
 	rem_player_shadow_->setVisible(false);
 	delete character_; 
+	character_ = 0;
 	characterModel_->remove(); 
 	rem_player_shadow_->remove();	
 	nameDisplay_->remove(); 
