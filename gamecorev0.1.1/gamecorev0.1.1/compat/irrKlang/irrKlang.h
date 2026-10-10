@@ -1,12 +1,3 @@
-/************************************************************************/
-/* irrKlang.h (silent stand-in)
-	Purpose: lets GameCore build where the irrKlang SDK is unavailable.
-	Every call succeeds and plays nothing. Only the parts of the irrKlang
-	API that GameCore uses are declared. Put the real SDK's include
-	directory first on the include path to get sound back.
-*/
-/************************************************************************/
-
 #ifndef IRRKLANG_SILENT_STUB_H
 #define IRRKLANG_SILENT_STUB_H
 
@@ -32,9 +23,7 @@ namespace irrklang
 	class ISoundEngine
 	{
 	public:
-		// irrKlang returns a sound object only when track or startPaused is
-		// set; callers that pass neither must not use the result.
-		ISound* play2D(const char* /*file*/, bool /*loop*/ = false,
+		ISound* play2D(const char*, bool = false,
 			bool startPaused = false, bool track = false)
 		{
 			if (!startPaused && !track)
@@ -43,10 +32,10 @@ namespace irrklang
 			sound->setIsPaused(startPaused);
 			return sound;
 		}
-		bool isCurrentlyPlaying(const char* /*file*/) { return false; }
-		void removeSoundSource(const char* /*file*/) {}
+		bool isCurrentlyPlaying(const char*) { return false; }
+		void removeSoundSource(const char*) {}
 		void stopAllSounds() {}
-		void setSoundVolume(ik_f32 /*volume*/) {}
+		void setSoundVolume(ik_f32) {}
 		bool drop() { delete this; return true; }
 	};
 

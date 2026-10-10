@@ -439,5 +439,4 @@ gamecorev0.1.1/gamecorev0.1.1/test/ball.obj
 gamecorev0.1.1/gamecorev0.1.1/test/beer.obj
 gamecorev0.1.1/gamecorev0.1.1/test/crate.obj
 
-# Linux build output (CMake puts the executable beside the game data)
 gamecorev0.1.1/gamecorev0.1.1/gamecore

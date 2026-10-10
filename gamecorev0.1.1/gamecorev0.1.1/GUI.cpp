@@ -65,14 +65,12 @@ void GUI::drawDebug(IGUIFont* font,IVideoDriver* driver,vector3df nodePosition)
 	GlobalMemoryStatusEx(&memInfo);
 	DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
 #elif defined(__linux__)
-	//the page file's equivalent here is RAM plus swap
 	struct sysinfo memInfo;
 	sysinfo(&memInfo);
 	unsigned long long virtualMemUsed =
 		((unsigned long long)memInfo.totalram + memInfo.totalswap
 		 - memInfo.freeram - memInfo.freeswap) * memInfo.mem_unit;
 #else
-	//not measured on this platform yet; the readout shows 0
 	unsigned long long virtualMemUsed = 0;
 #endif
 

@@ -15,7 +15,6 @@
 #endif
 
 #ifndef _WIN32
-	//Windows' wide-string to double, which other platforms lack
 	inline double _wtof(const wchar_t* str) { return wcstod(str, 0); }
 #endif
 
