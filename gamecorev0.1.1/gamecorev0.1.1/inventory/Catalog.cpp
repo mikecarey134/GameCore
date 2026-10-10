@@ -115,6 +115,14 @@ namespace inventory
 			return value >= 1;
 		}
 
+		bool parseIndex(const std::string& text, int& value)
+		{
+			if (text.empty() || text.size() > 9 || text.find_first_not_of("0123456789") != std::string::npos)
+				return false;
+			value = std::stoi(text);
+			return true;
+		}
+
 		bool parseCategory(const std::string& text, Category& value)
 		{
 			if (text == "weapon") value = Category::Weapon;
@@ -135,6 +143,9 @@ namespace inventory
 				return false;
 			if (table.rows.empty())
 				return errors.at(0, "no slots");
+			bool hasDoll = table.column("doll_column") >= 0 || table.column("doll_row") >= 0;
+			if (hasDoll && !checkShape(table, { "doll_column", "doll_row" }, errors))
+				return false;
 
 			int id = table.column("id");
 			int name = table.column("name");
@@ -146,7 +157,19 @@ namespace inventory
 				for (const Slot& slot : slots)
 					if (slot.id == slotId)
 						return errors.at(row.line, "duplicate slot id '" + slotId + "'");
-				slots.push_back(Slot{ slotId, row.cells[name] });
+				Slot slot;
+				slot.id = slotId;
+				slot.name = row.cells[name];
+				if (table.column("icon") >= 0 && row.cells[table.column("icon")] != "-")
+					slot.icon = row.cells[table.column("icon")];
+				if (hasDoll)
+				{
+					if (!parseIndex(row.cells[table.column("doll_column")], slot.dollColumn))
+						return errors.at(row.line, "doll_column must be a whole number of at least 0");
+					if (!parseIndex(row.cells[table.column("doll_row")], slot.dollRow))
+						return errors.at(row.line, "doll_row must be a whole number of at least 0");
+				}
+				slots.push_back(slot);
 			}
 			return true;
 		}
@@ -232,6 +255,14 @@ namespace inventory
 				for (const std::string& slot : type.slots)
 					if (blocked == slot)
 						return errors.at(row.line, "'" + type.id + "' blocks " + slot + ", a slot it can be equipped in");
+
+			if (table.column("icon") >= 0)
+			{
+				if (cell("icon").empty())
+					return errors.at(row.line, "icon is empty; write '-' for none");
+				if (cell("icon") != "-")
+					type.icon = cell("icon");
+			}
 
 			loaded.itemTypes_.push_back(type);
 		}

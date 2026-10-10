@@ -1,0 +1,23 @@
+Item icons from game-icons.net (https://game-icons.net), licensed under
+Creative Commons Attribution 3.0 (https://creativecommons.org/licenses/by/3.0/).
+
+Changes: the black background square was removed and each icon was
+rendered to a 128 x 128 PNG.
+
+  pistol.png        Pistol gun          by John Colburn
+  shotgun.png       Sawed-off shotgun   by Delapouite
+  knife.png         Bowie knife         by Lorc
+  hatchet.png       Hatchet             by Delapouite
+  flashlight.png    Flashlight          by Delapouite
+  lockpick.png      Lockpicks           by Delapouite
+  key.png           Skeleton key        by Lorc
+  bandage.png       Bandage roll        by Lorc
+  pills.png         Medicine pills      by Delapouite
+  ammo_box.png      Ammo box            by sbed
+  body_armor.png    Kevlar vest         by Skoll
+  helmet.png        Brodie helmet       by Skoll
+  gloves.png        Gloves              by Delapouite
+  boots.png         Metal boot          by Delapouite
+  utility_belt.png  Belt                by lucasms
+  amulet.png        Gem pendant         by Lorc
+  doll.png          Person              by Delapouite

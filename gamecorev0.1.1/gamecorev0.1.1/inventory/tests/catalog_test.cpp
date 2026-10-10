@@ -338,3 +338,91 @@ TEST_CASE("an item may not block a slot it can be equipped in")
 	CHECK(error.line == 2);
 	CHECK(error.message == "'buckler' blocks off_hand, a slot it can be equipped in");
 }
+
+TEST_CASE("an optional icon column names each item's icon file, '-' meaning none")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string items =
+		"id, name, width, height, slots, blocks, max_stack, category, icon\n"
+		"helmet, Helmet, 2, 2, head, -, 1, armor, helmet.png\n"
+		"key, Key, 1, 1, -, -, 1, key_item, -\n";
+
+	REQUIRE(loadCatalog(oneSlot, items, catalog, error));
+	REQUIRE(catalog.itemType("helmet") != nullptr);
+	CHECK(catalog.itemType("helmet")->icon == "helmet.png");
+	REQUIRE(catalog.itemType("key") != nullptr);
+	CHECK(catalog.itemType("key")->icon.empty());
+}
+
+TEST_CASE("without an icon column every item simply has no icon")
+{
+	Catalog catalog;
+	LoadError error;
+
+	REQUIRE(loadCatalog(oneSlot, std::string(itemsHeader) + "key, Key, 1, 1, -, -, 1, key_item\n", catalog, error));
+	REQUIRE(catalog.itemType("key") != nullptr);
+	CHECK(catalog.itemType("key")->icon.empty());
+}
+
+TEST_CASE("an empty icon cell must be written as '-'")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string items =
+		"id, name, width, height, slots, blocks, max_stack, category, icon\n"
+		"key, Key, 1, 1, -, -, 1, key_item, \n";
+
+	CHECK_FALSE(loadCatalog(oneSlot, items, catalog, error));
+	CHECK(error.line == 2);
+	CHECK(error.message == "icon is empty; write '-' for none");
+}
+
+TEST_CASE("slots can name an icon and a paper-doll position")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string slots =
+		"id, name, icon, doll_column, doll_row\n"
+		"head, Head, helmet.png, 1, 0\n"
+		"neck, Neck, -, 2, 0\n";
+	std::string items = std::string(itemsHeader) + "key, Key, 1, 1, -, -, 1, key_item\n";
+
+	REQUIRE(loadCatalog(slots, items, catalog, error));
+	CHECK(catalog.slot(0).icon == "helmet.png");
+	CHECK(catalog.slot(0).dollColumn == 1);
+	CHECK(catalog.slot(0).dollRow == 0);
+	CHECK(catalog.slot(1).icon.empty());
+	CHECK(catalog.slot(1).dollColumn == 2);
+}
+
+TEST_CASE("slots without the optional columns have no icon and no doll position")
+{
+	Catalog catalog;
+	LoadError error;
+
+	REQUIRE(loadCatalog(oneSlot, std::string(itemsHeader) + "key, Key, 1, 1, -, -, 1, key_item\n", catalog, error));
+	CHECK(catalog.slot(0).icon.empty());
+	CHECK(catalog.slot(0).dollColumn == -1);
+	CHECK(catalog.slot(0).dollRow == -1);
+}
+
+TEST_CASE("doll positions must be whole numbers from 0, and the two columns come together")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string items = std::string(itemsHeader) + "key, Key, 1, 1, -, -, 1, key_item\n";
+	std::string slots;
+	int line = 0;
+	std::string expected;
+
+	SUBCASE("a word") { slots = "id, name, doll_column, doll_row\nhead, Head, left, 0\n"; line = 2; expected = "doll_column must be a whole number of at least 0"; }
+	SUBCASE("negative") { slots = "id, name, doll_column, doll_row\nhead, Head, 1, -1\n"; line = 2; expected = "doll_row must be a whole number of at least 0"; }
+	SUBCASE("row without column") { slots = "id, name, doll_row\nhead, Head, 0\n"; line = 1; expected = "missing column 'doll_column'"; }
+	SUBCASE("column without row") { slots = "id, name, doll_column\nhead, Head, 0\n"; line = 1; expected = "missing column 'doll_row'"; }
+
+	CHECK_FALSE(loadCatalog(slots, items, catalog, error));
+	CHECK(error.file == "slots.csv");
+	CHECK(error.line == line);
+	CHECK(error.message == expected);
+}

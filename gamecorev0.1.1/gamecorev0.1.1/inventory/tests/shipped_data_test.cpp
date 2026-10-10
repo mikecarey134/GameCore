@@ -102,3 +102,44 @@ TEST_CASE("the utility belt equips to the belt slot")
 
 	CHECK(shippedItem(catalog, "utility_belt").slots == std::vector<std::string>{ "belt" });
 }
+
+static bool iconExists(const std::string& name)
+{
+	std::ifstream in(std::string(INVENTORY_DATA_DIR) + "/../icons/" + name, std::ios::binary);
+	return in.is_open();
+}
+
+TEST_CASE("every shipped item and slot names an icon file that exists")
+{
+	Catalog catalog = shippedCatalog();
+
+	for (const char* id : { "knife", "hatchet", "pistol", "shotgun", "flashlight", "lockpick", "key", "bandage",
+		"pills", "ammo_box", "body_armor", "helmet", "gloves", "boots", "utility_belt", "amulet" })
+	{
+		CAPTURE(id);
+		const ItemType& type = shippedItem(catalog, id);
+		REQUIRE_FALSE(type.icon.empty());
+		CHECK(iconExists(type.icon));
+	}
+	for (int index = 0; index < catalog.slotCount(); ++index)
+	{
+		CAPTURE(catalog.slotId(index));
+		REQUIRE_FALSE(catalog.slot(index).icon.empty());
+		CHECK(iconExists(catalog.slot(index).icon));
+	}
+}
+
+TEST_CASE("every shipped slot has its own place on the paper doll")
+{
+	Catalog catalog = shippedCatalog();
+
+	for (int a = 0; a < catalog.slotCount(); ++a)
+	{
+		CAPTURE(catalog.slotId(a));
+		CHECK(catalog.slot(a).dollColumn >= 0);
+		CHECK(catalog.slot(a).dollRow >= 0);
+		for (int b = a + 1; b < catalog.slotCount(); ++b)
+			CHECK_FALSE((catalog.slot(a).dollColumn == catalog.slot(b).dollColumn
+				&& catalog.slot(a).dollRow == catalog.slot(b).dollRow));
+	}
+}

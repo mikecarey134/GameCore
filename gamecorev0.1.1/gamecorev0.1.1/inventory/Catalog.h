@@ -16,6 +16,7 @@ namespace inventory
 		std::vector<std::string> blocks;
 		int maxStack = 1;
 		Category category = Category::Tool;
+		std::string icon;
 	};
 
 	struct LoadError
@@ -29,6 +30,9 @@ namespace inventory
 	{
 		std::string id;
 		std::string name;
+		std::string icon;
+		int dollColumn = -1;
+		int dollRow = -1;
 	};
 
 	class Catalog
@@ -37,6 +41,7 @@ namespace inventory
 		int slotCount() const { return (int)slots_.size(); }
 		const std::string& slotId(int index) const { return slots_[index].id; }
 		const std::string& slotName(int index) const { return slots_[index].name; }
+		const Slot& slot(int index) const { return slots_[index]; }
 		bool hasSlot(const std::string& id) const;
 		const ItemType* itemType(const std::string& id) const;
 
