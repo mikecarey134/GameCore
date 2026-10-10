@@ -1,0 +1,50 @@
+name: Game
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            install: sudo apt-get update && sudo apt-get install -y libirrlicht-dev libgl-dev libx11-dev libxext-dev libxxf86vm-dev
+            configure: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+            keep_going: -- -k
+          - os: macos-14
+            install: brew install irrlicht
+            configure: ""
+            keep_going: -- -k
+          - os: windows-2022
+            install: vcpkg install irrlicht:x64-windows
+            configure: -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
+            keep_going: ""
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /gamecorev0.1.1/gamecorev0.1.1/*.cpp
+            /gamecorev0.1.1/gamecorev0.1.1/*.h
+            /gamecorev0.1.1/gamecorev0.1.1/CMakeLists.txt
+            /gamecorev0.1.1/gamecorev0.1.1/compat/
+            /gamecorev0.1.1/gamecorev0.1.1/console/
+            /gamecorev0.1.1/gamecorev0.1.1/third_party/
+
+      - name: Install Irrlicht
+        run: ${{ matrix.install }}
+
+      - name: Configure
+        run: cmake -S gamecorev0.1.1/gamecorev0.1.1 -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.configure }}
+
+      - name: Build
+        run: cmake --build build --config Release --parallel ${{ matrix.keep_going }}
