@@ -1,0 +1,13 @@
+Bullet Physics 2.77, from bullet-2.77.tgz (Google Code archive,
+code.google.com/archive/p/bullet).
+
+Only LinearMath, BulletCollision, BulletDynamics, BulletSoftBody and the
+top-level headers of src/ are included. src/ is renamed Bullet/ so the
+"Bullet/..." includes in irrBullet resolve against this copy. Project
+and build files from the release are left out.
+
+Altered source:
+  Bullet/BulletSoftBody/btSoftBodyInternals.h
+    ZeroInitialize() clears the value with memset instead of copying a
+    default-initialised static const object, which current compilers
+    reject for types without a user-provided default constructor.
