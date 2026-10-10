@@ -325,3 +325,16 @@ TEST_CASE("blank and whitespace-only lines are skipped anywhere")
 	CHECK(catalog.itemType("key") != nullptr);
 	CHECK(catalog.itemType("pistol") != nullptr);
 }
+
+TEST_CASE("an item may not block a slot it can be equipped in")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string slots = "id, name\nmain_hand, Main Hand\noff_hand, Off Hand\n";
+	std::string items = std::string(itemsHeader) +
+		"buckler, Buckler, 1, 2, main_hand|off_hand, off_hand, 1, armor\n";
+
+	CHECK_FALSE(loadCatalog(slots, items, catalog, error));
+	CHECK(error.line == 2);
+	CHECK(error.message == "'buckler' blocks off_hand, a slot it can be equipped in");
+}

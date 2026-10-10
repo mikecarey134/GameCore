@@ -228,6 +228,10 @@ namespace inventory
 				return errors.at(row.line, "'" + type.id + "' stacks, so it cannot be equipped");
 			if (!type.blocks.empty() && type.slots.empty())
 				return errors.at(row.line, "'" + type.id + "' blocks slots but cannot be equipped");
+			for (const std::string& blocked : type.blocks)
+				for (const std::string& slot : type.slots)
+					if (blocked == slot)
+						return errors.at(row.line, "'" + type.id + "' blocks " + slot + ", a slot it can be equipped in");
 
 			loaded.itemTypes_.push_back(type);
 		}
