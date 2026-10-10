@@ -6,7 +6,9 @@
 */
 /************************************************************************/
 
+#ifdef _WIN32
 #define _IRR_WINDOWS_
+#endif
 //#define CONSOLE
 //comment out if you don't want to see the Debug console
 
@@ -31,7 +33,9 @@
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "Config_Reader.h"	
+#ifdef _WIN32
 #include <winsock2.h>
+#endif
 #include "WeaponObject.h"
 #include "SolarCycle.h"
 
@@ -46,7 +50,7 @@ using namespace io;
 using namespace gui;
 using namespace RakNet;
 
-#ifndef _WINDOWS_
+#if defined(_WIN32) && !defined(_WINDOWS_)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN

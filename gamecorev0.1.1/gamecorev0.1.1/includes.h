@@ -14,6 +14,11 @@
 	#include <windows.h>
 #endif
 
+#ifndef _WIN32
+	//Windows' wide-string to double, which other platforms lack
+	inline double _wtof(const wchar_t* str) { return wcstod(str, 0); }
+#endif
+
 using irr::u8;
 using irr::u16;
 using irr::u32;

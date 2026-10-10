@@ -10,9 +10,15 @@
 #pragma once
 #include<irrlicht.h>
 #include "player.h"
+#ifdef _WIN32
 #include "windows.h"
 #include "psapi.h"
 #include"gl/gl.h"
+#elif defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 class GUI
 {

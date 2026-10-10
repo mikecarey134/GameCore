@@ -26,8 +26,6 @@ ChatQueue::~ChatQueue()
 	std::list<ChatQueueMessage>::iterator iter;
 	for (iter=ChatQueue_list.begin(); iter != ChatQueue_list.end(); iter++)
 	{     
-		if(iter->ChatQueue_memoryManaged == true)
-			delete iter->message;
 	}
 	ChatQueue_list.erase(ChatQueue_list.begin(),ChatQueue_list.end());
 }
@@ -72,8 +70,6 @@ void ChatQueue::draw()
 		{ 
 			//Max lines means no fade, special case delete
 			if(count > ChatQueue_maxLines){
-				if(iter->ChatQueue_memoryManaged == true)
-					delete iter->message;
 				ChatQueue_list.erase(iter,ChatQueue_list.end());
 				return;
 			}
@@ -94,8 +90,6 @@ void ChatQueue::draw()
 				}
 				if( ((l_time - iter->fade) >= ChatQueue_fadeTime) || !ChatQueue_fade )
 				{
-					if(iter->ChatQueue_memoryManaged == true)
-						delete iter->message;
 					ChatQueue_list.erase(iter,ChatQueue_list.end());
 					return;
 				}

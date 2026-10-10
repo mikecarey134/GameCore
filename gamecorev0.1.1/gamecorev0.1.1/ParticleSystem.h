@@ -19,7 +19,7 @@ class ParticleSystem
 {
 public:
 
-	ParticleSystem::ParticleSystem(ISceneManager* smgr,IVideoDriver* driver,
+	ParticleSystem(ISceneManager* smgr,IVideoDriver* driver,
 		const aabbox3df& box = aabbox3df(-10,28,-10,10,30,10),		   
 		vector3df direction = vector3df(0.0f,0.1f,0.0f),
 		u32 maxStartAmount = 100,u32 minStartAmount = 50, SColor startColor = SColor(0,255,0,0),
