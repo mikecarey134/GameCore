@@ -12,8 +12,7 @@ IKinematicCharacterController::IKinematicCharacterController(irrBulletWorld* con
 	btScalar characterWidth = PLAYER_BOUNDING_WIDTH;
 	Capsule = new btCapsuleShape(characterWidth,characterHeight);
 	GhostObject->setCollisionShape(Capsule);
-	GhostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-	GhostObject->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	GhostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT | btCollisionObject::CF_KINEMATIC_OBJECT);
 	
 
 	btScalar stepHeight = btScalar(0.35);
@@ -128,7 +127,9 @@ void IKinematicCharacterController::destroy()
 
 IKinematicCharacterController::~IKinematicCharacterController()
 {
-	delete Capsule;
-	World->getPointer()->removeCollisionObject(GhostObject);
 	World->getPointer()->removeAction(Character);
+	World->getPointer()->removeCollisionObject(GhostObject);
+	delete Character;
+	delete GhostObject;
+	delete Capsule;
 }

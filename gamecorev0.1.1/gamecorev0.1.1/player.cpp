@@ -104,6 +104,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//characterModel_->setName(&modelName);
 
 	//add the player shadow
+	player_shadow_ = 0;
 	//player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
 	//player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
 
@@ -509,6 +510,8 @@ void player::isAttackingSomeone(bool& attacking, std::string& enemyName)
 
 void player::damage()
 {
+	if (isDead())
+		return;
 	
 	player_punch_= engine_->play2D("sounds/damage.mp3");
 	gore_.setPosition(vector3df(getPosition().X,getPosition().Y-40,getPosition().Z));
@@ -532,8 +535,10 @@ void player::kill()
 	//remove all player model attributes
 	gore_.hide(true);
 	characterModel_->setVisible(false); 
-	player_shadow_->setVisible(false);
+	if (player_shadow_)
+		player_shadow_->setVisible(false);
 	delete character_;
+	character_ = 0;
 	smgr_->setActiveCamera(fpsCam_);
 	camera_->remove();
 }
