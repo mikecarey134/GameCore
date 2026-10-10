@@ -18,11 +18,19 @@ public:
 	void close();
 
 private:
-	void drawSlots();
+	void drawFrame();
+	void drawDoll();
+	void drawSlot(int index);
 	void drawGrid();
+	void drawTile(const inventory::Placed& placed, bool dimmed, bool hovered);
 	void drawHeld();
+	void drawDetails();
 	void drawStatus();
-	void drawText(const std::string& text, const inventory::Rect& area, irr::video::SColor colour, bool centred);
+	void drawIcon(const std::string& icon, const inventory::Rect& area, irr::video::SColor tint);
+	void drawText(const std::string& text, const inventory::Rect& area, irr::video::SColor colour, bool big = false);
+	void drawInset(const inventory::Rect& area, irr::video::SColor top, irr::video::SColor bottom);
+	const inventory::ItemType* hoveredType(int& count) const;
+	std::string slotNames(const std::vector<std::string>& slotIds) const;
 
 	irr::IrrlichtDevice* device_;
 	inventory::Inventory* inventory_;
