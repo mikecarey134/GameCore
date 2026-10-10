@@ -104,7 +104,7 @@ const WideString IC_Command::getUsage()
 }
 //=========================================================================================
 //! get the description line count
-const irr::u32 IC_Command::getDescLineCount()
+irr::u32 IC_Command::getDescLineCount()
 {
 	return commandDescLines.size();
 }
@@ -335,7 +335,7 @@ void IC_Dispatcher::printCommandDesc(const WideString cmdName, IC_MessageSink* p
 const wchar_t IC_Console::IC_KEY_TILDE = 0xc0;
 //=========================================================================================
 //! constructor
-IC_Console::IC_Console() : guiFont(0), consoleHistoryIndex(0),consoleRect(0,0,0,0),bVisible(false)
+IC_Console::IC_Console() : bVisible(false), guiFont(0),consoleRect(0,0,0,0),consoleHistoryIndex(0)
 {
 }
 //=========================================================================================
@@ -489,7 +489,7 @@ void IC_Console::clearMessages()
 }
 //=========================================================================================
 //! render the console (it internally checks if the console is visible)
-void IC_Console::renderConsole(irr::gui::IGUIEnvironment* guienv, irr::video::IVideoDriver *videoDriver, const u32 deltaMillis)
+void IC_Console::renderConsole(irr::gui::IGUIEnvironment*, irr::video::IVideoDriver *videoDriver, const u32)
 {
 	// render only if the console is visible
 	if(isVisible())

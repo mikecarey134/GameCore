@@ -75,7 +75,7 @@ public:
 	//! get the usage string for the command
 	const WideString getUsage();
 	//! get the description line count
-	const irr::u32 getDescLineCount();
+	irr::u32 getDescLineCount();
 	//! get the desc line at
 	const WideString getDescLine(const u32 index);
 

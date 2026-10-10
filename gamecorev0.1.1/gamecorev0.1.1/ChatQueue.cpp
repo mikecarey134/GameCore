@@ -10,9 +10,9 @@
 
 ChatQueue::ChatQueue(IrrlichtDevice * device,
 					 const core::rect<s32> drawArea,float textLife,
-					 bool setFade, float fadeTime, bool setShadows, bool debug, bool isDrawn):
-					ChatQueue_device(device),ChatQueue_life(textLife)
-					,ChatQueue_fade(setFade),ChatQueue_fadeTime(fadeTime),ChatQueue_debug(debug),ChatQueue_visible(isDrawn)
+					 bool setFade, float fadeTime, bool, bool debug, bool isDrawn):
+					ChatQueue_device(device),ChatQueue_fade(setFade)
+					,ChatQueue_visible(isDrawn),ChatQueue_debug(debug),ChatQueue_fadeTime(fadeTime),ChatQueue_life(textLife)
 {
 	//init the chat queue
 	m_fontHeight = 0;
@@ -129,7 +129,7 @@ void ChatQueue::ChatQueue_calculateRect(const core::rect<s32> drawArea)
 	m_x = l_positionTmp.X;  
 }
 
-void ChatQueue::ChatQueue_calculateFontHeight(irr::gui::IGUIFont* font)
+void ChatQueue::ChatQueue_calculateFontHeight(irr::gui::IGUIFont*)
 {
 	dimension2d<u32> l_fontHeight = ChatQueue_font->getDimension(L"|");
 	m_fontHeight = l_fontHeight.Height;   

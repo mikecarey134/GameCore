@@ -66,7 +66,7 @@ public:
 	void drawMainMenu  ();
 
 	void drawPauseMenu ();
-	void drawMessage   (wchar_t* message);
+	void drawMessage   (const wchar_t* message);
 	void drawInventory ();
 	void setInventoryScreen(InventoryScreen* screen) { inventoryScreen_ = screen; }
 

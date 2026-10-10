@@ -29,8 +29,8 @@ public:
 		GUI_ID_TRANSPARENCY_SCROLL_BAR};
 
 	GUI(){}
-	GUI(irr::IrrlichtDevice* device):device_(device), theColor_(255,255,255,255),red(255,255,0,0),blue(255,0,0,255),green(255,0,255,0),
-		yellow(255,255,252,66),white(255,255,255,255){}//default colors
+	GUI(irr::IrrlichtDevice* device):red(255,255,0,0), blue(255,0,0,255),yellow(255,255,252,66),green(255,0,255,0),white(255,255,255,255),
+		theColor_(255,255,255,255),device_(device){}//default colors
 	
 	GUI(const GUI& other): theColor_(other.theColor_), device_(other.device_)
 	{

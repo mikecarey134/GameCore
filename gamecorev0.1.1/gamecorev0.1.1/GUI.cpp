@@ -40,7 +40,7 @@ void GUI::drawCrosshair(irr::gui::IGUIFont* font,irr::core::rect<irr::s32> locat
 		location,theColor_);//set to private member color
 
 }
-void GUI::drawHealth(IGUIFont* font, player* thePlayer)
+void GUI::drawHealth(IGUIFont*, player* thePlayer)
 {	//core::stringw h;
 	SColor color;
 	//draw health color based on how much health they have
@@ -128,8 +128,8 @@ void GUI::drawloading(irr::video::IVideoDriver*& driver, irr::gui::IGUIEnvironme
 {
 	driver->beginScene(true, false, irr::video::SColor(255,0,0,0));
 
-	ITexture* backgroundImage = driver->getTexture("bill/creepyman.jpg");
-	ITexture* titleImage = driver->getTexture("bill/loading.jpg");
+	driver->getTexture("bill/creepyman.jpg");
+	driver->getTexture("bill/loading.jpg");
 
 	//driver->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
 	//driver->draw2DImage(titleImage,position2d<s32>(100,100),rect<s32>(40,40,600,300),NULL,SColor(255,255,255,255), false);
@@ -197,7 +197,7 @@ void GUI::drawHUD(player* thePlayer)
 	//fpsstr+= thePlayer->getHunger();
 
 }
-void GUI::addDialogBox(wchar_t* message)
+void GUI::addDialogBox(wchar_t*)
 {
 	/*
 	stringw msg;

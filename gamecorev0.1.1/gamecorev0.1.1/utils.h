@@ -14,7 +14,7 @@ public:
 	const IC_Error& operator = (const IC_Error& err);
 	virtual const WideString getType() const{ return L"Generic Error"; }
 	const WideString getMessage() const;
-	const s32 getCode() const;
+	s32 getCode() const;
 protected:
 	void setMessage(const WideString str);
 	void setCode(const s32 code);

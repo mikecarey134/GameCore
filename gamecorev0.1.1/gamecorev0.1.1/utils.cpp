@@ -27,7 +27,7 @@ const WideString IC_Error::getMessage() const
 	return errorMessage; 
 }
 //=====================================================================================
-const s32 IC_Error::getCode() const
+s32 IC_Error::getCode() const
 {
 	return errorCode; 
 }

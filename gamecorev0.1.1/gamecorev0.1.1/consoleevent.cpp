@@ -26,9 +26,9 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI* gui,
 						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
 						   NPC* npc, mapLoader* currentMap, InternalServer* client):
-							device_(device),guienv_(guienv),driver_(driver),Context_(Context),gui_(gui),debug(false),							
-							pauseMenu(false), started(false), chatshown(false),creditsDisplayed(false), inventory(false), engine_(engine), 
-							player_(thePlayer), world_(world), npc_(npc), currentMap_(currentMap), client_(client),
+							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
+							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
+							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
 							inventoryScreen_(nullptr)
 {
 	//open up the file to get set up the coords
@@ -539,7 +539,7 @@ remotePlayer* consoleevent::findRemotePlayer (std::string nodeName)
 	return rm;
 }
 
-void consoleevent::update(u32 then, u32 now)//update the game throught the gameloop
+void consoleevent::update(u32, u32)//update the game throught the gameloop
 {
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 
@@ -583,7 +583,7 @@ void consoleevent::update(u32 then, u32 now)//update the game throught the gamel
 	
 }
 
-void consoleevent::drawMessage(wchar_t* message)
+void consoleevent::drawMessage(const wchar_t*)
 {
 	/*stringw msg;
 	msg+= message;
