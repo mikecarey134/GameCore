@@ -48,3 +48,6 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release --parallel ${{ matrix.keep_going }}
+
+      - name: Test inventory screen logic
+        run: ctest --test-dir build --build-config Release --output-on-failure --verbose

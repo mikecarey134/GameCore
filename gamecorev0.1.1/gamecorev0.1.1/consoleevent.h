@@ -28,6 +28,7 @@
 #include <iostream>
 
 #define CLUE_DRAW_OFFSET 10
+class InventoryScreen;
 
 
 class consoleevent : public irr::IEventReceiver, public GUI
@@ -67,6 +68,7 @@ public:
 	void drawPauseMenu ();
 	void drawMessage   (wchar_t* message);
 	void drawInventory ();
+	void setInventoryScreen(InventoryScreen* screen) { inventoryScreen_ = screen; }
 
 	void playerNpcCollisionCheck();
 
@@ -117,4 +119,5 @@ private:
 
 	//debugging get rid of this at some point
 	std::ofstream coords;
+	InventoryScreen* inventoryScreen_;
 };

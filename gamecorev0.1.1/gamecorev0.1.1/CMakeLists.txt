@@ -107,11 +107,11 @@ set(GAMECORE_SOURCES
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
   kinematiccharactercontroller.cpp main.cpp mapLoader.cpp NetworkData.cpp NPC.cpp
   ParticleSystem.cpp player.cpp remotePlayer.cpp SolarCycle.cpp utils.cpp
-  WeaponObject.cpp)
+  WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
 
 add_executable(gamecore ${GAMECORE_SOURCES})
 target_include_directories(gamecore PRIVATE "${IRRKLANG_INCLUDE_DIR}")
-target_link_libraries(gamecore PRIVATE irrbullet raknet lua51 irrlicht_engine ${IRRKLANG_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet lua51 irrlicht_engine ${IRRKLANG_LIBRARY} ${CMAKE_DL_LIBS})
 
 if(WIN32)
   target_link_libraries(gamecore PRIVATE ws2_32 opengl32)

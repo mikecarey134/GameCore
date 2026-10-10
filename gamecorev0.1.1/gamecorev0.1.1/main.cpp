@@ -38,6 +38,11 @@
 #endif
 #include "WeaponObject.h"
 #include "SolarCycle.h"
+#include "Catalog.h"
+#include "Inventory.h"
+#include "InventoryScreen.h"
+#include <fstream>
+#include <sstream>
 
 
 //standard irrlicht namespaces
@@ -68,6 +73,31 @@ using namespace RakNet;
 #endif
 #endif
 
+
+static std::string readText(const char* path)
+{
+	std::ifstream in(path, std::ios::binary);
+	std::ostringstream text;
+	text << in.rdbuf();
+	return text.str();
+}
+
+static void addStartingItems(inventory::Inventory& backpack)
+{
+	const char* items[] = { "pistol", "knife", "shotgun", "ammo_box", "key", "lockpick", "pills", "body_armor", "utility_belt" };
+	for (const char* item : items)
+		backpack.pickUp(inventory::Item{ item, 1 });
+	backpack.pickUp(inventory::Item{ "bandage", 3 });
+
+	const char* worn[][2] = { { "body_armor", "chest" }, { "utility_belt", "belt" } };
+	for (const auto& pair : worn)
+		for (const inventory::Placed& placed : backpack.backpackContents())
+			if (placed.item.type == pair[0])
+			{
+				backpack.equipFrom(placed.anchor, pair[1]);
+				break;
+			}
+}
 
 int main(void)
 {
@@ -145,6 +175,21 @@ int main(void)
 
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	device->setEventReceiver(&crecv);
+
+	inventory::Catalog itemCatalog;
+	inventory::LoadError itemError;
+	bool itemsLoaded = inventory::loadCatalog(readText("inventory/data/slots.csv"),
+		readText("inventory/data/items.csv"), itemCatalog, itemError);
+	inventory::Inventory backpack(itemCatalog, 8, 5);
+	std::string itemProblem = itemError.file + " line " + std::to_string(itemError.line) + ": " + itemError.message;
+	if (itemsLoaded)
+		addStartingItems(backpack);
+	else
+		std::cerr << "Inventory data did not load: " << itemProblem << std::endl;
+	InventoryScreen inventoryScreen = itemsLoaded
+		? InventoryScreen(device, backpack, itemCatalog)
+		: InventoryScreen(device, itemProblem);
+	crecv.setInventoryScreen(&inventoryScreen);
 
 	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");
 
@@ -233,7 +278,8 @@ int main(void)
 					
 					
 				
-					theGui.drawHUD(&thePlayer);
+					if (!crecv.getIsInventory())
+						theGui.drawHUD(&thePlayer);
 				    chat_queue.draw();
 					crecv.displayconsole(frameDeltaTime);
 					
