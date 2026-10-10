@@ -39,6 +39,8 @@ jobs:
             /gamecorev0.1.1/gamecorev0.1.1/compat/
             /gamecorev0.1.1/gamecorev0.1.1/console/
             /gamecorev0.1.1/gamecorev0.1.1/third_party/
+            /gamecorev0.1.1/gamecorev0.1.1/inventory/
+            /gamecorev0.1.1/gamecorev0.1.1/inventory_ui/
 
       - name: Install Irrlicht
         run: ${{ matrix.install }}
