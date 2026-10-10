@@ -93,6 +93,10 @@ target_link_libraries(gamecore PRIVATE irrbullet raknet lua51 irrlicht_engine ${
 
 if(WIN32)
   target_link_libraries(gamecore PRIVATE ws2_32 opengl32)
+  if(MSVC)
+    target_link_options(gamecore PRIVATE
+      /NODEFAULTLIB:irrKlang.lib /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
+  endif()
 elseif(APPLE)
   target_link_libraries(gamecore PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework IOKit")
 else()
