@@ -23,7 +23,7 @@ public:
 	enum config_vals{ DRIVER_TYPE=0,DEBUG,STENCIL_BUFF, 
 		VSINC, FULL_SCREEN, ONLINE,REMOTE_PORT, PORT,IP ,PLAYER_MODEL,PLAYER_NAME};
 	
-	Config_Reader(char* filename);
+	Config_Reader(const char* filename);
 	~Config_Reader(void);
 	bool readLine(irr::io::IReadFile* f,std::string& str );
 

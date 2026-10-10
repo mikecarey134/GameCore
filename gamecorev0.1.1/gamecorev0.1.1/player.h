@@ -48,7 +48,7 @@ class player
 
 public:
 
-	player(irr::IrrlichtDevice* device,char* filename,
+	player(irr::IrrlichtDevice* device,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		irrklang::ISoundEngine* engine, irrBulletWorld* world, std::string player_name,int model_type);
 	
@@ -69,7 +69,7 @@ public:
 	void setSpeed      (float newSpeed)           {playerSpeed_ = newSpeed;}
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
-	void setChatMessage(char* message)            { chat_message_ = message;}
+	void setChatMessage(const char* message)          { chat_message_ = message;}
 	void setCamDist    (float increment)          {cameradist_ = irr::core::clamp(cameradist_ + increment, 5.0f, 50.0f);}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
 	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
@@ -79,8 +79,8 @@ public:
 	void kill();
 	void setState(int state)					  { current_state_ = state; }
 
-	const irr::f32 getXDir () const		{ return xDirection_; }
-	const irr::f32 getZDir () const		{ return zDirection_; }
+	irr::f32 getXDir () const		{ return xDirection_; }
+	irr::f32 getZDir () const		{ return zDirection_; }
 	bool isOnGround        ()           { return character_ && character_->isOnGround();  }
 	bool isEnemyInRange	   ()			{ return enemyInRange_; }
 	bool enemyNPCInRange   ()			{ return enemyNPCInRange_; }
@@ -99,7 +99,7 @@ public:
 	irr::core::vector3df                getRotation   () { return characterModel_->getRotation(); }
 	irr::scene::IAnimatedMeshSceneNode* getPlayerNode () { return characterModel_; }
 	float                               getPlayerSpeed() { return playerSpeed_; }
-	char*                               getChatMessage() { return chat_message_; }
+	const char*                         getChatMessage() { return chat_message_; }
 	irr::scene::ICameraSceneNode*       getCamera     () { return camera_; }
 	int                                 getHealth     () { return playerHealth_; }
 	int                                 getHunger     () { return playerHunger_; }
@@ -146,7 +146,6 @@ private:
 	irrklang::ISound* player_punch_;
 	irrklang::ISound* player_jump_;
 	
-	irr::u32 then;
 
 	irr::f32 xDirection_;
 	irr::f32 zDirection_;
@@ -155,7 +154,7 @@ private:
 	irr::f32 mouseCursorY_;
 
 	float playerSpeed_;
-	char* chat_message_;
+	const char* chat_message_;
 	int playerHealth_;
 	int playerHunger_;
 	int playerWater_;

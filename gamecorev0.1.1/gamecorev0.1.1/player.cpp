@@ -18,9 +18,9 @@ using namespace io;
 using namespace gui;
 
 
-player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
+player::player(IrrlichtDevice* device,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
 			   irrBulletWorld* world, std::string player_name,int model_type):
-device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
+world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
 									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2,0.2),dimension2df(4.0,4.0))
@@ -72,8 +72,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	mouseCursorX_ = 0.0;
 	mouseCursorY_ = 0.0;
 
-	float height = 5.0;
-	float width  = 3.0;
 
 	character_ = new IKinematicCharacterController(world_);
 
@@ -283,9 +281,7 @@ void player::moveCameraControl()
 
 		// Step the simulation with our delta time
 
-		irr::core::position2d<f32> cursorPos = device_->getCursorControl()->getRelativePosition();
 		camera_ = device_->getSceneManager()->getActiveCamera();
-		irr::core::vector3df cameraPos = camera_->getAbsolutePosition();
 
 		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 		//manage shadow
@@ -544,7 +540,7 @@ void player::kill()
 }
 
 //early player weapon switching system
-void player::switch_weap(int type)
+void player::switch_weap(int)
 {
 	characterModel_->setVisible(false);
 

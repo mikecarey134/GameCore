@@ -18,7 +18,7 @@ using namespace io;
 using namespace gui;
 
 
-Config_Reader::Config_Reader(char* filename)
+Config_Reader::Config_Reader(const char* filename)
 {
 	//make an instance of irrlicht device to read the file
 	device_ = createDevice(EDT_NULL,dimension2d<u32>(0,0),16,false);

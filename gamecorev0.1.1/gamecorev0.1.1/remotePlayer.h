@@ -50,8 +50,8 @@ public:
 	bool isDead()								  { return dead_; }
 	
 
-	const irr::f32 getXDir () const		{ return xDirection_; }
-	const irr::f32 getZDir () const		{ return zDirection_; }
+	irr::f32 getXDir () const		{ return xDirection_; }
+	irr::f32 getZDir () const		{ return zDirection_; }
 	bool isOnGround        ()           { return character_->isOnGround();  }
 	bool isBeingDamaged		()			{ return beingDamaged_; }
 

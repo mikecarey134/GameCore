@@ -29,12 +29,10 @@ using namespace gui;
 
 remotePlayer::remotePlayer(IrrlichtDevice* device,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
 						   ISoundEngine* engine, irrBulletWorld* world,int model_type):
-device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
+world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_(false), dead_(false)
 {
 	
-	float height = 5.0;
-	float width  = 3.0;
 
 	character_ = new IKinematicCharacterController(world_);
 	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
@@ -72,7 +70,6 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_
 	//rem_player_shadow_->setScale(vector3df(.85,.85,.85));
 
 	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
-	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
 
 
 	nameDisplay_ = smgr_->addBillboardTextSceneNode(font,name_.c_str(),0, dimension2d<f32>(12,2),
@@ -124,7 +121,7 @@ void remotePlayer::forward()
 	characterModel_->setFrameLoop(301,318);
 	characterModel_->setAnimationSpeed(4);
 
-	/*if (walkframe_== 0 || walkframe_ == 319 )
+	if (walkframe_== 0 || walkframe_ == 319 )
 	{
 		walkframe_ = 301;
 	}

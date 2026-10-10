@@ -190,7 +190,7 @@ int main(void)
 		: InventoryScreen(device, itemProblem);
 	crecv.setInventoryScreen(&inventoryScreen);
 
-	gui::IGUIFont* font2 = device->getGUIEnvironment()->getFont("bill/bigfont.png");
+	device->getGUIEnvironment()->getFont("bill/bigfont.png");
 
 	currentMap.loadMap();
 	//thePlayer.setUpCameraCollisions();
@@ -202,7 +202,7 @@ int main(void)
 
 	u32 then = device->getTimer()->getTime();
 
-	ISound* intro = engine->play2D("sounds/discovery.mp3", true);	
+	engine->play2D("sounds/discovery.mp3", true);	
 
 	
 	//clear the console before the game starts

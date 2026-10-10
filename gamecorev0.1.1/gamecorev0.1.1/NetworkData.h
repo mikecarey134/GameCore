@@ -27,7 +27,7 @@ class NetworkData
 {
 public:
 	//ctor
-	NetworkData(irr::IrrlichtDevice* device,char* filename,
+	NetworkData(irr::IrrlichtDevice* device,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		irrklang::ISoundEngine* engine, irrBulletWorld* world, ChatQueue* message_buffer, player* thePlayer);
 	//dtor
@@ -61,7 +61,6 @@ private:
 	std::string ourNetworkChatTheres;
 	std::map<std::string,remotePlayer> players_;
 	irr::IrrlichtDevice* device_;
-	char* filename_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
 	irrklang::ISoundEngine* engine_;

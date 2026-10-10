@@ -34,12 +34,11 @@
 using namespace RakNet;
 using namespace std;
 
-InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
+InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,const char* filename,
 							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 							   irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip,
 							   int remote_port, int local_port,ChatQueue* message_buffer, 
 							   player* thePlayer): online_(online),
-							   device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
 							   networkData_(device,filename,smgr,driver,engine,world, message_buffer, thePlayer),
 							   message_buffer_(message_buffer)
 {
@@ -109,13 +108,12 @@ InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* fil
 InternalServer::~InternalServer(void)
 {
 }
-void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font)
+void InternalServer::messageLoop(player& thePlayer, GUI&,irr::gui::IGUIFont*)
 {
 	
 	if (online_ == true)//if the online parameter is set maybe we will have a user set this
 	{
 
-		RakNet::SystemAddress clientID=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 
 		// message is the data to send
 		// strlen(message)+1 is to send the null terminator
@@ -143,7 +141,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 		std::vector<remotePlayer> damagedPlayers = networkData_.findDamagedPlayers();
 		if (!damagedPlayers.empty())
 		{
-			for (int i = 0; i < damagedPlayers.size(); ++i)
+			for (size_t i = 0; i < damagedPlayers.size(); ++i)
 			{
 				std::string damageMsg = "3 ";
 				damageMsg += damagedPlayers[i].getName();
@@ -293,7 +291,7 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 	//}
 }
 
-bool InternalServer::emptyMess(char* message)
+bool InternalServer::emptyMess(const char* message)
 {	
 	int length=0;
 	while(*message!= '\0')

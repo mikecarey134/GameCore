@@ -44,14 +44,14 @@
 class InternalServer
 {
 public:
-	InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
+	InternalServer(bool online,irr::IrrlichtDevice* device,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip
         ,int remote_port, int local_port,ChatQueue* message_buffer, player* thePlayer);
 
 	~InternalServer(void);
 	void messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font);
-	bool emptyMess(char* message);
+	bool emptyMess(const char* message);
 	void shutdown(player& thePlayer);
 	bool isOnline(){return online_;}
 
@@ -61,22 +61,14 @@ public:
 private:
 	bool online_;
 
-	irr::IrrlichtDevice* device_;
-	char* filename_;
-	irr::scene::ISceneManager* smgr_;
-	irr::video::IVideoDriver* driver_;
-	irrklang::ISoundEngine* engine_;
-	irrBulletWorld* world_;
 
 	//need to have an array of clients to send updates
 	//std::vector<remotePlayer> clients_;
-	RakNet::RakNetStatistics* rss_;
 	RakNet::RakPeerInterface* client_;
 	// Holds packets
 	RakNet::Packet* p;
 	//unsigned char packetIdentifier;
 	bool isServer;
-	char message[MAX_MESSAGE_SIZE];
 	NetworkData networkData_;
 	ChatQueue* message_buffer_;
 };
