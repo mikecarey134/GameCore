@@ -572,7 +572,7 @@ void IC_Console::handleKeyPress(wchar_t keyChar, irr::EKEY_CODE keyCode, bool bS
 		{
 			
 			u32 index = consoleHistory.size() - 1 - consoleHistoryIndex;
-			if(index >= 0 && index < consoleHistory.size())
+			if(index < consoleHistory.size())
 			{
 				consoleHistoryIndex++;
 				currentCommand = consoleHistory[index];
@@ -593,7 +593,7 @@ void IC_Console::handleKeyPress(wchar_t keyChar, irr::EKEY_CODE keyCode, bool bS
 		{
 			
 			u32 index = consoleHistory.size() - consoleHistoryIndex;
-			if(index >= 0 && index < consoleHistory.size())
+			if(index < consoleHistory.size())
 			{
 				consoleHistoryIndex--;
 				currentCommand = consoleHistory[index];

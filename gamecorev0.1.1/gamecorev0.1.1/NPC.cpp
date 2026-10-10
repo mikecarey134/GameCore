@@ -57,16 +57,15 @@ NPC::~NPC()
 
 void NPC::drawNPCHealth()
 {
-	IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 	healthText_ = "";
 	healthText_ += npcHealth_;
 	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
 
-	healthDisplay_->remove();
-	healthDisplay_ = smgr_->addBillboardTextSceneNode(font, healthText_.c_str(),0, dimension2d<f32>(11,5),
-													  vector3df(characterModel_->getPosition().X, 
-													            characterModel_->getPosition().Y+19,
-																characterModel_->getPosition().Z));
+	healthDisplay_->setText(healthText_.c_str());
+	healthDisplay_->setSize(dimension2d<f32>(11,5));
+	healthDisplay_->setPosition(vector3df(characterModel_->getPosition().X, 
+										  characterModel_->getPosition().Y+19,
+										  characterModel_->getPosition().Z));
 	
 	if (npcHealth_ > 50)
 		healthDisplay_->setColor(SColor(255,0,255,0));
@@ -114,6 +113,8 @@ void NPC::luaSetDir()
 
 void NPC::damage()
 {
+	if (isDead_)
+		return;
 	npcHealth_ -= 5;
 	std::cout << npcHealth_ << std::endl;
 

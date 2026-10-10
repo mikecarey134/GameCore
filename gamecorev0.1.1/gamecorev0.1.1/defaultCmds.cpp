@@ -328,11 +328,11 @@ bool IC_Command_SAY::invoke(const array<WideString>& args, IC_Dispatcher* pDispa
 			message +=" ";
 	
 		}
-		char* dest_msg = new char[message.size()];
-		int ret = wcstombs(dest_msg,message.c_str(),message.size());//convert from wchar_t* to char*
-		if(ret == message.size()){dest_msg[message.size()-1] ='\0';}//insert the null terminator
+		chatText_.clear();
+		for(u32 i = 0; i + 1 < message.size(); ++i)
+			chatText_ += (char)message[i];
 
-		thePlayer_->setChatMessage(dest_msg);//set players chat message to the passed in string
+		thePlayer_->setChatMessage(&chatText_[0]);//set players chat message to the passed in string
 		
 		//delete [] dest_msg;
 	}
@@ -368,11 +368,11 @@ bool IC_Command_C::invoke(const array<WideString>& args, IC_Dispatcher* pDispatc
 			message +=" ";
 
 		}
-		char* dest_msg = new char[message.size()];
-		int ret = wcstombs(dest_msg,message.c_str(),message.size());//convert from wchar_t* to char*
-		if(ret == message.size()){dest_msg[message.size()-1] ='\0';}//insert the null terminator
+		chatText_.clear();
+		for(u32 i = 0; i + 1 < message.size(); ++i)
+			chatText_ += (char)message[i];
 
-		thePlayer_->setChatMessage(dest_msg);//set players chat message to the passed in string
+		thePlayer_->setChatMessage(&chatText_[0]);//set players chat message to the passed in string
 
 		//delete [] dest_msg;
 	}
@@ -389,7 +389,7 @@ IC_Command_P_SPEED::IC_Command_P_SPEED(player* thePlayer) : IC_Command(L"pspeed"
 {
 	thePlayer_= thePlayer;
 
-	setUsage(L"\pspeed <New Speed>");
+	setUsage(L"\\pspeed <New Speed>");
 
 	addDescLine("Increases or decreases player speed");
 }
@@ -422,7 +422,7 @@ IC_Command_PH::IC_Command_PH(player* thePlayer) : IC_Command(L"ph")
 {
 	thePlayer_= thePlayer;
 
-	setUsage(L"\ph <New Health>");
+	setUsage(L"\\ph <New Health>");
 
 	addDescLine("Increases or decreases player health");
 }
@@ -454,7 +454,7 @@ IC_Command_LM::IC_Command_LM(mapLoader* currentMap) : IC_Command(L"lm")
 {
 	currentMap_ = currentMap;
 
-	setUsage(L"\lm <New Map>");
+	setUsage(L"\\lm <New Map>");
 
 	addDescLine("Change the currently loaded map");
 }
@@ -472,15 +472,9 @@ bool IC_Command_LM::invoke(const array<WideString>& args, IC_Dispatcher* pDispat
 		const wchar_t* arg = args[0].c_str();
 		if (args.size()==1)
 		{
-			char* newMap = new char[args[0].size()];//dynamically allocate a c string and copy the contents of args[0]
-			unsigned int i=0;
-			for(;i<args[0].size();++i)
-			{
-				newMap[i] = (char)args[0][i];
-
-			}
-
-			newMap[i] ='\0';//insert null terminator
+			std::string newMap;
+			for(unsigned int i=0;i<args[0].size();++i)
+				newMap += (char)args[0][i];
 			
 			currentMap_->closeMap();
 			currentMap_->setMap(newMap);
@@ -503,7 +497,7 @@ IC_Command_H::IC_Command_H(player* thePlayer) : IC_Command(L"h")
 {
 	thePlayer_= thePlayer;
 
-	setUsage(L"\h ");
+	setUsage(L"\\h ");
 
 	addDescLine("Hurt Current Player");
 }

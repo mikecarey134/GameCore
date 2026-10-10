@@ -64,18 +64,14 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 			{
 				//Iterate through the list of clues until we find the one the player is looking at
 				std::list<ClueObject*>::iterator obj = clueObjects_.begin();
-				ClueObject* clueHolder = *obj;
-				while(clueHolder->getModel()->getName() != player_->getSelectedNode()->getName() &&
-					  obj != clueObjects_.end())
-				{
+				while(obj != clueObjects_.end() &&
+					  (*obj)->getModel()->getName() != player_->getSelectedNode()->getName())
 					++obj;
-					clueHolder = *obj;
-				}
 
 				if (obj != clueObjects_.end())
 				{
-					player_->addClue(clueHolder);
-					clueHolder->eraseModelFromWorld();
+					player_->addClue(*obj);
+					(*obj)->eraseModelFromWorld();
 				}
 			}
 			
@@ -385,14 +381,17 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 	driver_->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
 	//driver_->draw2DImage(titleImage,position2d<s32>(0,0),rect<s32>(0,0,424,127),NULL,SColor(255,255,255,255), true);
 
-	guienv_->addButton(rect<s32>(330,200,450,240), 0, GUI_ID_START,
-		L"Start", L"Starts the game");
-	guienv_->addButton(rect<s32>(330,260,450,300), 0, GUI_ID_OPTIONS,
-		L"Options", L"Adjust game settings");
-	guienv_->addButton(rect<s32>(330,320,450,360), 0, GUI_ID_CREDITS,
-		L"Credits", L"Click to see who made the game");
-	guienv_->addButton(rect<s32>(330,380,450,420), 0, GUI::GUI_ID_QUIT_BUTTON,
-		L"Exit", L"Exit to the Desktop");
+	if (!guienv_->getRootGUIElement()->getElementFromId(GUI_ID_CREDITS, true))
+	{
+		guienv_->addButton(rect<s32>(330,200,450,240), 0, GUI_ID_START,
+			L"Start", L"Starts the game");
+		guienv_->addButton(rect<s32>(330,260,450,300), 0, GUI_ID_OPTIONS,
+			L"Options", L"Adjust game settings");
+		guienv_->addButton(rect<s32>(330,320,450,360), 0, GUI_ID_CREDITS,
+			L"Credits", L"Click to see who made the game");
+		guienv_->addButton(rect<s32>(330,380,450,420), 0, GUI::GUI_ID_QUIT_BUTTON,
+			L"Exit", L"Exit to the Desktop");
+	}
 
 
 	//2 types of gui fonts
@@ -430,14 +429,17 @@ void consoleevent::drawPauseMenu ()// render the pause menu
 	ITexture* titleImage = driver_->getTexture("bill/pauselogo.png");
 	driver_->draw2DImage(titleImage,position2d<s32>(290,150),rect<s32>(0,0,240,38),NULL,SColor(255,255,255,255), true);
 
-	guienv_->addButton(rect<s32>(350,285,470,315), 0, GUI_ID_RESUME,
-		L"Resume", L"Unpauses the game");
-	guienv_->addButton(rect<s32>(350,325,470,355), 0, GUI_ID_PAUSE_OPTIONS,
-		L"Options", L"Set up game things");
-	guienv_->addButton(rect<s32>(350,365,470,395), 0, GUI_ID_GOTO_MAIN_MENU,
-		L"Main Menu", L"Goes back to the main menu");
-	guienv_->addButton(rect<s32>(350,405,470,435), 0, GUI::GUI_ID_QUIT_BUTTON,
-		L"Quit", L"Exits Program");
+	if (!guienv_->getRootGUIElement()->getElementFromId(GUI_ID_GOTO_MAIN_MENU, true))
+	{
+		guienv_->addButton(rect<s32>(350,285,470,315), 0, GUI_ID_RESUME,
+			L"Resume", L"Unpauses the game");
+		guienv_->addButton(rect<s32>(350,325,470,355), 0, GUI_ID_PAUSE_OPTIONS,
+			L"Options", L"Set up game things");
+		guienv_->addButton(rect<s32>(350,365,470,395), 0, GUI_ID_GOTO_MAIN_MENU,
+			L"Main Menu", L"Goes back to the main menu");
+		guienv_->addButton(rect<s32>(350,405,470,435), 0, GUI::GUI_ID_QUIT_BUTTON,
+			L"Quit", L"Exits Program");
+	}
 
 		//2 types of gui fonts
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();

@@ -70,7 +70,7 @@ public:
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
 	void setChatMessage(char* message)            { chat_message_ = message;}
-	void setCamDist    (float increment)          {cameradist_+= increment;}
+	void setCamDist    (float increment)          {cameradist_ = irr::core::clamp(cameradist_ + increment, 5.0f, 50.0f);}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
 	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
 	void setHunger     (int newHunger)            {playerHunger_ = newHunger;}

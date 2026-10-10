@@ -152,6 +152,7 @@ public:
 	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
 private:
 	player* thePlayer_;
+	std::string chatText_;
 };
 
 
@@ -163,6 +164,7 @@ public:
 	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
 private:
 	player* thePlayer_;
+	std::string chatText_;
 };
 
 
