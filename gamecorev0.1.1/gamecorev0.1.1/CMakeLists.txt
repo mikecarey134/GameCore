@@ -51,7 +51,9 @@ file(COPY "${THIRD_PARTY}/irrbullet-0.1.8/" DESTINATION "${IRRBULLET_COPY}"
      FILES_MATCHING PATTERN "*.h" PATTERN "*.cpp")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/kinematiccharactercontroller.h"
                "${IRRBULLET_COPY}/kinematiccharactercontroller.h" COPYONLY)
-file(WRITE "${IRRBULLET_COPY}/irrBullet.h" "#include \"irrbullet.h\"\n")
+if(NOT EXISTS "${IRRBULLET_COPY}/irrBullet.h")
+  file(WRITE "${IRRBULLET_COPY}/irrBullet.h" "#include \"irrbullet.h\"\n")
+endif()
 file(GLOB IRRBULLET_SOURCES "${IRRBULLET_COPY}/*.cpp")
 list(REMOVE_ITEM IRRBULLET_SOURCES "${IRRBULLET_COPY}/kinematiccharactercontroller.cpp")
 add_library(irrbullet STATIC ${IRRBULLET_SOURCES})
