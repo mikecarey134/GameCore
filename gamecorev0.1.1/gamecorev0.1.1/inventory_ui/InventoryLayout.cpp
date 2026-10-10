@@ -4,45 +4,60 @@ namespace inventory
 {
 	namespace
 	{
-		const int slotWidth = 180;
-		const int slotHeight = 44;
-		const int gap = 8;
-		const int slotsPerRow = 4;
+		const int panelWidth = 760;
+		const int panelHeight = 560;
 		const int cellSize = 52;
-		const int margin = 20;
-		const int slotsTop = 40;
-		const int gridGap = 24;
-		const int statusGap = 20;
-		const int statusHeight = 20;
-		const int slotBlockWidth = slotsPerRow * slotWidth + (slotsPerRow - 1) * gap;
 	}
 
-	InventoryLayout::InventoryLayout(int screenWidth, int screenHeight, int slotCount, int columns, int rows)
-		: screenWidth_(screenWidth), screenHeight_(screenHeight), slotCount_(slotCount), columns_(columns), rows_(rows)
+	InventoryLayout::InventoryLayout(int screenWidth, int screenHeight, const std::vector<Cell>& slotPositions,
+		int columns, int rows)
+		: left_((screenWidth - panelWidth) / 2), top_((screenHeight - panelHeight) / 2), slotPositions_(slotPositions),
+		columns_(columns), rows_(rows)
 	{
 	}
 
-	int InventoryLayout::slotBlockLeft() const
+	Rect InventoryLayout::panel() const
 	{
-		return (screenWidth_ - slotBlockWidth) / 2;
+		return Rect{ left_, top_, panelWidth, panelHeight };
 	}
 
-	int InventoryLayout::gridTop() const
+	Rect InventoryLayout::title() const
 	{
-		int slotRows = (slotCount_ + slotsPerRow - 1) / slotsPerRow;
-		return slotsTop + slotRows * (slotHeight + gap) - gap + gridGap;
+		return Rect{ left_ + (panelWidth - 303) / 2, top_ + 8, 303, 72 };
+	}
+
+	Rect InventoryLayout::dollArea() const
+	{
+		return Rect{ left_ + 20, top_ + 92, 280, 420 };
+	}
+
+	Rect InventoryLayout::details() const
+	{
+		return Rect{ left_ + 320, top_ + 376, 416, 92 };
+	}
+
+	Rect InventoryLayout::statusLine() const
+	{
+		return Rect{ left_ + 320, top_ + 476, 416, 20 };
+	}
+
+	Rect InventoryLayout::hintLine() const
+	{
+		return Rect{ left_ + 20, top_ + 528, 720, 16 };
 	}
 
 	Rect InventoryLayout::slot(int index) const
 	{
-		return Rect{ slotBlockLeft() + (index % slotsPerRow) * (slotWidth + gap), slotsTop + (index / slotsPerRow) * (slotHeight + gap),
-			slotWidth, slotHeight };
+		Cell position = slotPositions_[index];
+		if (position.column < 0 || position.row < 0)
+			return Rect{ 0, 0, 0, 0 };
+		Rect area = dollArea();
+		return Rect{ area.x + 16 + position.column * 88, area.y + 16 + position.row * 100, 72, 72 };
 	}
 
 	Rect InventoryLayout::cell(Cell position) const
 	{
-		int left = (screenWidth_ - columns_ * cellSize) / 2;
-		return Rect{ left + position.column * cellSize, gridTop() + position.row * cellSize, cellSize, cellSize };
+		return Rect{ left_ + 320 + position.column * cellSize, top_ + 100 + position.row * cellSize, cellSize, cellSize };
 	}
 
 	Rect InventoryLayout::footprint(Cell anchor, int width, int height) const
@@ -56,19 +71,9 @@ namespace inventory
 		Rect grid = footprint(Cell{ 0, 0 }, columns_, rows_);
 		if (grid.contains(x, y))
 			return Hit{ Hit::Kind::Cell, Cell{ (x - grid.x) / cellSize, (y - grid.y) / cellSize }, -1 };
-		for (int index = 0; index < slotCount_; ++index)
+		for (int index = 0; index < (int)slotPositions_.size(); ++index)
 			if (slot(index).contains(x, y))
 				return Hit{ Hit::Kind::Slot, Cell{ 0, 0 }, index };
 		return Hit{ Hit::Kind::None, Cell{ 0, 0 }, -1 };
-	}
-
-	Rect InventoryLayout::panel() const
-	{
-		return Rect{ margin, margin, screenWidth_ - 2 * margin, screenHeight_ - 2 * margin };
-	}
-
-	Rect InventoryLayout::statusLine() const
-	{
-		return Rect{ slotBlockLeft(), gridTop() + rows_ * cellSize + statusGap, slotBlockWidth, statusHeight };
 	}
 }
