@@ -110,7 +110,10 @@ int main(void)
 	IrrlichtDevice *device = createDevice(config_reader.get_driver(),//drivers
 	dimension2d<u32>(800,600),16,config_reader.get_full_screen()
 	,config_reader.get_s_buffer(),config_reader.get_vsinc());
-	
+	if(!device)//if device fails to load exit
+	{
+		return 1;
+	}
 
 	GUI theGui(device);//create an instance of gui
 	theGui.drawIntro();//draw our intro 
@@ -119,6 +122,11 @@ int main(void)
 	
 	device->setWindowCaption(L"gamecore Build v0.1.1(Alpha)");//set the caption for the window
 	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
+	if (!engine)//if the irrklang device fails exit 
+	{
+		device->drop();
+		return 1;
+	}
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
 	IVideoDriver* driver = device->getVideoDriver();
 
@@ -135,15 +143,6 @@ int main(void)
 	SAppContext context;//guiEvent stuff
 	context.device = device;
 	context.counter = 0;
-
-	if(!device)//if device fails to load exit
-	{
-		return 1;
-	}
-	if (!engine)//if the irrklang device fails exit 
-	{
-		return 1;
-	}
 
 	//init the chat buffer display that shows all player chat
 	ChatQueue chat_queue(device,rect<s32>(0,580,580,500),5000,true,500);
@@ -293,14 +292,15 @@ int main(void)
 			device->yield();
 	}
 
-	//reclaim memory and shutdown device
-	device->drop();
-
-	
 	if(Client.isOnline())//if we are online
 	{
 		Client.shutdown(thePlayer);//shutdown internal server
 	}
+
+	//reclaim memory and shutdown device
+	delete world;
+	engine->drop();
+	device->drop();
 
 	return 0;
 }

@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <cstring>
 #include "Config_Reader.h"
 
 using namespace irr;
@@ -28,8 +29,8 @@ Config_Reader::Config_Reader(char* filename)
 	ini_vals.reserve(DEFAULT_SIZE);//reserve the default amount so we do not have to call doubleCap()
 	
 	//get our filename
-	filename_ = new char[20];
-	filename_ = strcpy(filename_, filename);
+	filename_ = new char[strlen(filename) + 1];
+	strcpy(filename_, filename);
 	fs_ = device_->getFileSystem();
 
 	if(!fs_->existFile(filename_))//if the file exsists
