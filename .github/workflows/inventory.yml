@@ -22,7 +22,7 @@ jobs:
       run:
         working-directory: gamecorev0.1.1/gamecorev0.1.1/inventory
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: gamecorev0.1.1/gamecorev0.1.1/inventory
 
@@ -33,4 +33,4 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Test
-        run: ctest --test-dir build --build-config Release --output-on-failure
+        run: ctest --test-dir build --build-config Release --output-on-failure --verbose
