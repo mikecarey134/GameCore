@@ -43,7 +43,8 @@ void mapLoader::loadMap()
 		const stringc suffix = name.subString(name.findFirst('_')+1, name.size()-name.findFirst('_'));
 
 
-		if(node->getType() == ESNT_MESH || ESNT_CUBE || ESNT_SPHERE || ESNT_ANY)
+		ESCENE_NODE_TYPE type = node->getType();
+		if(type == ESNT_MESH || type == ESNT_OCTREE || type == ESNT_CUBE || type == ESNT_SPHERE)
 		{
 			if(prefix == "rigid")
 			{
@@ -58,7 +59,8 @@ void mapLoader::loadMap()
 				else if(suffix == "sphere")
 					shape = new ISphereShape(node, node->getBoundingBox().getVolume()*(f32)0.001);
 
-				world_->addRigidBody(shape);
+				if(shape)
+					world_->addRigidBody(shape);
 
 				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 			}
@@ -116,29 +118,28 @@ void mapLoader::loadMap()
 		//node->setDebugDataVisible(EDS_BBOX);
 		node->setMaterialFlag(EMF_LIGHTING,1);
 		node->setAutomaticCulling(EAC_BOX);//cull unneeded primitives 
-	
-		vector3df clueLocation(167, -4, 67);
-		clueLocations_.push_back(clueLocation);
-		clueLocation = vector3df(114, -4, 80);
-		clueLocations_.push_back(clueLocation);
-
-
-		device_->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
-
-
-		//temp skybox later we will have one based off the time of day
-		irr::scene::ISceneNode* skybox = smgr_->addSkyBoxSceneNode(
-			driver_->getTexture("map/sky/bstop.jpg"),
-			driver_->getTexture("map/sky/bstop.jpg"),
-			driver_->getTexture("map/sky/bsleft.jpg"),
-			driver_->getTexture("map/sky/bsright.jpg"),
-			driver_->getTexture("map/sky/bsfront.jpg"),
-			driver_->getTexture("map/sky/bsback.jpg"));
-
 	}
+
+	vector3df clueLocation(167, -4, 67);
+	clueLocations_.push_back(clueLocation);
+	clueLocation = vector3df(114, -4, 80);
+	clueLocations_.push_back(clueLocation);
+
+
+	device_->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
+
+
+	//temp skybox later we will have one based off the time of day
+	smgr_->addSkyBoxSceneNode(
+		driver_->getTexture("map/sky/bstop.jpg"),
+		driver_->getTexture("map/sky/bstop.jpg"),
+		driver_->getTexture("map/sky/bsleft.jpg"),
+		driver_->getTexture("map/sky/bsright.jpg"),
+		driver_->getTexture("map/sky/bsfront.jpg"),
+		driver_->getTexture("map/sky/bsback.jpg"));
 }
 
 void mapLoader::closeMap()
 {
-
+	device_->getLogger()->log("closeMap does nothing yet: the old map, its physics and its clue points stay loaded", ELL_WARNING);
 }
