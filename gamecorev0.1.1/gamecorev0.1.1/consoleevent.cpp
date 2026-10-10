@@ -541,7 +541,7 @@ void consoleevent::addClueObject(ClueObject* object)
 	if(object->getObjectType() == TYPE_CLUE)
 	{
 		irr::core::string<char> nameEdit = object->getModel()->getName();
-		nameEdit += clueObjects_.size();
+		nameEdit += (unsigned int)clueObjects_.size();
 		object->getModel()->setName(nameEdit);
 
 		clueObjects_.push_back(object);
