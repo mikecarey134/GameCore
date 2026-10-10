@@ -1,0 +1,104 @@
+#include "doctest.h"
+#include "Catalog.h"
+#include <fstream>
+#include <sstream>
+
+using namespace inventory;
+
+static std::string readDataFile(const std::string& name)
+{
+	std::string path = std::string(INVENTORY_DATA_DIR) + "/" + name;
+	std::ifstream in(path, std::ios::binary);
+	INFO("cannot open ", path);
+	REQUIRE(in.is_open());
+	std::ostringstream text;
+	text << in.rdbuf();
+	return text.str();
+}
+
+static Catalog shippedCatalog()
+{
+	Catalog catalog;
+	LoadError error;
+	bool loaded = loadCatalog(readDataFile("slots.csv"), readDataFile("items.csv"), catalog, error);
+	INFO(error.file, " line ", error.line, ": ", error.message);
+	REQUIRE(loaded);
+	return catalog;
+}
+
+static const ItemType& shippedItem(const Catalog& catalog, const char* id)
+{
+	const ItemType* type = catalog.itemType(id);
+	INFO("no item type '", id, "'");
+	REQUIRE(type != nullptr);
+	return *type;
+}
+
+TEST_CASE("the shipped slot and item files load")
+{
+	shippedCatalog();
+}
+
+TEST_CASE("the shipped slots are the owner's eight, in order")
+{
+	Catalog catalog = shippedCatalog();
+
+	std::vector<std::string> ids;
+	for (int i = 0; i < catalog.slotCount(); ++i)
+		ids.push_back(catalog.slotId(i));
+
+	CHECK(ids == std::vector<std::string>{ "head", "chest", "gloves", "boots", "belt", "main_hand", "off_hand", "neck" });
+}
+
+TEST_CASE("the shipped items have the owner's sizes")
+{
+	Catalog catalog = shippedCatalog();
+
+	struct Size { const char* id; int width; int height; };
+	const Size sizes[] = { { "key", 1, 1 }, { "pistol", 1, 3 }, { "body_armor", 2, 3 }, { "shotgun", 1, 4 } };
+	for (const Size& size : sizes)
+	{
+		CAPTURE(size.id);
+		const ItemType& type = shippedItem(catalog, size.id);
+		CHECK(type.width == size.width);
+		CHECK(type.height == size.height);
+	}
+}
+
+TEST_CASE("only the shotgun is two-handed, blocking the off hand")
+{
+	Catalog catalog = shippedCatalog();
+
+	const ItemType& shotgun = shippedItem(catalog, "shotgun");
+	CHECK(shotgun.slots == std::vector<std::string>{ "main_hand" });
+	CHECK(shotgun.blocks == std::vector<std::string>{ "off_hand" });
+
+	for (const char* id : { "knife", "hatchet", "pistol", "flashlight", "lockpick", "key", "bandage", "pills",
+		"ammo_box", "body_armor", "helmet", "gloves", "boots", "utility_belt", "amulet" })
+	{
+		CAPTURE(id);
+		CHECK(shippedItem(catalog, id).blocks.empty());
+	}
+}
+
+TEST_CASE("bandages, pills and ammo stack; lockpicks do not")
+{
+	Catalog catalog = shippedCatalog();
+
+	for (const char* id : { "bandage", "pills", "ammo_box" })
+	{
+		CAPTURE(id);
+		CHECK(shippedItem(catalog, id).maxStack > 1);
+	}
+	const ItemType& lockpick = shippedItem(catalog, "lockpick");
+	CHECK(lockpick.maxStack == 1);
+	CHECK(lockpick.width == 1);
+	CHECK(lockpick.height == 1);
+}
+
+TEST_CASE("the utility belt equips to the belt slot")
+{
+	Catalog catalog = shippedCatalog();
+
+	CHECK(shippedItem(catalog, "utility_belt").slots == std::vector<std::string>{ "belt" });
+}
