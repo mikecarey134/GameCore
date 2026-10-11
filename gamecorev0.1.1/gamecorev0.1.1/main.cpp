@@ -259,7 +259,6 @@ int main(void)
 						if (!crecv.getPaused() && !crecv.getIsInventory())//is the game paused
 						{
 							device->getCursorControl()->setVisible(false);//make cursor temp visible
-							device->getCursorControl()->setPosition( 0.5f, 0.5f );
 						}
 						else
 							device->getCursorControl()->setVisible(true);
@@ -284,6 +283,9 @@ int main(void)
 						}
 						else
 							thePlayer.haltCamera();
+
+						if (!crecv.getPaused() && !crecv.getIsInventory())
+							device->getCursorControl()->setPosition( 0.5f, 0.5f );
 					
 					
 				
