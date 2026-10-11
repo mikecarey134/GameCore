@@ -29,6 +29,8 @@ private:
 
 	irr::core::string<char> mapName_;
 	std::vector<irr::core::vector3df> clueLocations_;
+	std::vector<ICollisionObject*> bodies_;
+	std::vector<irr::scene::ISceneNode*> mapNodes_;
 };
 
 #endif

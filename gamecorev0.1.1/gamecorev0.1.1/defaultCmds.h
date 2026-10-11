@@ -183,11 +183,12 @@ private:
 class IC_Command_LM : public IC_Command
 {
 public:
-	IC_Command_LM(mapLoader* currentMap);
+	IC_Command_LM(mapLoader* currentMap, player* thePlayer);
 	virtual ~IC_Command_LM();
 	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
 private:
 	mapLoader* currentMap_;
+	player* thePlayer_;
 };
 
 

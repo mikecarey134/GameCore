@@ -21,8 +21,7 @@ device_(device), driver_(driver), smgr_(smgr), world_(world)
 
 void mapLoader::loadMap()
 {
-
-	
+	core::list<ISceneNode*> before = smgr_->getRootSceneNode()->getChildren();
 
 	device_->getSceneManager()->loadScene(mapName_);
 	//driver_->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
@@ -59,7 +58,7 @@ void mapLoader::loadMap()
 					shape = new ISphereShape(node, node->getBoundingBox().getVolume()*(f32)0.001);
 
 				if(shape)
-					world_->addRigidBody(shape);
+					bodies_.push_back(world_->addRigidBody(shape));
 
 				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 			}
@@ -68,7 +67,7 @@ void mapLoader::loadMap()
 			{
 			
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
-				world_->addRigidBody(shape);
+				bodies_.push_back(world_->addRigidBody(shape));
 				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(IDFlag_IsPickable);
@@ -99,6 +98,7 @@ void mapLoader::loadMap()
 			else if(prefix == "soft")
 			{
 				ISoftBody* softbody = world_->addSoftBody(static_cast<IMeshSceneNode*>(node));
+				bodies_.push_back(softbody);
 				softbody->setTotalMass(0.1f, false);
 				softbody->setActivationState(EAS_DISABLE_DEACTIVATION);
 				node->setMaterialFlag(EMF_BACK_FACE_CULLING, false);
@@ -136,9 +136,36 @@ void mapLoader::loadMap()
 		driver_->getTexture("map/sky/bsright.jpg"),
 		driver_->getTexture("map/sky/bsfront.jpg"),
 		driver_->getTexture("map/sky/bsback.jpg"));
+
+	const core::list<ISceneNode*>& after = smgr_->getRootSceneNode()->getChildren();
+	for (core::list<ISceneNode*>::ConstIterator it = after.begin(); it != after.end(); ++it)
+	{
+		bool isNew = true;
+		for (core::list<ISceneNode*>::ConstIterator old = before.begin(); old != before.end(); ++old)
+			if (*old == *it)
+				isNew = false;
+		if (isNew)
+		{
+			(*it)->grab();
+			mapNodes_.push_back(*it);
+		}
+	}
 }
 
 void mapLoader::closeMap()
 {
-	device_->getLogger()->log("closeMap does nothing yet: the old map, its physics and its clue points stay loaded", ELL_WARNING);
+	for (size_t i = 0; i < bodies_.size(); ++i)
+	{
+		bodies_[i]->includeNodeOnRemoval(false);
+		world_->removeCollisionObject(bodies_[i]);
+	}
+	bodies_.clear();
+
+	for (size_t i = 0; i < mapNodes_.size(); ++i)
+	{
+		mapNodes_[i]->remove();
+		mapNodes_[i]->drop();
+	}
+	mapNodes_.clear();
+	clueLocations_.clear();
 }

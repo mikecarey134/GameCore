@@ -449,7 +449,7 @@ bool IC_Command_PH::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 		throw IC_Error(L"No Valid Argument! <New Health>");
 }
 
-IC_Command_LM::IC_Command_LM(mapLoader* currentMap) : IC_Command(L"lm")
+IC_Command_LM::IC_Command_LM(mapLoader* currentMap, player* thePlayer) : IC_Command(L"lm"), thePlayer_(thePlayer)
 {
 	currentMap_ = currentMap;
 
@@ -477,6 +477,8 @@ bool IC_Command_LM::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 			currentMap_->closeMap();
 			currentMap_->setMap(newMap);
 			currentMap_->loadMap();
+			house_spawn spawn;
+			thePlayer_->setposition(spawn.get_spawn());
 		}
 		else
 			throw IC_Error(L"Missing Argument! <Message>");

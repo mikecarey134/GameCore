@@ -430,7 +430,7 @@ void IC_Console::loadDefaultCommands(irr::IrrlichtDevice* device)
 	cmd = new IC_Command_QUIT();
 	registerCommand(cmd);
 
-	cmd = new IC_Command_LM(currentMap_);
+	cmd = new IC_Command_LM(currentMap_, thePlayer_);
 	registerCommand(cmd);
 }
 //=========================================================================================
