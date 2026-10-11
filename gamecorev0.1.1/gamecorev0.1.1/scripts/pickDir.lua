@@ -1,5 +1,4 @@
 function setDirection()
-	math.randomseed(os.time());
 	
 	--Need to do this to get good random numbers
 	--Otherwise, it just picks the same number over and over
