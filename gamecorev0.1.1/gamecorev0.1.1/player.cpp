@@ -83,7 +83,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//player attributes
 	//////////////////////////////////////////////////////////////////////////
 	common_paths model_path;
-    house_spawn spawn_loc;
 
 	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(model_path.model_paths[player_model_type_].c_str()));
 
@@ -120,10 +119,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	
 	
-	vector3df spawn(spawn_loc.get_spawn());
-	fpsCam_->setPosition(spawn);
-	character_->warp(spawn);//set the init player pos on the map
-	characterModel_->setPosition(spawn);
 	//setup the player shadow
 	//player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
 
@@ -540,6 +535,14 @@ void player::kill()
 }
 
 //early player weapon switching system
+void player::spawn(vector3df pos)
+{
+	fpsCam_->setPosition(pos);
+	if (character_)
+		character_->warp(pos);
+	characterModel_->setPosition(pos);
+}
+
 void player::switch_weap(int type)
 {
 	common_paths model_path;

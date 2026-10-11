@@ -477,8 +477,8 @@ bool IC_Command_LM::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 			currentMap_->closeMap();
 			currentMap_->setMap(PREFIX + newMap);
 			currentMap_->loadMap();
-			house_spawn spawn;
-			thePlayer_->setposition(spawn.get_spawn());
+			std::vector<irr::core::vector3df> spawns = currentMap_->getSpawnPoints();
+			thePlayer_->spawn(spawns[rand() % spawns.size()]);
 		}
 		else
 			throw IC_Error(L"Missing Argument! <Message>");

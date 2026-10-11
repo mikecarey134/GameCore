@@ -33,6 +33,8 @@ ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device,
 	//model_->setRotation(vector3df(90.0f, 0.0f, 0.0f));
 
 	model_->setName(TYPE_CLUE);
+	if (theMap_->getClueLocations().empty())
+		model_->setVisible(false);
 
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(model_);
 	model_->setTriangleSelector(selector);

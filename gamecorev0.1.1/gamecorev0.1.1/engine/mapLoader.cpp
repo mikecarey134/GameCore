@@ -31,10 +31,14 @@ void mapLoader::loadMap()
 	{
 
 		ISceneNode* node = nodes[i];
+		node->updateAbsolutePosition();
 		stringc name = node->getName();
 		const stringc prefix = name.subString(0,name.findFirst('_'));
 		const stringc suffix = name.subString(name.findFirst('_')+1, name.size()-name.findFirst('_'));
 
+
+		if(prefix == "spawn")
+			spawnPoints_.push_back(node->getAbsolutePosition());
 
 		ESCENE_NODE_TYPE type = node->getType();
 		if(type == ESNT_MESH || type == ESNT_OCTREE || type == ESNT_CUBE || type == ESNT_SPHERE)
@@ -131,5 +135,13 @@ void mapLoader::closeMap()
 		mapNodes_[i]->drop();
 	}
 	mapNodes_.clear();
+	spawnPoints_.clear();
 	onMapClosed();
+}
+
+std::vector<vector3df> mapLoader::getSpawnPoints() const
+{
+	if (spawnPoints_.empty())
+		return std::vector<vector3df>(1, vector3df(0, 10, 0));
+	return spawnPoints_;
 }

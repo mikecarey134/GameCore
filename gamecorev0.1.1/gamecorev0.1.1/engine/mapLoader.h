@@ -18,6 +18,8 @@ public:
 	void loadMap();
 	void closeMap();
 
+	std::vector<irr::core::vector3df> getSpawnPoints() const;
+
 protected:
 	virtual void onMapLoaded() {}
 	virtual void onMapClosed() {}
@@ -31,6 +33,7 @@ private:
 	irr::core::string<char> mapName_;
 	std::vector<ICollisionObject*> bodies_;
 	std::vector<irr::scene::ISceneNode*> mapNodes_;
+	std::vector<irr::core::vector3df> spawnPoints_;
 };
 
 #endif

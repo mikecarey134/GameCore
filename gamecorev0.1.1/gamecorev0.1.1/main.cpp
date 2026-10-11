@@ -193,6 +193,8 @@ int main(void)
 	device->getGUIEnvironment()->getFont("bill/bigfont.png");
 
 	currentMap.loadMap();
+	std::vector<vector3df> spawns = currentMap.getSpawnPoints();
+	thePlayer.spawn(spawns[rand() % spawns.size()]);
 	//thePlayer.setUpCameraCollisions();
 
 	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap);
