@@ -235,14 +235,14 @@ TEST_CASE_FIXTURE(ServerFixture, "a state is relayed to the others with the send
 	CHECK(b.count(STATE) == 0);
 }
 
-TEST_CASE_FIXTURE(ServerFixture, "states closer than fifty milliseconds apart are dropped")
+TEST_CASE_FIXTURE(ServerFixture, "states closer than the interval less ten milliseconds of jitter are dropped")
 {
 	Client a(network), b(network);
 	join(a, "mikey");
 	join(b, "dan", { &a });
 	b.send(STATE, State{ 1, { 0, 0, 0 }, { 0, 0, 0 }, 0 }, Unreliable);
 	settle({ &a, &b });
-	now += GameServer::STATE_INTERVAL_MS - 1;
+	now += 39;
 	b.send(STATE, State{ 2, { 0, 0, 0 }, { 0, 0, 0 }, 0 }, Unreliable);
 	settle({ &a, &b });
 	CHECK(a.count(STATE) == 1);
@@ -250,6 +250,10 @@ TEST_CASE_FIXTURE(ServerFixture, "states closer than fifty milliseconds apart ar
 	b.send(STATE, State{ 3, { 0, 0, 0 }, { 0, 0, 0 }, 0 }, Unreliable);
 	settle({ &a, &b });
 	CHECK(a.count(STATE) == 2);
+	now += 45;
+	b.send(STATE, State{ 4, { 0, 0, 0 }, { 0, 0, 0 }, 0 }, Unreliable);
+	settle({ &a, &b });
+	CHECK(a.count(STATE) == 3);
 }
 
 TEST_CASE_FIXTURE(ServerFixture, "chat is relayed to the others with the sender's id")

@@ -226,6 +226,25 @@ TEST_CASE_FIXTURE(ClientFixture, "the local state goes out twenty times a second
 		CHECK(b.seen.moved[i].state.seq == (uint16_t)(b.seen.moved[i - 1].state.seq + 1));
 }
 
+TEST_CASE_FIXTURE(ClientFixture, "frames that do not divide fifty milliseconds still send twenty states a second")
+{
+	TestClient& a = joined("mikey");
+	TestClient& b = joined("dan");
+	b.seen.moved.clear();
+	for (int frame = 0; frame < 125; ++frame)
+	{
+		now += 16;
+		server.tick();
+		a.client.update(a.local);
+		b.client.update(b.local);
+	}
+	now += 16;
+	server.tick();
+	b.client.update(b.local);
+	CHECK(b.seen.moved.size() >= 39);
+	CHECK(b.seen.moved.size() <= 41);
+}
+
 TEST_CASE_FIXTURE(ClientFixture, "a client on another protocol version is kicked with the reason")
 {
 	TestClient& a = add();
@@ -424,4 +443,31 @@ TEST_CASE_FIXTURE(ClientFixture, "over a lossy, reordering link the remote playe
 	CHECK(seqs.size() < 40);
 	for (size_t i = 1; i < seqs.size(); ++i)
 		CHECK(isNewerSeq(seqs[i], seqs[i - 1]));
+}
+
+TEST_CASE("after a long stall the client does not burst out the states it missed")
+{
+	uint32_t now = 1000;
+	LoopbackNetwork network;
+	LoopbackTransport fakeServer(network);
+	REQUIRE(fakeServer.listen(GameServer::DEFAULT_PORT, 8));
+	TestClient a(network, now);
+	REQUIRE(a.client.connect("localhost", GameServer::DEFAULT_PORT, "mikey", 1));
+	a.client.update(a.local);
+	PeerId client = NO_PEER;
+	typesReceived(fakeServer, client);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, {} }), Reliable);
+	a.client.update(a.local);
+	now += NetClient::STATE_INTERVAL_MS;
+	a.client.update(a.local);
+	typesReceived(fakeServer, client);
+
+	now += 1000;
+	for (int frame = 0; frame < 6; ++frame)
+	{
+		a.client.update(a.local);
+		now += 10;
+	}
+	std::vector<uint8_t> sent = typesReceived(fakeServer, client);
+	CHECK(sent.size() == 2);
 }

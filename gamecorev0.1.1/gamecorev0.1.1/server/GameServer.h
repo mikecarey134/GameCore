@@ -18,6 +18,7 @@ public:
 	static const uint16_t DEFAULT_PORT = 25515;
 	static const int MAX_PLAYERS = 8;
 	static const uint32_t STATE_INTERVAL_MS = 50;
+	static const uint32_t STATE_JITTER_MS = 10;
 	static const uint32_t HIT_COOLDOWN_MS = 300;
 	static const int MAX_MESSAGES_PER_SECOND = 30;
 

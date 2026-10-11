@@ -60,8 +60,8 @@ void NetClient::update(const State& local)
 	uint32_t now = clock_();
 	if (sentState_ && now - lastStateTime_ < STATE_INTERVAL_MS)
 		return;
+	lastStateTime_ = sentState_ && now - lastStateTime_ < 2 * STATE_INTERVAL_MS ? lastStateTime_ + STATE_INTERVAL_MS : now;
 	sentState_ = true;
-	lastStateTime_ = now;
 	State state = local;
 	state.seq = stateSeq_++;
 	transport_.send(server_, encode(STATE, state), Unreliable);

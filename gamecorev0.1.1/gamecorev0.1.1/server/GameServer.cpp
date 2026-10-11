@@ -5,6 +5,7 @@ using namespace protocol;
 const uint16_t GameServer::DEFAULT_PORT;
 const int GameServer::MAX_PLAYERS;
 const uint32_t GameServer::STATE_INTERVAL_MS;
+const uint32_t GameServer::STATE_JITTER_MS;
 const uint32_t GameServer::HIT_COOLDOWN_MS;
 const int GameServer::MAX_MESSAGES_PER_SECOND;
 
@@ -178,7 +179,7 @@ void GameServer::onState(PeerId peer, ByteReader& in)
 	if (!player || !read(in, state))
 		return;
 	uint32_t now = clock_();
-	if (player->hasState && now - player->lastStateTime < STATE_INTERVAL_MS)
+	if (player->hasState && now - player->lastStateTime < STATE_INTERVAL_MS - STATE_JITTER_MS)
 		return;
 	player->hasState = true;
 	player->lastStateTime = now;
