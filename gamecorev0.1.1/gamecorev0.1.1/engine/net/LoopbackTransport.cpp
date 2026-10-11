@@ -1,7 +1,7 @@
 #include "LoopbackTransport.h"
 
 LoopbackTransport::LoopbackTransport(LoopbackNetwork& network)
-	: network_(network), nextPeer_(1), maxPeers_(0), port_(0), listening_(false)
+	: network_(network), nextPeer_(1), maxPeers_(0), port_(0), listening_(false), dropRate_(0.0f), reorderRate_(0.0f)
 {
 }
 
@@ -38,11 +38,33 @@ bool LoopbackTransport::connect(const std::string&, uint16_t port)
 	return true;
 }
 
-void LoopbackTransport::send(PeerId peer, const std::vector<uint8_t>& data, Delivery)
+void LoopbackTransport::send(PeerId peer, const std::vector<uint8_t>& data, Delivery delivery)
 {
 	std::map<PeerId, Link>::iterator link = links_.find(peer);
-	if (link != links_.end())
-		link->second.other->push(NetEvent::Received, link->second.remoteId, data);
+	if (link == links_.end())
+		return;
+	LoopbackTransport* other = link->second.other;
+	PeerId remoteId = link->second.remoteId;
+	if (delivery == Unreliable && (dropRate_ > 0.0f || reorderRate_ > 0.0f))
+	{
+		std::uniform_real_distribution<float> roll(0.0f, 1.0f);
+		if (roll(random_) < dropRate_)
+			return;
+		std::map<PeerId, std::vector<uint8_t> >::iterator held = held_.find(peer);
+		if (held != held_.end())
+		{
+			other->push(NetEvent::Received, remoteId, data);
+			other->push(NetEvent::Received, remoteId, held->second);
+			held_.erase(held);
+			return;
+		}
+		if (roll(random_) < reorderRate_)
+		{
+			held_[peer] = data;
+			return;
+		}
+	}
+	other->push(NetEvent::Received, remoteId, data);
 }
 
 void LoopbackTransport::broadcast(const std::vector<uint8_t>& data, Delivery delivery, PeerId exceptPeer)
@@ -59,6 +81,7 @@ void LoopbackTransport::disconnect(PeerId peer)
 		return;
 	Link ended = link->second;
 	links_.erase(link);
+	held_.erase(peer);
 	ended.other->links_.erase(ended.remoteId);
 	ended.other->push(NetEvent::Disconnected, ended.remoteId, std::vector<uint8_t>());
 	push(NetEvent::Disconnected, peer, std::vector<uint8_t>());
@@ -71,6 +94,13 @@ bool LoopbackTransport::poll(NetEvent& event)
 	event = events_.front();
 	events_.pop_front();
 	return true;
+}
+
+void LoopbackTransport::setUnreliableLoss(float dropRate, float reorderRate, uint32_t seed)
+{
+	dropRate_ = dropRate;
+	reorderRate_ = reorderRate;
+	random_.seed(seed);
 }
 
 void LoopbackTransport::shutdown()

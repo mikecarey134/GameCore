@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <map>
+#include <random>
 #include "Transport.h"
 
 class LoopbackTransport;
@@ -28,6 +29,8 @@ public:
 	bool poll(NetEvent& event) override;
 	void shutdown() override;
 
+	void setUnreliableLoss(float dropRate, float reorderRate, uint32_t seed);
+
 private:
 	struct Link
 	{
@@ -45,6 +48,10 @@ private:
 	int maxPeers_;
 	uint16_t port_;
 	bool listening_;
+	float dropRate_;
+	float reorderRate_;
+	std::mt19937 random_;
+	std::map<PeerId, std::vector<uint8_t> > held_;
 };
 
 #endif

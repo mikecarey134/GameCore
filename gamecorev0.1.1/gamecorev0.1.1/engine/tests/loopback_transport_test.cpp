@@ -271,3 +271,60 @@ TEST_CASE("a framed message crosses the loopback and reaches its handler with th
 	CHECK(text == "hi there");
 	CHECK(log.empty());
 }
+
+TEST_CASE("a lossy link drops unreliable packets and never reliable ones")
+{
+	LoopbackNetwork network;
+	LoopbackTransport server(network), client(network);
+	server.listen(7000, 4);
+	client.connect("localhost", 7000);
+	drain(server);
+	PeerId serverOnClient = connectedPeer(client);
+	client.setUnreliableLoss(1.0f, 0.0f, 7);
+	for (uint8_t i = 0; i < 10; ++i)
+	{
+		client.send(serverOnClient, { i }, Unreliable);
+		client.send(serverOnClient, { (uint8_t)(100 + i) }, Reliable);
+	}
+	std::vector<NetEvent> events = drain(server);
+	REQUIRE(events.size() == 10);
+	for (size_t i = 0; i < events.size(); ++i)
+		CHECK(events[i].data[0] == 100 + i);
+}
+
+TEST_CASE("a lossy link with some loss drops some unreliable packets but not all")
+{
+	LoopbackNetwork network;
+	LoopbackTransport server(network), client(network);
+	server.listen(7000, 4);
+	client.connect("localhost", 7000);
+	drain(server);
+	PeerId serverOnClient = connectedPeer(client);
+	client.setUnreliableLoss(0.5f, 0.0f, 7);
+	for (int i = 0; i < 200; ++i)
+		client.send(serverOnClient, { 1 }, Unreliable);
+	size_t arrived = drain(server).size();
+	CHECK(arrived > 50);
+	CHECK(arrived < 150);
+}
+
+TEST_CASE("a reordering link delivers unreliable packets out of order")
+{
+	LoopbackNetwork network;
+	LoopbackTransport server(network), client(network);
+	server.listen(7000, 4);
+	client.connect("localhost", 7000);
+	drain(server);
+	PeerId serverOnClient = connectedPeer(client);
+	client.setUnreliableLoss(0.0f, 1.0f, 7);
+	for (uint8_t i = 1; i <= 4; ++i)
+		client.send(serverOnClient, { i }, Unreliable);
+	client.send(serverOnClient, { 9 }, Reliable);
+	std::vector<NetEvent> events = drain(server);
+	REQUIRE(events.size() == 5);
+	CHECK(events[0].data[0] == 2);
+	CHECK(events[1].data[0] == 1);
+	CHECK(events[2].data[0] == 4);
+	CHECK(events[3].data[0] == 3);
+	CHECK(events[4].data[0] == 9);
+}
