@@ -97,7 +97,8 @@ void mapLoader::loadMap()
 
 		}
 		//node->setDebugDataVisible(EDS_BBOX);
-		node->setMaterialFlag(EMF_LIGHTING,1);
+		if(node->getType() != ESNT_SKY_BOX)
+			node->setMaterialFlag(EMF_LIGHTING,1);
 		node->setAutomaticCulling(EAC_BOX);//cull unneeded primitives 
 	}
 

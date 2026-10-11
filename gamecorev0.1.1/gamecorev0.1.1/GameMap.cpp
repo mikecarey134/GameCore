@@ -48,15 +48,6 @@ void GameMap::onMapLoaded()
 			clueLocations_.push_back(nodes[i]->getAbsolutePosition());
 	if (clue_)
 		clue_->placeOnMap();
-
-	//temp skybox later we will have one based off the time of day
-	smgr_->addSkyBoxSceneNode(
-		driver_->getTexture("map/sky/bstop.jpg"),
-		driver_->getTexture("map/sky/bstop.jpg"),
-		driver_->getTexture("map/sky/bsleft.jpg"),
-		driver_->getTexture("map/sky/bsright.jpg"),
-		driver_->getTexture("map/sky/bsfront.jpg"),
-		driver_->getTexture("map/sky/bsback.jpg"));
 }
 
 void GameMap::onMapClosed()
