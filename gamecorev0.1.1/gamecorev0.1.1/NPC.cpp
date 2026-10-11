@@ -108,6 +108,7 @@ void NPC::luaSetDir()
 	AIdirection_.Z = (f32)lua_tonumber(L, -2);
 	vector3df newRotation = vector3df(characterModel_->getRotation().X, (f32)lua_tonumber(L, -1), characterModel_->getRotation().Z);
 	characterModel_->setRotation(newRotation);
+	lua_close(L);
 }
 
 void NPC::damage()

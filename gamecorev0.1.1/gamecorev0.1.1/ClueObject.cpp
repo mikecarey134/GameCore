@@ -76,6 +76,7 @@ vector3df ClueObject::setLocation()
 		exit(1);
 
 	int selection = (int)lua_tointeger(L, -1);
+	lua_close(L);
 
 	return theMap_->getClueLocations()[selection];
 }
@@ -93,6 +94,7 @@ string<char> ClueObject::setClueMsg()
 		exit(1);
 
 	string<char> msg = lua_tostring(L, -1);
+	lua_close(L);
 
 	return msg;	
 }
