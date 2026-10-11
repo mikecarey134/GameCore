@@ -423,8 +423,6 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 	
 	font->draw("v0.1.1 (alpha)",rect<s32>(20,570,20,590),SColor(255,255,255,255));
 
-	device_->getCursorControl()->setVisible(true);
-	device_->getCursorControl()->setPosition(device_->getCursorControl()->getPosition());
 	guienv_->drawAll();
 	
 }
@@ -468,8 +466,6 @@ void consoleevent::drawPauseMenu ()// render the pause menu
 		if(font)
 			skin->setFont(font);
 	skin->setFont(guienv_->getBuiltInFont(),EGDF_TOOLTIP);
-	device_->getCursorControl()->setVisible(true);
-	device_->getCursorControl()->setPosition(device_->getCursorControl()->getPosition());
 
 	guienv_->drawAll();
 
@@ -479,7 +475,6 @@ void consoleevent::drawInventory ()
 {
 	if (inventoryScreen_)
 		inventoryScreen_->draw();
-	device_->getCursorControl()->setVisible(true);
 }
 
 void consoleevent::playerNpcCollisionCheck()
@@ -651,7 +646,6 @@ void consoleevent::newRound()
 	for (std::list<ClueObject*>::iterator clue = clueObjects_.begin(); clue != clueObjects_.end(); ++clue)
 		(*clue)->reset();
 	npc_->reset();
-	device_->getCursorControl()->setPosition(0.5f, 0.5f);
 }
 
 void consoleevent::goToMainMenu()

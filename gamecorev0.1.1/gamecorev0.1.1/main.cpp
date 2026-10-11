@@ -30,6 +30,7 @@
 #include "ParticleSystem.h"
 #include "InternalServer.h"
 #include "GameMap.h"
+#include "MouseCapture.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "Config_Reader.h"	
@@ -174,6 +175,7 @@ int main(void)
 
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	device->setEventReceiver(&crecv);
+	MouseCapture mouseCapture(device->getCursorControl());
 
 	inventory::Catalog itemCatalog;
 	inventory::LoadError itemError;
@@ -222,6 +224,8 @@ int main(void)
 
 		if (device->isWindowActive())//if a window is running
 		{	
+				mouseCapture.setCaptured(crecv.getStarted() && !crecv.getPaused() && !crecv.getIsInventory() && !thePlayer.isDead());
+				mouseCapture.beginFrame();
 				
 				if (!crecv.getStarted())//draw the main menu
 				{
@@ -259,10 +263,7 @@ int main(void)
 					
 						if (!crecv.getPaused() && !crecv.getIsInventory())//is the game paused
 						{
-							device->getCursorControl()->setVisible(false);//make cursor temp visible
 						}
-						else
-							device->getCursorControl()->setVisible(true);
 
 						
 						smgr->drawAll();
@@ -274,7 +275,7 @@ int main(void)
 						//we dont want the camera to update while the player is stationary
 						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
 						{			
-							thePlayer.moveCameraControl();
+							thePlayer.moveCameraControl(mouseCapture.delta());
 							testClue.update();
 
 							if(!npc_tester.isDead() && npc_tester.isLoaded() == DONE_LOADING)
@@ -284,9 +285,6 @@ int main(void)
 						}
 						else
 							thePlayer.haltCamera();
-
-						if (!crecv.getPaused() && !crecv.getIsInventory())
-							device->getCursorControl()->setPosition( 0.5f, 0.5f );
 					
 					
 				

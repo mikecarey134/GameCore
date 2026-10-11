@@ -20,8 +20,8 @@ using namespace gui;
 
 player::player(IrrlichtDevice* device,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, SoundEngine* engine, 
 			   irrBulletWorld* world, std::string player_name,int model_type):
-world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
+camera_(smgr),world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0), player_name_(player_name),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
 									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2f,0.2f),dimension2df(4.0,4.0))
 {
@@ -56,23 +56,17 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//////////////////////////////////////////////////////////////////////////
 	//player cameras
 	//////////////////////////////////////////////////////////////////////////
-	camera_ = device->getSceneManager()->addCameraSceneNode();
-	camera_->bindTargetAndRotation(true);
-	camera_->setID(ID_IsNotPickable);
+	camera_.getNode()->setID(ID_IsNotPickable);
 
 	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap,8);
 	fpsCam_->setID(ID_IsNotPickable);
-	smgr_->setActiveCamera(camera_);
+	camera_.makeActive();
 	//set up the camera clipping planes in order to render the scene faster
 
-	camera_->setNearValue(5);
-	camera_->setFarValue(1500);
+	camera_.getNode()->setNearValue(5);
+	camera_.getNode()->setFarValue(1500);
 	//////////////////////////////////////////////////////////////////////////
 		
-	mouseCursorX_ = 0.0;
-	mouseCursorY_ = 0.0;
-
-
 	createCharacter();
 
 	//dungeon example
@@ -132,7 +126,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 
 	clues_.clear();
 
-	camera_->setPosition(characterModel_->getPosition());
+	camera_.getNode()->setPosition(characterModel_->getPosition());
 	
 	//good CPU feature
 	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
@@ -220,15 +214,15 @@ void player::setUpCameraCollisions()
 	}
 
 	scene::ISceneNodeAnimator* anim = device_->getSceneManager()->createCollisionResponseAnimator(
-		meta, camera_, core::vector3df(1,1,1),
+		meta, camera_.getNode(), core::vector3df(1,1,1),
 		core::vector3df(0,0,0));
 	meta->drop(); // I'm done with the meta selector now
 
-	camera_->addAnimator(anim);
+	camera_.getNode()->addAnimator(anim);
 	anim->drop(); // I'm done with the animator now
 }
 
-void player::moveCameraControl()
+void player::moveCameraControl(const irr::core::position2df& mouseDelta)
 {
 /*
 	if (current_state_ == DEAD)
@@ -247,37 +241,34 @@ void player::moveCameraControl()
 	else*/
 	if (!isDead())
 	{
-		smgr_->setActiveCamera(camera_);
+		camera_.makeActive();
 		
 		characterModel_->setVisible(true);
 
 		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 
-		vector3df rot(0, camera_->getRotation().Y, 0);
+		vector3df rot(0, camera_.getMoveYaw(), 0);
 		characterModel_->setRotation(rot);
 
 		vector3df direction(xDirection_, 0.0f, zDirection_);
 
 		irr::core::matrix4 m;
 
-		m.setRotationDegrees(vector3df(0, camera_->getRotation().Y-180.0f, 0));
+		m.setRotationDegrees(vector3df(0, camera_.getMoveYaw()-180.0f, 0));
 
 		m.transformVect(direction);
 
 		character_->setPositionIncrementPerSimulatorStep(direction*0.3f);
-
-		camera_->setTarget(characterModel_->getPosition());
-
-		// Step the simulation with our delta time
-
-		camera_ = device_->getSceneManager()->getActiveCamera();
 
 		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
 		//manage shadow
 		//player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-3.8f,getPosition().Z));
 		//player_shadow_->setScale(vector3df(.35,.35,.35));
 
-		camera_->setPosition(calculateCameraPos());	
+		camera_.setTarget(characterModel_->getPosition());
+		camera_.update(mouseDelta);
+
+		gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();
 
 		nodeSelector(); //highlights nodes within a certain range of the player	
 	}
@@ -286,9 +277,9 @@ void player::moveCameraControl()
 
 	//setup the player lamp position
 	vector3df lamppos;
-	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4 )* -1 ;
+	lamppos.X = characterModel_->getPosition().X + camera_.lookDirection().X * 4;
 	lamppos.Y = characterModel_->getPosition().Y ;
-	lamppos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * 4) * -1 ;
+	lamppos.Z = characterModel_->getPosition().Z + camera_.lookDirection().Z * 4;
 
 	//lamp_->enableCastShadow(false);
 	
@@ -299,34 +290,6 @@ void player::moveCameraControl()
 	
 	
 }
-vector3df player::calculateCameraPos()
-{
-	vector3df newCamPos;
-
-	position2d<f32> cursor = device_->getCursorControl()->getRelativePosition();
-	
-	mouseCursorX_ += (cursor.X - 0.5f) * CAMERA_MOVE_SPEED;
-	mouseCursorY_ -= (cursor.Y - 0.5f) * CAMERA_MOVE_SPEED;
-
-	if( mouseCursorY_ < -90 )
-		mouseCursorY_ = -89.9f;
-	else
-		if( mouseCursorY_ > 40 )
-			mouseCursorY_ = 39.9f;
-
-	//std::cout << mouseCursorX_ << ", " << mouseCursorY_ << std::endl;
-
-	newCamPos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * cameradist_);
-	newCamPos.Y = characterModel_->getPosition().Y - (sin(mouseCursorY_ * PI / 180.0f) * cameradist_);
-	newCamPos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * cameradist_);
-
-	gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();
-
-	
-
-	return newCamPos;
-}
-
 void player::forward()
 {	
 	//early walk animations 
@@ -388,9 +351,7 @@ void player::nodeSelector()
 						  characterModel_->getPosition().Z);
 	//ray.end = ray.start + (camera_->getTarget() - ray.start) * 100000.0f;
 	//f32 rayEndX = abs(characterModel_->getPosition()) - abs(camera_->getPosition())
-	ray.end =	vector3df (characterModel_->getPosition().X + (cos(mouseCursorX_ * PI / 180.0f) * REACH_DIST),
-						   characterModel_->getPosition().Y + (sin(mouseCursorY_ * PI / 180.0f) * REACH_DIST),
-						   characterModel_->getPosition().Z - (sin(mouseCursorX_ * PI / 180.0f) * REACH_DIST));//ray.start + (characterModel_->getRotation()) * 10.0f;
+	ray.end = characterModel_->getPosition() + camera_.lookDirection() * REACH_DIST;
 
 	device_->getVideoDriver()->draw3DLine(ray.start,ray.end,SColor(255,255,0,0));
 
@@ -542,12 +503,11 @@ void player::respawn(vector3df pos)
 	playerHealth_ = PLAYER_HEALTH;
 	playerHunger_ = PLAYER_HUNGER;
 	playerWater_ = PLAYER_WATER;
-	mouseCursorX_ = 0.0;
-	mouseCursorY_ = 0.0;
+	camera_.reset();
 	clues_.clear();
 	gore_.hide(false);
 	characterModel_->setVisible(true);
-	smgr_->setActiveCamera(camera_);
+	camera_.makeActive();
 	idle();
 	spawn(pos);
 }

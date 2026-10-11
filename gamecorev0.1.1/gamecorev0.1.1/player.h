@@ -23,14 +23,13 @@
 //#include "NPC.h"
 #include "remotePlayer.h"
 #include "ParticleSystem.h"
+#include "OrbitCamera.h"
 
 
 
 //Player Variables/////////////
 #define DEFAULT_PLAYER_SPEED 3.0f
-#define CAMERA_DISTANCE_BACK 10.0f
 #define CAMERA_OFFSET 15.0f
-#define CAMERA_MOVE_SPEED 50.0f
 #define PLAYER_JUMP_FORCE 60.0f
 #define PLAYER_EARTH_GRAVITY 150.0f
 #define PLAYER_ANIMATION_SPEED 12.0f
@@ -58,8 +57,7 @@ public:
 	void                 jump				();
 	void                 rotate				(irr::core::vector3df rotation){ characterModel_->setRotation(rotation); }
 	void                 animate			(irr::scene::EMD2_ANIMATION_TYPE animation);
-	void                 moveCameraControl	();
-	irr::core::vector3df calculateCameraPos	();
+	void                 moveCameraControl	(const irr::core::position2df& mouseDelta);
 	void				 nodeSelector		();
 
 
@@ -72,7 +70,7 @@ public:
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
 	void setZDir       (irr::f32 dir)             { zDirection_ = dir; }
 	void setChatMessage(const char* message)          { chat_message_ = message;}
-	void setCamDist    (float increment)          {cameradist_ = irr::core::clamp(cameradist_ + increment, 5.0f, 50.0f);}
+	void setCamDist    (float increment)          {camera_.zoom(increment);}
 	void setlamp       (bool ison)                {lamp_->setVisible(ison);}
 	void setHealth     (int newHealth)            {playerHealth_ = newHealth;}
 	void setHunger     (int newHunger)            {playerHunger_ = newHunger;}
@@ -102,7 +100,7 @@ public:
 	irr::scene::IAnimatedMeshSceneNode* getPlayerNode () { return characterModel_; }
 	float                               getPlayerSpeed() { return playerSpeed_; }
 	const char*                         getChatMessage() { return chat_message_; }
-	irr::scene::ICameraSceneNode*       getCamera     () { return camera_; }
+	irr::scene::ICameraSceneNode*       getCamera     () { return camera_.getNode(); }
 	int                                 getHealth     () { return playerHealth_; }
 	int                                 getHunger     () { return playerHunger_; }
 	int                                 getWater      () { return playerWater_; }
@@ -136,7 +134,7 @@ private:
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 	irr::scene::IMeshSceneNode* player_shadow_;
 
-    irr::scene::ICameraSceneNode* camera_;
+	OrbitCamera camera_;
 	irr::scene::ICameraSceneNode* fpsCam_;
 
 	irrBulletWorld* world_;
@@ -153,9 +151,6 @@ private:
 	irr::f32 xDirection_;
 	irr::f32 zDirection_;
 
-	irr::f32 mouseCursorX_;
-	irr::f32 mouseCursorY_;
-
 	float playerSpeed_;
 	const char* chat_message_;
 	int playerHealth_;
@@ -166,7 +161,6 @@ private:
 	irr::scene::ISceneNode* selectedSceneNode_;
 
 	//playerData data_;
-	float cameradist_;
 
 	irr::scene::ILightSceneNode* lamp_;
 	std::string player_name_;
