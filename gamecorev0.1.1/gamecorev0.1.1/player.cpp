@@ -353,8 +353,6 @@ void player::nodeSelector()
 	//f32 rayEndX = abs(characterModel_->getPosition()) - abs(camera_->getPosition())
 	ray.end = characterModel_->getPosition() + camera_.lookDirection() * REACH_DIST;
 
-	device_->getVideoDriver()->draw3DLine(ray.start,ray.end,SColor(255,255,0,0));
-
 	// Tracks the current intersection point with the level or a mesh
 	core::vector3df intersection;
 	// Used to show with triangle has been hit
