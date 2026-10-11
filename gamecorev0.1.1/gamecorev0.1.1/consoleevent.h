@@ -75,6 +75,7 @@ public:
 	void drawMessage   (const wchar_t* message);
 	void newRound      ();
 	void goToMainMenu  ();
+	void startPressed  ();
 	void drawInventory ();
 	void setInventoryScreen(InventoryScreen* screen) { inventoryScreen_ = screen; }
 
@@ -97,6 +98,8 @@ public:
 	} MouseState;
 
 private:
+	friend class MenuLayer;
+	friend class DebugLayer;
 
 	IC_Console console;
 	irr::gui::IGUIEnvironment* guienv_;

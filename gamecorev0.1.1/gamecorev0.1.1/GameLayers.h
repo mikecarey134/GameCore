@@ -37,4 +37,24 @@ private:
 	gamecore::SoundEngine* sound_;
 };
 
+class MenuLayer : public InputLayer
+{
+public:
+	explicit MenuLayer(consoleevent& game) : game_(game) {}
+	bool onEvent(const irr::SEvent& event) override;
+
+private:
+	consoleevent& game_;
+};
+
+class DebugLayer : public InputLayer
+{
+public:
+	explicit DebugLayer(consoleevent& game) : game_(game) {}
+	bool onEvent(const irr::SEvent& event) override;
+
+private:
+	consoleevent& game_;
+};
+
 #endif

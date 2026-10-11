@@ -177,6 +177,10 @@ int main(void)
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	InputRouter inputRouter;
 	inputRouter.push(&crecv);
+	DebugLayer debugLayer(crecv);
+	inputRouter.push(&debugLayer);
+	MenuLayer menuLayer(crecv);
+	inputRouter.push(&menuLayer);
 	InventoryLayer inventoryLayer(crecv, engine);
 	inputRouter.push(&inventoryLayer);
 	NoteLayer noteLayer(crecv);

@@ -154,57 +154,6 @@ bool consoleevent::onEvent(const irr::SEvent& event)
 		}
 		
 
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_ESCAPE && 
-			event.KeyInput.PressedDown == true)
-		{//handle the ESC key to display the pause menu
-			if(pauseMenu || console.isVisible())
-			{
-				chatshown = false;
-				pauseMenu = false;
-				console.setVisible(false);
-				
-			}
-		
-			else if (started && player_->isDead())
-				goToMainMenu();
-			else
-				pauseMenu = true;
-				
-
-			engine_->play2D("sounds/button-20.wav",false);
-		
-		}
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_F && 
-			event.KeyInput.PressedDown == true && !console.isVisible() && !player_->isDead())
-		{
-			if(player_->getIsLamp())
-				player_->setlamp(false);
-			else
-				player_->setlamp(true);
-		}
-
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_T && 
-			event.KeyInput.PressedDown == true && !console.isVisible()&& !pauseMenu)
-		{//handle f3 key to display the debugging information
-			if (chatshown)
-			{
-				//chatshown = false;
-
-			}
-			else
-				chatshown = true;
-			std::cout<<"T_Pressed!\n"<<"Value:"<<chatshown<<"\n";
-			
-		}
-
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_F3 && 
-			event.KeyInput.PressedDown == true)
-		{//handle f3 key to display the debugging information
-			if(debug)
-				debug = false;
-			else
-				debug = true;
-		}
 
 
 		
@@ -212,101 +161,6 @@ bool consoleevent::onEvent(const irr::SEvent& event)
 
 	}
 	
-	if (event.EventType == EET_GUI_EVENT)
-		{
-			s32 id = event.GUIEvent.Caller->getID();
-			IGUIEnvironment* env = Context_.device->getGUIEnvironment();
-
-			switch(event.GUIEvent.EventType)
-			{
-			case EGET_EDITBOX_ENTER:
-				{
-					player_->setChatMessage("");
-					chatshown = false;
-					
-				}
-				break;
-
-			case EGET_SCROLL_BAR_CHANGED:
-				if (id == GUI_ID_TRANSPARENCY_SCROLL_BAR)
-				{
-					s32 pos = ((IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
-					setSkinTransparency(pos, env->getSkin());
-				}
-				break;
-
-			case EGET_BUTTON_CLICKED: //if one of our gui buttons is clicked handle it
-				switch(id)
-				{
-				case GUI_ID_QUIT_BUTTON:
-					Context_.device->closeDevice();
-					engine_->play2D("sounds/button-25.wav",false);
-					return true;
-
-				case GUI_ID_START:
-
-					engine_->play2D("sounds/button-25.wav",false);
-					if(started)
-						started = false;
-					else
-					{
-						
-						started = true;
-						removeButtons(guienv_, mainMenuButtons); //Clear out the main menu buttons when game starts
-						newRound();
-					}
-					
-					return true;
-
-				case GUI_ID_CREDITS:
-					{
-						if (!creditsDisplayed)
-						{
-							creditsDisplayed = true;
-						}
-					}
-					return true;
-
-				case GUI_ID_GOTO_MAIN_MENU:
-					goToMainMenu();
-					return true;
-
-				case GUI_ID_RESUME:
-					if(pauseMenu)//this fixes the menu sound bug Mike
-						engine_->play2D("sounds/button-25.wav",false);
-					pauseMenu = false;
-					
-					return true;
-					
-				case GUI_ID_FILE_OPEN_BUTTON:
-					Context_.listbox->addItem(L"File open");
-					// There are some options for the file open dialog
-					// We set the title, make it a modal window, and make sure
-					// that the working directory is restored after the dialog
-					// is finished.
-					env->addFileOpenDialog(L"Please choose a file.", true, 0, -1, true);
-					return true;
-
-				default:
-					return false;
-				}
-				break;
-
-			case EGET_FILE_SELECTED:
-				{
-					// show the model filename, selected in the file dialog
-					IGUIFileOpenDialog* dialog =
-						(IGUIFileOpenDialog*)event.GUIEvent.Caller;
-					Context_.listbox->addItem(dialog->getFileName());
-				}
-				break;
-			
-
-			default:
-				break;
-			}
-		}
-
 	return false;
 }
 
@@ -585,4 +439,17 @@ void consoleevent::goToMainMenu()
 	removeButtons(guienv_, pauseMenuButtons);
 	engine_->stopAllSounds();
 	engine_->play2D("sounds/button-25.wav",false);
+}
+
+void consoleevent::startPressed()
+{
+	engine_->play2D("sounds/button-25.wav",false);
+	if(started)
+		started = false;
+	else
+	{
+		started = true;
+		removeButtons(guienv_, mainMenuButtons); //Clear out the main menu buttons when game starts
+		newRound();
+	}
 }
