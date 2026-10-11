@@ -57,24 +57,6 @@ static void removeButtons(IGUIEnvironment* guienv, const s32 (&ids)[4])
 
 bool consoleevent::onEvent(const irr::SEvent& event)
 {
-	bool dismissPress = (event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.PressedDown) ||
-		(event.EventType == irr::EET_MOUSE_INPUT_EVENT && event.MouseInput.Event == EMIE_RMOUSE_PRESSED_DOWN);
-	if (dismissPress)
-	{
-		bool dismissed = false;
-		for (std::list<ClueObject*>::iterator clue = clueObjects_.begin(); clue != clueObjects_.end(); ++clue)
-			if ((*clue)->isNoteShowing())
-			{
-				(*clue)->hideNote();
-				dismissed = true;
-			}
-		if (dismissed)
-			return true;
-	}
-
-	if (inventory && inventoryScreen_ && inventoryScreen_->onEvent(event))
-		return true;
-
 	//test for our mouse events
 	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT && !pauseMenu && !console.isVisible() )
 	{
@@ -227,21 +209,6 @@ bool consoleevent::onEvent(const irr::SEvent& event)
 
 		
 
-		if (event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_E &&
-			event.KeyInput.PressedDown == true && !pauseMenu && !console.isVisible())
-		{
-			engine_->play2D("sounds/button-20.wav",false);
-			if (inventory)
-			{
-				inventory = false;
-				if (inventoryScreen_)
-					inventoryScreen_->close();
-			}
-			else
-			{
-				inventory = true;
-			}
-		}
 
 	}
 	

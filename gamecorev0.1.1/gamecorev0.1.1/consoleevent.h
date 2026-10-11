@@ -62,6 +62,9 @@ public:
 	bool getStarted()      { return started; }
 	bool getPaused()       { return pauseMenu; }
 	bool getIsInventory()  { return inventory; }
+	void setIsInventory(bool open) { inventory = open; }
+	InventoryScreen* getInventoryScreen() { return inventoryScreen_; }
+	std::list<ClueObject*>& getClueObjects() { return clueObjects_; }
 	bool getIsConsole()    {return console.isVisible();}
 
 	void displayconsole(const u32 dm){console.renderConsole(guienv_,driver_,dm);}

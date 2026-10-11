@@ -4,6 +4,7 @@
 #include "InputRouter.h"
 
 class consoleevent;
+namespace gamecore { class SoundEngine; }
 
 class ConsoleLayer : public InputLayer
 {
@@ -13,6 +14,27 @@ public:
 
 private:
 	consoleevent& game_;
+};
+
+class NoteLayer : public InputLayer
+{
+public:
+	explicit NoteLayer(consoleevent& game) : game_(game) {}
+	bool onEvent(const irr::SEvent& event) override;
+
+private:
+	consoleevent& game_;
+};
+
+class InventoryLayer : public InputLayer
+{
+public:
+	InventoryLayer(consoleevent& game, gamecore::SoundEngine* sound) : game_(game), sound_(sound) {}
+	bool onEvent(const irr::SEvent& event) override;
+
+private:
+	consoleevent& game_;
+	gamecore::SoundEngine* sound_;
 };
 
 #endif
