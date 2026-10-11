@@ -61,7 +61,9 @@ public:
 	bool& isDead()					{ return isDead_; }
 	irr::core::vector3df getPosition() { return characterModel_->getPosition(); }
 
-	void loadModel();
+	void loadModel(irr::core::vector3df spawn);
+	void despawn();
+	void reset();
 
 	void drawNPCHealth();
 

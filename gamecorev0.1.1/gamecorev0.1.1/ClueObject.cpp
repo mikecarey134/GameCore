@@ -61,13 +61,20 @@ void ClueObject::placeOnMap()
 	model_->setVisible(!theMap_->getClueLocations().empty());
 }
 
+void ClueObject::reset()
+{
+	clueProperties_.isFound_ = false;
+	clueProperties_.showClue_ = false;
+	placeOnMap();
+}
+
 void ClueObject::update()
 { 
 	if (!clueProperties_.isFound_)
 	{
 		model_->setRotation(irr::core::vector3df(model_->getRotation().X, model_->getRotation().Y+1, model_->getRotation().Z));
 	}
-	else
+	else if (clueProperties_.showClue_)
 		drawClueMessage();
 }
 
@@ -173,4 +180,5 @@ void ClueObject::eraseModelFromWorld()
 {
 	model_->setVisible(false);
 	clueProperties_.isFound_ = true;
+	clueProperties_.showClue_ = true;
 }

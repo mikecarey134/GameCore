@@ -33,6 +33,9 @@ public:
 	void update(); 
 	void prepareClue();
 	void placeOnMap();
+	void reset();
+	bool isNoteShowing() const { return clueProperties_.showClue_; }
+	void hideNote() { clueProperties_.showClue_ = false; }
 	irr::core::vector3df setLocation();
 	irr::core::string<char> setClueMsg();
 	irr::scene::ISceneNode* getModel () const { return model_; }

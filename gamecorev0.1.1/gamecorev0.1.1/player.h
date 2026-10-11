@@ -66,6 +66,7 @@ public:
 	void setTexture    (const char* filename)     {characterModel_->setMaterialTexture(0,driver_->getTexture(filename));}
 	void setposition   (irr::core::vector3df pos) { if (character_) character_->warp(pos); }//set the player at the correct pos
 	void spawn         (irr::core::vector3df pos);
+	void respawn       (irr::core::vector3df pos);
 	void setGravity    (irr::f32 newGravity)      { if (character_) character_->setGravity(newGravity); }
 	void setSpeed      (float newSpeed)           {playerSpeed_ = newSpeed;}
 	void setXDir       (irr::f32 dir)             { xDirection_ = dir; }
@@ -130,6 +131,7 @@ public:
 	void setStepSoundPaused(bool setting) { playerSteps_->setIsPaused(setting); }
 
 private:
+	void createCharacter();
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 	irr::scene::IMeshSceneNode* player_shadow_;

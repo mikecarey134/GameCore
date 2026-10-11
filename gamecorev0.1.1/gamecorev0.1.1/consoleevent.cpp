@@ -25,7 +25,7 @@ using namespace gamecore;
 consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI* gui,
 						   gamecore::SoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
-						   NPC* npc, mapLoader* currentMap, InternalServer* client):
+						   NPC* npc, GameMap* currentMap, InternalServer* client):
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
@@ -59,6 +59,21 @@ static void removeButtons(IGUIEnvironment* guienv, const s32 (&ids)[4])
 
 bool consoleevent::OnEvent(const irr::SEvent& event)
 {
+	bool dismissPress = (event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.PressedDown) ||
+		(event.EventType == irr::EET_MOUSE_INPUT_EVENT && event.MouseInput.Event == EMIE_RMOUSE_PRESSED_DOWN);
+	if (dismissPress)
+	{
+		bool dismissed = false;
+		for (std::list<ClueObject*>::iterator clue = clueObjects_.begin(); clue != clueObjects_.end(); ++clue)
+			if ((*clue)->isNoteShowing())
+			{
+				(*clue)->hideNote();
+				dismissed = true;
+			}
+		if (dismissed)
+			return true;
+	}
+
 	if (inventory && inventoryScreen_ && inventoryScreen_->onEvent(event))
 		return true;
 
@@ -171,8 +186,9 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 				
 			}
 		
+			else if (started && player_->isDead())
+				goToMainMenu();
 			else
-				
 				pauseMenu = true;
 				
 
@@ -307,6 +323,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 						
 						started = true;
 						removeButtons(guienv_, mainMenuButtons); //Clear out the main menu buttons when game starts
+						newRound();
 					}
 					
 					return true;
@@ -321,12 +338,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 					return true;
 
 				case GUI_ID_GOTO_MAIN_MENU:
-					started = false;
-					pauseMenu = false;
-					removeButtons(guienv_, pauseMenuButtons);
-					engine_->stopAllSounds();
-					engine_->play2D("sounds/button-25.wav",false);
-					
+					goToMainMenu();
 					return true;
 
 				case GUI_ID_RESUME:
@@ -567,10 +579,27 @@ void consoleevent::update(u32, u32)//update the game throught the gameloop
 		}
 	}	
 
-	if (player_->isKillerKnown() && npc_->isLoaded() == NOT_LOADED)
+	std::vector<vector3df> npcSpawns = currentMap_->getNpcLocations();
+	if (player_->isKillerKnown() && npc_->isLoaded() == NOT_LOADED && !npcSpawns.empty())
 		npc_->isLoaded() = LOADING;
 	else if (npc_->isLoaded() == LOADING)
-		npc_->loadModel();
+	{
+		if (npcSpawns.empty())
+			npc_->isLoaded() = NOT_LOADED;
+		else
+			npc_->loadModel(npcSpawns[rand() % npcSpawns.size()]);
+	}
+
+	if (started && player_->isDead() && !pauseMenu)
+	{
+		gui::IGUIFont* deathFont = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
+		dimension2d<u32> screen = driver_->getScreenSize();
+		if (deathFont)
+		{
+			deathFont->draw(L"You died", rect<s32>(0, screen.Height/2 - 60, screen.Width, screen.Height/2), SColor(255,200,0,0), true, true);
+			deathFont->draw(L"Press Esc for Main Menu", rect<s32>(0, screen.Height/2, screen.Width, screen.Height/2 + 40), SColor(255,255,255,255), true, true);
+		}
+	}
 
 	if(chatshown)
 		drawMessage(L"T Was Pressed!");
@@ -613,4 +642,23 @@ void consoleevent::drawMessage(const wchar_t*)
 
 	//gui_->addDialogBox(message);
 	
+}
+
+void consoleevent::newRound()
+{
+	std::vector<vector3df> spawns = currentMap_->getSpawnPoints();
+	player_->respawn(spawns[rand() % spawns.size()]);
+	for (std::list<ClueObject*>::iterator clue = clueObjects_.begin(); clue != clueObjects_.end(); ++clue)
+		(*clue)->reset();
+	npc_->reset();
+	device_->getCursorControl()->setPosition(0.5f, 0.5f);
+}
+
+void consoleevent::goToMainMenu()
+{
+	started = false;
+	pauseMenu = false;
+	removeButtons(guienv_, pauseMenuButtons);
+	engine_->stopAllSounds();
+	engine_->play2D("sounds/button-25.wav",false);
 }

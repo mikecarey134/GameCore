@@ -18,7 +18,7 @@
 #include "GUI.h"
 #include "player.h"
 #include "NPC.h"
-#include "mapLoader.h"
+#include "GameMap.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
@@ -42,7 +42,7 @@ public:
 	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,GUI* gui, 
 		/*irr::scene::ICameraSceneNode* camera,*/ gamecore::SoundEngine* engine, 
-		player* thePlayer, irrBulletWorld* world, NPC* npc, mapLoader* currentMap, InternalServer* client);
+		player* thePlayer, irrBulletWorld* world, NPC* npc, GameMap* currentMap, InternalServer* client);
 	
 	~consoleevent();
 
@@ -67,6 +67,8 @@ public:
 
 	void drawPauseMenu ();
 	void drawMessage   (const wchar_t* message);
+	void newRound      ();
+	void goToMainMenu  ();
 	void drawInventory ();
 	void setInventoryScreen(InventoryScreen* screen) { inventoryScreen_ = screen; }
 
@@ -107,7 +109,7 @@ private:
 	bool creditsDisplayed;
 	bool inventory;
 	gamecore::SoundEngine* engine_;
-	mapLoader* currentMap_;
+	GameMap* currentMap_;
 	InternalServer* client_;
 	irr::gui::IGUIEditBox* ebox_;
 

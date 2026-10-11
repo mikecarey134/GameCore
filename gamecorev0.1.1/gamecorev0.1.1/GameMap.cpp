@@ -1,6 +1,7 @@
 #include "GameMap.h"
 #include "GrassNode.h"
 #include "ClueObject.h"
+#include "NPC.h"
 
 using namespace irr;
 using namespace core;
@@ -8,7 +9,7 @@ using namespace scene;
 using namespace video;
 
 GameMap::GameMap(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, irrBulletWorld* world)
-	: mapLoader(device, driver, smgr, world), clue_(0)
+	: mapLoader(device, driver, smgr, world), clue_(0), npc_(0)
 {
 }
 
@@ -46,6 +47,9 @@ void GameMap::onMapLoaded()
 	for (u32 i = 0; i < nodes.size(); ++i)
 		if (stringc(nodes[i]->getName()).subString(0, 5) == "clue_")
 			clueLocations_.push_back(nodes[i]->getAbsolutePosition());
+	for (u32 i = 0; i < nodes.size(); ++i)
+		if (stringc(nodes[i]->getName()).subString(0, 4) == "npc_")
+			npcLocations_.push_back(nodes[i]->getAbsolutePosition());
 	if (clue_)
 		clue_->placeOnMap();
 }
@@ -53,6 +57,9 @@ void GameMap::onMapLoaded()
 void GameMap::onMapClosed()
 {
 	clueLocations_.clear();
+	npcLocations_.clear();
+	if (npc_ && !npc_->isDead())
+		npc_->despawn();
 	if (clue_)
 		clue_->getModel()->setVisible(false);
 }

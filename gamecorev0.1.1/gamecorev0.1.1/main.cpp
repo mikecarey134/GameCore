@@ -202,6 +202,7 @@ int main(void)
 	//player.addClue(testClue);
 	crecv.addClueObject(&testClue);
 	currentMap.setClue(&testClue);
+	currentMap.setNpc(&npc_tester);
 
 	u32 then = device->getTimer()->getTime();
 

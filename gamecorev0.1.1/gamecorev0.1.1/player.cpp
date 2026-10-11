@@ -73,7 +73,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	mouseCursorY_ = 0.0;
 
 
-	character_ = new IKinematicCharacterController(world_);
+	createCharacter();
 
 	//dungeon example
 	//character_->warp(vector3df(-217.0f, 3.8f, 390.0f));
@@ -92,10 +92,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	characterModel_->setScale(vector3df(1.0, 1.0, 1.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
-	
-	character_->setGravity(PLAYER_EARTH_GRAVITY);
-
-	character_->setJumpForce(PLAYER_JUMP_FORCE);
 
 	//const c8 modelName = player_name_;
 	//characterModel_->setName(&modelName);
@@ -106,8 +102,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
 
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
-
-	character_->setMaxSlope((f32)(PI / 1.8));
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	playerSteps_->setVolume(.55f);
@@ -531,7 +525,31 @@ void player::kill()
 	delete character_;
 	character_ = 0;
 	smgr_->setActiveCamera(fpsCam_);
-	camera_->remove();
+}
+
+void player::createCharacter()
+{
+	character_ = new IKinematicCharacterController(world_);
+	character_->setGravity(PLAYER_EARTH_GRAVITY);
+	character_->setJumpForce(PLAYER_JUMP_FORCE);
+	character_->setMaxSlope((f32)(PI / 1.8));
+}
+
+void player::respawn(vector3df pos)
+{
+	if (!character_)
+		createCharacter();
+	playerHealth_ = PLAYER_HEALTH;
+	playerHunger_ = PLAYER_HUNGER;
+	playerWater_ = PLAYER_WATER;
+	mouseCursorX_ = 0.0;
+	mouseCursorY_ = 0.0;
+	clues_.clear();
+	gore_.hide(false);
+	characterModel_->setVisible(true);
+	smgr_->setActiveCamera(camera_);
+	idle();
+	spawn(pos);
 }
 
 //early player weapon switching system

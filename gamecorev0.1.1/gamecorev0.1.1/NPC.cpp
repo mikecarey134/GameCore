@@ -34,7 +34,7 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	//characterModel_->addShadowVolumeSceneNode();
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));	
 	//character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
-	character_->warp(vector3df(259.0f, 80.0f, -25.0f));//set the init pos on the map
+	character_->warp(vector3df(259.0f, 38.0f, -25.0f));//set the init pos on the map
 	*/
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
 	directionCounter_ = 0;
@@ -115,6 +115,24 @@ void NPC::luaSetDir()
 	lua_close(L);
 }
 
+void NPC::despawn()
+{
+	if (isLoaded_ == DONE_LOADING)
+	{
+		characterModel_->remove();
+		if (!isDead_)
+			healthDisplay_->remove();
+	}
+	isLoaded_ = NOT_LOADED;
+}
+
+void NPC::reset()
+{
+	despawn();
+	isDead_ = false;
+	npcHealth_ = NPC_HEALTH;
+}
+
 void NPC::damage()
 {
 	if (isDead_)
@@ -137,7 +155,7 @@ void NPC::damage()
 	}
 }
 
-void NPC::loadModel()
+void NPC::loadModel(vector3df spawn)
 {
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"),
 		0, /*player::*/IDFlag_IsPickable);
@@ -148,7 +166,7 @@ void NPC::loadModel()
 	//characterModel_->addShadowVolumeSceneNode();
 	characterModel_->setScale(vector3df(3.0, 3.0, 3.0));	
 	//character_->warp(vector3df(30.0f, 105.0f, 23.0f));//set the init pos on the map
-	character_->warp(vector3df(259.0f, 80.0f, -25.0f));//set the init pos on the map
+	character_->warp(spawn);//set the init pos on the map
 
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
 	characterModel_->setTriangleSelector(selector);
