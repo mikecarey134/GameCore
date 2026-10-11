@@ -116,7 +116,8 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/InteractiveObject.h ${ENGINE_DIR}/SAppcontext.h
   ${ENGINE_DIR}/SoundEngine.cpp ${ENGINE_DIR}/SoundEngine.h
   ${ENGINE_DIR}/mapLoader.cpp ${ENGINE_DIR}/mapLoader.h
-  ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/OrbitCamera.h)
+  ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/OrbitCamera.h
+  ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/MouseCapture.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
