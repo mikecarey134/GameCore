@@ -124,7 +124,8 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/ConsoleLayer.cpp ${ENGINE_DIR}/ConsoleLayer.h
   ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/LuaVM.h
   ${ENGINE_DIR}/DebugOverlay.cpp ${ENGINE_DIR}/DebugOverlay.h
-  ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/ActionMap.h)
+  ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/ActionMap.h
+  ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio lua51)
 
@@ -140,8 +141,9 @@ target_include_directories(gamecore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gamecore PRIVATE gamecore_engine)
 
 add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test.cpp engine/tests/input_router_test.cpp
-  engine/tests/lua_vm_test.cpp engine/tests/action_map_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
-  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp)
+  engine/tests/lua_vm_test.cpp engine/tests/action_map_test.cpp
+  engine/tests/ui_anchor_test.cpp engine/tests/window_size_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
+  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
 target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51)
 add_test(NAME engine_tests COMMAND engine_tests)

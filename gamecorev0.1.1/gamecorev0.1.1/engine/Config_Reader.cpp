@@ -9,6 +9,7 @@
 #include <iostream>
 #include <cstring>
 #include "Config_Reader.h"
+#include "UiAnchor.h"
 #ifdef __APPLE__
 #include <unistd.h>
 #endif
@@ -125,4 +126,12 @@ irr::video::E_DRIVER_TYPE Config_Reader::get_driver()
 	}
 
 	return driver;
+}
+
+irr::core::dimension2d<irr::u32> Config_Reader::get_window_size()
+{
+	std::vector<std::string> lines;
+	if (ini_vals.size() > WINDOW_WIDTH)
+		lines.assign(ini_vals.begin() + WINDOW_WIDTH, ini_vals.end());
+	return windowSize(lines, [](const std::string& message) { std::cerr << message << std::endl; });
 }
