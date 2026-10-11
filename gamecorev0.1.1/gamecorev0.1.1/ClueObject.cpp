@@ -52,6 +52,15 @@ void ClueObject::prepareClue()
 	//clueProperties_ = properties(msg, loc);
 }
 
+void ClueObject::placeOnMap()
+{
+	if (clueProperties_.isFound_)
+		return;
+	clueProperties_.location_ = setLocation();
+	model_->setPosition(clueProperties_.location_);
+	model_->setVisible(!theMap_->getClueLocations().empty());
+}
+
 void ClueObject::update()
 { 
 	if (!clueProperties_.isFound_)
@@ -162,6 +171,6 @@ void ClueObject::drawClueMessage()
 
 void ClueObject::eraseModelFromWorld()
 {
-	model_->remove();
+	model_->setVisible(false);
 	clueProperties_.isFound_ = true;
 }

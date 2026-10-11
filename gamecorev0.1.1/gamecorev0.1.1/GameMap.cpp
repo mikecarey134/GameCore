@@ -1,5 +1,6 @@
 #include "GameMap.h"
 #include "GrassNode.h"
+#include "ClueObject.h"
 
 using namespace irr;
 using namespace core;
@@ -7,7 +8,7 @@ using namespace scene;
 using namespace video;
 
 GameMap::GameMap(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, irrBulletWorld* world)
-	: mapLoader(device, driver, smgr, world)
+	: mapLoader(device, driver, smgr, world), clue_(0)
 {
 }
 
@@ -45,6 +46,8 @@ void GameMap::onMapLoaded()
 	for (u32 i = 0; i < nodes.size(); ++i)
 		if (stringc(nodes[i]->getName()).subString(0, 5) == "clue_")
 			clueLocations_.push_back(nodes[i]->getAbsolutePosition());
+	if (clue_)
+		clue_->placeOnMap();
 
 	//temp skybox later we will have one based off the time of day
 	smgr_->addSkyBoxSceneNode(
@@ -59,4 +62,6 @@ void GameMap::onMapLoaded()
 void GameMap::onMapClosed()
 {
 	clueLocations_.clear();
+	if (clue_)
+		clue_->getModel()->setVisible(false);
 }

@@ -3,6 +3,8 @@
 
 #include "mapLoader.h"
 
+class ClueObject;
+
 #define PREFIX "map/"
 
 class GameMap : public mapLoader
@@ -11,6 +13,7 @@ public:
 	GameMap(irr::IrrlichtDevice* device, irr::video::IVideoDriver* driver, irr::scene::ISceneManager* smgr, irrBulletWorld* world);
 
 	const std::vector<irr::core::vector3df> getClueLocations() const { return clueLocations_; }
+	void setClue(ClueObject* clue) { clue_ = clue; }
 
 protected:
 	void onMapLoaded() override;
@@ -18,6 +21,7 @@ protected:
 
 private:
 	std::vector<irr::core::vector3df> clueLocations_;
+	ClueObject* clue_;
 };
 
 #endif

@@ -32,6 +32,7 @@ public:
 	const irr::core::string<char> getObjectType() const { return type_; }
 	void update(); 
 	void prepareClue();
+	void placeOnMap();
 	irr::core::vector3df setLocation();
 	irr::core::string<char> setClueMsg();
 	irr::scene::ISceneNode* getModel () const { return model_; }
