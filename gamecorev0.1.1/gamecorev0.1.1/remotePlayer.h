@@ -75,7 +75,6 @@ private:
 	irr::video::IVideoDriver* driver_;
 
 	irrklang::ISoundEngine* engine_;
-	irrklang::ISound* playerSteps_;
 	irrklang::ISound* player_punch;
 
 	irr::u32 then;

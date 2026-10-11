@@ -59,7 +59,6 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_
 
 	character_->setMaxSlope(PI/4);
 
-	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
