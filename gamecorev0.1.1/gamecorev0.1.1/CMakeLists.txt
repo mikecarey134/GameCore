@@ -46,7 +46,7 @@ target_compile_options(bullet PRIVATE ${QUIET_THIRD_PARTY})
 set(IRRBULLET_COPY "${CMAKE_CURRENT_BINARY_DIR}/irrbullet")
 file(COPY "${THIRD_PARTY}/irrbullet-0.1.8/" DESTINATION "${IRRBULLET_COPY}"
      FILES_MATCHING PATTERN "*.h" PATTERN "*.cpp")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/kinematiccharactercontroller.h"
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/engine/kinematiccharactercontroller.h"
                "${IRRBULLET_COPY}/kinematiccharactercontroller.h" COPYONLY)
 if(NOT EXISTS "${IRRBULLET_COPY}/irrBullet.h")
   file(WRITE "${IRRBULLET_COPY}/irrBullet.h" "#include \"irrbullet.h\"\n")
@@ -107,11 +107,16 @@ foreach(target gamecore_inventory gamecore_inventory_ui inventory_ui_tests)
   set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 endforeach()
 
+set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/engine")
 add_library(gamecore_engine STATIC
-  kinematiccharactercontroller.cpp kinematiccharactercontroller.h ChatQueue.cpp ChatQueue.h
-  ParticleSystem.cpp ParticleSystem.h Config_Reader.cpp Config_Reader.h
-  InteractiveObject.h SAppcontext.h SoundEngine.cpp SoundEngine.h mapLoader.cpp mapLoader.h)
-target_include_directories(gamecore_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+  ${ENGINE_DIR}/kinematiccharactercontroller.cpp ${ENGINE_DIR}/kinematiccharactercontroller.h
+  ${ENGINE_DIR}/ChatQueue.cpp ${ENGINE_DIR}/ChatQueue.h
+  ${ENGINE_DIR}/ParticleSystem.cpp ${ENGINE_DIR}/ParticleSystem.h
+  ${ENGINE_DIR}/Config_Reader.cpp ${ENGINE_DIR}/Config_Reader.h
+  ${ENGINE_DIR}/InteractiveObject.h ${ENGINE_DIR}/SAppcontext.h
+  ${ENGINE_DIR}/SoundEngine.cpp ${ENGINE_DIR}/SoundEngine.h
+  ${ENGINE_DIR}/mapLoader.cpp ${ENGINE_DIR}/mapLoader.h)
+target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
 set(GAMECORE_SOURCES
@@ -122,6 +127,7 @@ set(GAMECORE_SOURCES
   WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
 
 add_executable(gamecore ${GAMECORE_SOURCES})
+target_include_directories(gamecore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gamecore PRIVATE gamecore_engine)
 
 foreach(target gamecore_engine gamecore)
