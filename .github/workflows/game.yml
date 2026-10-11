@@ -48,6 +48,7 @@ jobs:
             /gamecorev0.1.1/gamecorev0.1.1/engine/
             /gamecorev0.1.1/gamecorev0.1.1/protocol/
             /gamecorev0.1.1/gamecorev0.1.1/server/
+            /gamecorev0.1.1/gamecorev0.1.1/client/
             /gamecorev0.1.1/gamecorev0.1.1/third_party/
             /gamecorev0.1.1/gamecorev0.1.1/inventory/
             /gamecorev0.1.1/gamecorev0.1.1/inventory_ui/
