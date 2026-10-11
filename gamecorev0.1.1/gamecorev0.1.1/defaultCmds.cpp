@@ -1,4 +1,3 @@
-#include "console/Stdafx.h"
 #include "defaultCmds.h"
 #include <irrlicht.h>
 
