@@ -37,8 +37,8 @@ void GameMap::onMapLoaded()
 				ISceneNode* hitNode = 0;
 				if (!smgr_->getSceneCollisionManager()->getCollisionPoint(line3df(x, box.MaxEdge.Y + 1, z, x, box.MinEdge.Y - 1, z), ground, onGround, hitTriangle, hitNode))
 					continue;
-				GrassNode* grass_node = new GrassNode(device_,vector3df(0,0,0));
-				grass_node->set_position(onGround);
+				grass_.push_back(GrassNode(device_,vector3df(0,0,0)));
+				grass_.back().set_position(onGround);
 			}
 		}
 		ground->drop();
@@ -58,6 +58,7 @@ void GameMap::onMapClosed()
 {
 	clueLocations_.clear();
 	npcLocations_.clear();
+	grass_.clear();
 	if (npc_ && !npc_->isDead())
 		npc_->despawn();
 	if (clue_)

@@ -2,6 +2,7 @@
 #define GAMEMAP_H
 
 #include "mapLoader.h"
+#include "GrassNode.h"
 
 class ClueObject;
 class NPC;
@@ -27,6 +28,7 @@ private:
 	ClueObject* clue_;
 	NPC* npc_;
 	std::vector<irr::core::vector3df> npcLocations_;
+	std::vector<GrassNode> grass_;
 };
 
 #endif
