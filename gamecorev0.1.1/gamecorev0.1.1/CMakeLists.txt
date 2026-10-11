@@ -8,9 +8,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set(THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
-set(IRRKLANG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/compat/irrKlang" CACHE PATH
-    "irrKlang headers; the default is a silent stand-in")
-set(IRRKLANG_LIBRARY "" CACHE FILEPATH "irrKlang library; leave empty with the silent stand-in")
 
 if(MSVC)
   set(QUIET_THIRD_PARTY /w)
@@ -80,6 +77,14 @@ add_library(lua51 STATIC ${LUA_SOURCES})
 target_include_directories(lua51 SYSTEM PUBLIC "${THIRD_PARTY}/lua-5.1.5/src")
 target_compile_options(lua51 PRIVATE ${QUIET_THIRD_PARTY})
 
+add_library(miniaudio STATIC "${THIRD_PARTY}/miniaudio-0.11.25/miniaudio.c")
+target_include_directories(miniaudio SYSTEM PUBLIC "${THIRD_PARTY}/miniaudio-0.11.25")
+target_compile_options(miniaudio PRIVATE ${QUIET_THIRD_PARTY})
+target_link_libraries(miniaudio PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
+if(UNIX AND NOT APPLE)
+  target_link_libraries(miniaudio PUBLIC m)
+endif()
+
 add_library(gamecore_inventory STATIC inventory/Catalog.cpp inventory/Inventory.cpp)
 target_include_directories(gamecore_inventory PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/inventory")
 
@@ -105,9 +110,9 @@ endforeach()
 add_library(gamecore_engine STATIC
   kinematiccharactercontroller.cpp kinematiccharactercontroller.h ChatQueue.cpp ChatQueue.h
   ParticleSystem.cpp ParticleSystem.h Config_Reader.cpp Config_Reader.h
-  InteractiveObject.h SAppcontext.h)
-target_include_directories(gamecore_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${IRRKLANG_INCLUDE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine)
+  InteractiveObject.h SAppcontext.h irrKlang.cpp irrKlang.h)
+target_include_directories(gamecore_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
 set(GAMECORE_SOURCES
   ClueObject.cpp console.cpp consoleevent.cpp
@@ -131,7 +136,7 @@ foreach(target gamecore_engine gamecore)
   endif()
   set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 endforeach()
-target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet lua51 irrlicht_engine ${IRRKLANG_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet lua51 irrlicht_engine ${CMAKE_DL_LIBS})
 
 if(WIN32)
   target_link_libraries(gamecore PRIVATE ws2_32 opengl32)
