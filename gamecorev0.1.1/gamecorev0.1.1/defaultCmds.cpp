@@ -200,7 +200,7 @@ bool IC_Command_TP::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 		
 		//handle 
 		//warp the player
-		thePlayer_->setposition(irr::core::vector3df(posx,posy,posz));
+		thePlayer_->setposition(irr::core::vector3df((f32)posx,(f32)posy,(f32)posz));
 		
 		return true;
 	}
@@ -232,7 +232,7 @@ bool IC_Command_RB::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 		const wchar_t* scale = args[1].c_str();
 		ICollisionShape* shape;
 		node = device_->getSceneManager()->addMeshSceneNode(device_->getSceneManager()->getMesh(args[0]));
-		node->setScale(vector3df(_wtof(scale),_wtof(scale),_wtof(scale)));
+		node->setScale(vector3df((f32)_wtof(scale),(f32)_wtof(scale),(f32)_wtof(scale)));
 		node->setPosition(vector3df(player_->getPosition().X-10,player_->getPosition().Y,player_->getPosition().Z-10));
 		//gpu intensive//////////////////
 		node->addShadowVolumeSceneNode();
@@ -269,7 +269,7 @@ bool IC_Command_GV::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 {
 	if (args.size()==1)
 	{
-		world_->setGravity(vector3df(0,_wtof(args[0].c_str()),0));
+		world_->setGravity(vector3df(0,(f32)_wtof(args[0].c_str()),0));
 	}
 	else
 		throw IC_Error(L"Missing Argument! <Gravity>");
@@ -294,7 +294,7 @@ bool IC_Command_PGV::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Me
 {
 	if (args.size()==1)
 	{
-		thePlayer_->setGravity(_wtof(args[0].c_str()));
+		thePlayer_->setGravity((f32)_wtof(args[0].c_str()));
 	}
 	else
 		throw IC_Error(L"Missing Argument! <Player Gravity>");
@@ -405,7 +405,7 @@ bool IC_Command_P_SPEED::invoke(const array<WideString>& args, IC_Dispatcher*, I
 		//arguments
 		const wchar_t* arg = args[0].c_str();
 		//conversion to float speed
-		float speed=_wtof(arg);
+		float speed=(float)_wtof(arg);
 
 		//handle 
 		thePlayer_->setSpeed(speed);
@@ -438,10 +438,10 @@ bool IC_Command_PH::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 		//arguments
 		const wchar_t* arg = args[0].c_str();
 		//conversion to float speed
-		float health=_wtof(arg);
+		float health=(float)_wtof(arg);
 
 		//handle 
-		thePlayer_->setHealth(health);
+		thePlayer_->setHealth((int)health);
 
 		return true;
 	}

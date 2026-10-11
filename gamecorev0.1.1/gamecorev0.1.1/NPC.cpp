@@ -37,7 +37,7 @@ NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* 
 	character_->warp(vector3df(259.0f, 38.0f, -25.0f));//set the init pos on the map
 	*/
 	AIdirection_ = vector3df(0.0f,0.0f,0.0f);
-	directionCounter_ = 0.0f;
+	directionCounter_ = 0;
 	/*
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
 	characterModel_->setTriangleSelector(selector);
@@ -81,7 +81,7 @@ void NPC::moveNPC()
 	if (directionCounter_ > 100)
 	{
 		//luaSetDir();
-		directionCounter_ = 0.0f;
+		directionCounter_ = 0;
 	}
 	//std::cout << AIdirection_.X << " " << AIdirection_.Z << std::endl;
 
@@ -104,9 +104,9 @@ void NPC::luaSetDir()
 	if (lua_pcall(L,0,3,0) != EXIT_SUCCESS)
 		exit(1);
 
-	AIdirection_.X = lua_tonumber(L, -3);
-	AIdirection_.Z = lua_tonumber(L, -2);
-	vector3df newRotation = vector3df(characterModel_->getRotation().X, lua_tonumber(L, -1), characterModel_->getRotation().Z);
+	AIdirection_.X = (f32)lua_tonumber(L, -3);
+	AIdirection_.Z = (f32)lua_tonumber(L, -2);
+	vector3df newRotation = vector3df(characterModel_->getRotation().X, (f32)lua_tonumber(L, -1), characterModel_->getRotation().Z);
 	characterModel_->setRotation(newRotation);
 }
 

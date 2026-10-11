@@ -23,7 +23,7 @@ player::player(IrrlichtDevice* device,const char*,irr::scene::ISceneManager* smg
 world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
-									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2,0.2),dimension2df(4.0,4.0))
+									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2f,0.2f),dimension2df(4.0,4.0))
 {
 	//append number to players to make 
 	//sure the same player id is not created
@@ -31,7 +31,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	for (int i=0;i<4;++i)
 	{
 		int id = (rand() % 10) +48;
-		player_name_+= id;
+		player_name_+= (char)id;
 	}
 	
 	//set the init chat message to an empty string
@@ -108,7 +108,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
-	character_->setMaxSlope(PI / 1.8);
+	character_->setMaxSlope((f32)(PI / 1.8));
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	playerSteps_->setVolume(.55f);
@@ -355,7 +355,7 @@ void player::forward()
 		walkframe_ = 301;
 	}
 	
-	characterModel_->setCurrentFrame(walkframe_);
+	characterModel_->setCurrentFrame((f32)walkframe_);
 	current_state_=State::WALK;
 
 	

@@ -75,7 +75,7 @@ vector3df ClueObject::setLocation()
 	if (lua_pcall(L,1,1,0) != EXIT_SUCCESS)
 		exit(1);
 
-	int selection = lua_tointeger(L, -1);
+	int selection = (int)lua_tointeger(L, -1);
 
 	return theMap_->getClueLocations()[selection];
 }

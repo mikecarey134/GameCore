@@ -21,7 +21,7 @@ GrassNode::GrassNode(irr::IrrlichtDevice* device,irr::core::vector3df)
 	grass_entity_->setMaterialTexture(0,device->getVideoDriver()->getTexture("models/nature/grass/grass.png"));
 	grass_entity_->setMaterialType(EMT_TRANSPARENT_ALPHA_CHANNEL);
 	grass_entity_->setMaterialFlag(EMF_BACK_FACE_CULLING ,0);
-	grass_entity_->setScale(vector3df(0.06,0.04,0.06));
+	grass_entity_->setScale(vector3df(0.06f,0.04f,0.06f));
 }
 
 GrassNode::~GrassNode(void)

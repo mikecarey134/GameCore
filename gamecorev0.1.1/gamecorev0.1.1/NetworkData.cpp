@@ -28,14 +28,14 @@ const char* NetworkData::getNetworkData() const
 
 int NetworkData::length()
 {
-	dataSize_ = ourNetworkData.str().length();
+	dataSize_ = (int)ourNetworkData.str().length();
 	return dataSize_;
 }
 
 
 int NetworkData::chatLength()
 {
-	return ourNetworkChatMine.length();
+	return (int)ourNetworkChatMine.length();
 }
 
 
@@ -62,8 +62,8 @@ void NetworkData::setRemote(const char* ourData)
 	std::string rem_msg;//player_message
 	std::stringstream ourID;
 	
-	float rem_x,rem_y,rem_z,rem_rotX,rem_rotY,rem_rotZ;
-	int model_type,current_state;
+	float rem_x=0,rem_y=0,rem_z=0,rem_rotX=0,rem_rotY=0,rem_rotZ=0;
+	int model_type=0,current_state=0;
 	ourID.str(ourData);
 	ourID >> mType >> ID;
 	if (ID.empty())

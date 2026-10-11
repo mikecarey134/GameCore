@@ -63,7 +63,7 @@ IRigidBody* CExampleFramework::shootCube(const irr::core::vector3df &scale, irr:
     body->setLinearVelocity(forwardDir);
     //body->setActivationState(EAS_DISABLE_DEACTIVATION);
 
-    body->setDamping(0.2,0.2);
+    body->setDamping(0.2f,0.2f);
     body->setFriction(0.4f);
 
     //ICollisionObjectAffectorDelete *deleteAffector = new ICollisionObjectAffectorDelete(4000);
@@ -97,7 +97,7 @@ IRigidBody* CExampleFramework::shootSphere(const irr::core::vector3df &scale, ir
 	//shape->setMargin(0.01);
 
 	IRigidBody *body = world->addRigidBody(shape);
-	body->setDamping(0.2,0.2);
+	body->setDamping(0.2f,0.2f);
 
     // Since we use a "bumpy" triangle mesh for the terrain, we need to set the CCD radius and
     // motion threshold to ensure that we don't have any tunneling problems.
@@ -153,23 +153,23 @@ IRigidBody* CExampleFramework::createTank(const irr::core::stringw& file, const 
     // all parameters for each wheel can stay the same for what needs to remain equal,
     // such as directions and suspension rest length.
     SWheelInfoConstructionInfo wheel;
-    wheel.chassisConnectionPointCS = irr::core::vector3df(0.0,-0.88,4.0);
+    wheel.chassisConnectionPointCS = irr::core::vector3df(0.0f,-0.88f,4.0f);
     wheel.wheelDirectionCS = irr::core::vector3df(0.0,-1,0.0);
     wheel.wheelAxleCS = irr::core::vector3df(-2,0.0,0.0);
-    wheel.suspensionRestLength = 0.6;
+    wheel.suspensionRestLength = 0.6f;
     wheel.wheelRadius = 8.0;
     wheel.isFrontWheel = false;
 
-    wheel.chassisConnectionPointCS = irr::core::vector3df(-4, -0.6, 12);
+    wheel.chassisConnectionPointCS = irr::core::vector3df(-4, -0.6f, 12);
     vehicle->addWheel(wheel);
 
-    wheel.chassisConnectionPointCS = irr::core::vector3df(4, -0.6, 12);
+    wheel.chassisConnectionPointCS = irr::core::vector3df(4, -0.6f, 12);
     vehicle->addWheel(wheel);
 
-    wheel.chassisConnectionPointCS = irr::core::vector3df(-4, -0.6, -12);
+    wheel.chassisConnectionPointCS = irr::core::vector3df(-4, -0.6f, -12);
     vehicle->addWheel(wheel);
 
-    wheel.chassisConnectionPointCS = irr::core::vector3df(4, -0.6, -12);
+    wheel.chassisConnectionPointCS = irr::core::vector3df(4, -0.6f, -12);
     vehicle->addWheel(wheel);
 
 	for(irr::u32 i=0;i<vehicle->getNumWheels();i++)
@@ -206,10 +206,10 @@ irr::scene::IParticleSystemSceneNode* CExampleFramework::createParticleSystem(co
     irr::scene::IParticleEmitter* em = ps->createBoxEmitter(
         irr::core::aabbox3d<irr::f32>(-7,0,-7,7,1,7), // emitter size
         dir,   // initial direction core::vector3df(0.0f,0.01f,0.0f)
-        min,max,                             // emit rate
+        (irr::u32)min,(irr::u32)max,                             // emit rate
         darkest,       // darkest color
         brightest,       // brightest color
-        minAge,maxAge,angle,                         // min and max age, angle
+        (irr::u32)minAge,(irr::u32)maxAge,(irr::s32)angle,                         // min and max age, angle
         minSize,         // min size
         maxSize);        // max size
 
@@ -230,7 +230,7 @@ irr::scene::IParticleSystemSceneNode* CExampleFramework::createParticleSystem(co
         paf->drop();
     }
 
-    ps->setScale(irr::core::vector3df(0.4,0.4,0.4));
+    ps->setScale(irr::core::vector3df(0.4f,0.4f,0.4f));
     ps->setMaterialFlag(irr::video::EMF_LIGHTING, false);
     ps->setMaterialFlag(irr::video::EMF_ZWRITE_ENABLE, false);
     ps->setMaterialTexture(0, device->getVideoDriver()->getTexture(textureFile.c_str()));
@@ -241,7 +241,7 @@ irr::scene::IParticleSystemSceneNode* CExampleFramework::createParticleSystem(co
 
     if(lifeTime > 0.0f)
     {
-        irr::scene::ISceneNodeAnimator* anim = device->getSceneManager()->createDeleteAnimator(lifeTime);
+        irr::scene::ISceneNodeAnimator* anim = device->getSceneManager()->createDeleteAnimator((irr::u32)lifeTime);
         ps->addAnimator(anim);
         anim->drop();
     }

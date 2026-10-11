@@ -26,7 +26,7 @@ void mapLoader::loadMap()
 
 	device_->getSceneManager()->loadScene(mapName_);
 	//driver_->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
-	driver_->setFog(SColor(200,0,0,0),EFT_FOG_EXP2,300,400,.001,true,false);
+	driver_->setFog(SColor(200,0,0,0),EFT_FOG_EXP2,300,400,.001f,true,false);
 
 
 
@@ -82,7 +82,7 @@ void mapLoader::loadMap()
 					
 					for(int g = 0; g < 100;++g){
 						grass_node = new GrassNode(device_,vector3df(0,0,0));
-						grass_node->set_position(vector3df(rand()%200 ,rand() % 1 + (-9), rand()% 200));
+						grass_node->set_position(vector3df((f32)(rand()%200) ,(f32)(rand() % 1 + (-9)), (f32)(rand()% 200)));
 						grass.push_back(grass_node);
 					}
 
