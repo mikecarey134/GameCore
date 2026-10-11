@@ -105,15 +105,16 @@ static void addStartingItems(inventory::Inventory& backpack)
 			}
 }
 
-int main(void)
+int main(int argc, char** argv)
 {
+	const bool smoke = argc > 1 && std::string(argv[1]) == "--smoke";
 	//seed the random time
 	srand((unsigned int)time(NULL));
 	//read in our config file
 	Config_Reader config_reader("config/configure.txt");
 	
 	//setup the irrlicht devices here
-	IrrlichtDevice *device = createDevice(config_reader.get_driver(),//drivers
+	IrrlichtDevice *device = createDevice(smoke ? EDT_NULL : config_reader.get_driver(),//drivers
 	dimension2d<u32>(800,600),16,config_reader.get_full_screen()
 	,config_reader.get_s_buffer(),config_reader.get_vsinc());
 	if(!device)//if device fails to load exit
@@ -174,7 +175,7 @@ int main(void)
 	NPC npc_tester(device,smgr,world,driver,luaVM);
 
 	//init the client side of the server
-	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
+	InternalServer Client(config_reader.get_online() && !smoke,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
 	GameFlow gameFlow(device,guienv,driver,context, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
@@ -238,13 +239,15 @@ int main(void)
 	gameFlow.clear_console();
 	
 	//thePlayer.switch_weap(1);
+	if (smoke)
+		gameFlow.startPressed();
 	while(device->run())//while the game is running
 	{		
 		const u32 now = device->getTimer()->getTime();
 		const u32 frameDeltaTime = now - then;	// Time in milliseconds
 		then = now;	
 
-		if (device->isWindowActive())//if a window is running
+		if (smoke || device->isWindowActive())//if a window is running
 		{	
 				mouseCapture.setCaptured(gameFlow.getStarted() && !gameFlow.getPaused() && !gameFlow.getIsInventory());
 				mouseCapture.beginFrame();
@@ -306,6 +309,12 @@ int main(void)
 		}
 		else
 			device->yield();
+
+		if (smoke)
+		{
+			std::cout << "Smoke run finished one frame" << std::endl;
+			break;
+		}
 	}
 
 	if(Client.isOnline())//if we are online

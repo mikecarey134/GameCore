@@ -16,14 +16,17 @@ jobs:
             install: sudo apt-get update && sudo apt-get install -y libirrlicht-dev libgl-dev libx11-dev libxext-dev libxxf86vm-dev
             configure: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
             keep_going: -- -k
+            exe: ./gamecore
           - os: macos-14
             install: brew install irrlicht
             configure: ""
             keep_going: -- -k
+            exe: ./gamecore
           - os: windows-2022
             install: vcpkg install irrlicht:x64-windows
             configure: -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
             keep_going: ""
+            exe: ./Release/gamecore.exe
     defaults:
       run:
         shell: bash
@@ -41,6 +44,14 @@ jobs:
             /gamecorev0.1.1/gamecorev0.1.1/third_party/
             /gamecorev0.1.1/gamecorev0.1.1/inventory/
             /gamecorev0.1.1/gamecorev0.1.1/inventory_ui/
+            /gamecorev0.1.1/gamecorev0.1.1/bill/
+            /gamecorev0.1.1/gamecorev0.1.1/characters/
+            /gamecorev0.1.1/gamecorev0.1.1/config/
+            /gamecorev0.1.1/gamecorev0.1.1/map/
+            /gamecorev0.1.1/gamecorev0.1.1/models/clue/
+            /gamecorev0.1.1/gamecorev0.1.1/models/nature/
+            /gamecorev0.1.1/gamecorev0.1.1/scripts/
+            /gamecorev0.1.1/gamecorev0.1.1/sounds/
 
       - name: Install Irrlicht
         run: ${{ matrix.install }}
@@ -53,3 +64,8 @@ jobs:
 
       - name: Run unit tests
         run: ctest --test-dir build --build-config Release --output-on-failure --verbose
+
+      - name: Smoke run
+        timeout-minutes: 5
+        working-directory: gamecorev0.1.1/gamecorev0.1.1
+        run: ${{ matrix.exe }} --smoke
