@@ -25,7 +25,6 @@ void mapLoader::loadMap()
 
 	device_->getSceneManager()->loadScene(mapName_);
 	//driver_->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001,true,false);
-	driver_->setFog(SColor(200,0,0,0),EFT_FOG_EXP2,300,400,.001f,true,false);
 
 
 
@@ -68,7 +67,6 @@ void mapLoader::loadMap()
 			
 				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
 				bodies_.push_back(world_->addRigidBody(shape));
-				node->setMaterialFlag(EMF_FOG_ENABLE,true);//add fog to our scene
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(IDFlag_IsPickable);
 

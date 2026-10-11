@@ -153,7 +153,6 @@ int main(void)
 
 	theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
 	
-	driver->setFog(SColor(0,255,255,255),EFT_FOG_EXP2,200,400,.001f,true,false);	
 
 	//Loading map now handled in its own class
 	mapLoader currentMap(device,driver,smgr,world);
