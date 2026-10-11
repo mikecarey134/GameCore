@@ -17,11 +17,12 @@ using namespace io;
 using namespace gui;
 
 NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
-		 irrBulletWorld* world, irr::video::IVideoDriver* driver) : 
-			device_(device), smgr_(smgr), driver_(driver), world_(world),npcHealth_(NPC_HEALTH),
+		 irrBulletWorld* world, irr::video::IVideoDriver* driver, LuaVM& lua) : 
+			device_(device), smgr_(smgr), driver_(driver), world_(world), lua_(lua),npcHealth_(NPC_HEALTH),
 				isLoaded_(NOT_LOADED),isHit_(false),isDead_(false)
 {
 	character_ = new IKinematicCharacterController(world_);
+	lua_.doFile("scripts/pickDir.lua");
 	//character_->setUseGhostSweepTest(true);
 	
 	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
@@ -94,25 +95,14 @@ void NPC::moveNPC()
 
 void NPC::luaSetDir()
 {
-	lua_State *L = lua_open();
-	luaL_openlibs(L);
-
-	luaL_dofile(L, "scripts/pickDir.lua");
-
-	lua_getglobal(L, "setDirection");
-
-	if (lua_pcall(L,0,3,0) != EXIT_SUCCESS)
-	{
-		std::cerr << "pickDir.lua setDirection failed: " << lua_tostring(L, -1) << std::endl;
-		lua_close(L);
+	std::vector<LuaValue> results;
+	if (!lua_.call("setDirection", {}, results, 3))
 		return;
-	}
 
-	AIdirection_.X = (f32)lua_tonumber(L, -3);
-	AIdirection_.Z = (f32)lua_tonumber(L, -2);
-	vector3df newRotation = vector3df(characterModel_->getRotation().X, (f32)lua_tonumber(L, -1), characterModel_->getRotation().Z);
+	AIdirection_.X = (f32)results[0].asNumber();
+	AIdirection_.Z = (f32)results[1].asNumber();
+	vector3df newRotation = vector3df(characterModel_->getRotation().X, (f32)results[2].asNumber(), characterModel_->getRotation().Z);
 	characterModel_->setRotation(newRotation);
-	lua_close(L);
 }
 
 void NPC::despawn()

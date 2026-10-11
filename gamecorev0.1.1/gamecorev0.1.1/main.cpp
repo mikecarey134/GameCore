@@ -169,13 +169,18 @@ int main(void)
 
 	SolarCycle sun(device,vector3df(thePlayer.getPosition().X,thePlayer.getPosition().Y+400,thePlayer.getPosition().Z));
 
-	NPC npc_tester(device,smgr,world,driver);
+	LuaVM luaVM;
+	NPC npc_tester(device,smgr,world,driver,luaVM);
 
 	//init the client side of the server
 	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
 	GameFlow gameFlow(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
+	luaVM.setLogger([&gameFlow](const std::string& message) {
+		gameFlow.getConsole().logMessage_ANSI(ELL_ERROR, message.c_str());
+		std::cerr << message << std::endl;
+	});
 	InputRouter inputRouter;
 	GameplayLayer gameplayLayer(gameFlow, inputRouter.state());
 	inputRouter.push(&gameplayLayer);
@@ -214,7 +219,7 @@ int main(void)
 	thePlayer.spawn(spawns[rand() % spawns.size()]);
 	//thePlayer.setUpCameraCollisions();
 
-	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap);
+	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap,luaVM);
 
 	//player.addClue(testClue);
 	gameFlow.addClueObject(&testClue);

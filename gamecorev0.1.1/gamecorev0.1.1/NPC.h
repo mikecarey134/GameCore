@@ -10,7 +10,7 @@
 #include "SoundEngine.h"
 #include<irrbullet.h>
 
-#include<lua.hpp>
+#include "LuaVM.h"
 
 #include<string>
 #include"common.h"
@@ -30,6 +30,7 @@ private:
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
 	irrBulletWorld* world_;
+	LuaVM& lua_;
 
 	IKinematicCharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
@@ -46,7 +47,7 @@ private:
 	
 public:
 	NPC(irr::IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
-		irrBulletWorld* world, irr::video::IVideoDriver* driver);
+		irrBulletWorld* world, irr::video::IVideoDriver* driver, LuaVM& lua);
 
 	~NPC(void);
 

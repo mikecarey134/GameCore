@@ -8,10 +8,11 @@ using namespace io;
 using namespace gui;
 
 ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-					   irrBulletWorld*, irr::video::IVideoDriver* driver, GameMap* theMap) : 
-						device_(device), driver_(driver), theMap_(theMap) 
+					   irrBulletWorld*, irr::video::IVideoDriver* driver, GameMap* theMap, LuaVM& lua) : 
+						device_(device), driver_(driver), theMap_(theMap), lua_(lua) 
 {
 	type_ = TYPE_CLUE;
+	lua_.doFile("scripts/ClueSetup.lua");
 	prepareClue();
 
 	model_ = smgr->addMeshSceneNode(smgr->getMesh(filename),0,-1,clueProperties_.location_,
@@ -81,21 +82,10 @@ void ClueObject::update()
 
 vector3df ClueObject::setLocation()
 {
-	lua_State *L = lua_open();
-	luaL_openlibs(L);
-
-	luaL_dofile(L, "scripts/ClueSetup.lua");
-
-	lua_getglobal(L, "pickRandomLocation");
-
-	lua_pushinteger(L, theMap_->getClueLocations().size());
-
 	int selection = 0;
-	if (lua_pcall(L,1,1,0) != EXIT_SUCCESS)
-		std::cerr << "ClueSetup.lua pickRandomLocation failed: " << lua_tostring(L, -1) << std::endl;
-	else
-		selection = (int)lua_tointeger(L, -1);
-	lua_close(L);
+	std::vector<LuaValue> results;
+	if (lua_.call("pickRandomLocation", { LuaValue((int)theMap_->getClueLocations().size()) }, results, 1))
+		selection = results[0].asInt();
 
 	const std::vector<vector3df> locations = theMap_->getClueLocations();
 	if (locations.empty())
@@ -107,19 +97,10 @@ vector3df ClueObject::setLocation()
 
 string<char> ClueObject::setClueMsg()
 {
-	lua_State *L = lua_open();
-	luaL_openlibs(L);
-
-	luaL_dofile(L, "scripts/ClueSetup.lua");
-
-	lua_getglobal(L, "setupClueMsg");
-
 	string<char> msg = "";
-	if (lua_pcall(L,0,1,0) != EXIT_SUCCESS)
-		std::cerr << "ClueSetup.lua setupClueMsg failed: " << lua_tostring(L, -1) << std::endl;
-	else if (lua_tostring(L, -1))
-		msg = lua_tostring(L, -1);
-	lua_close(L);
+	std::vector<LuaValue> results;
+	if (lua_.call("setupClueMsg", {}, results, 1) && results[0].isString())
+		msg = results[0].asString().c_str();
 
 	return msg;	
 }
