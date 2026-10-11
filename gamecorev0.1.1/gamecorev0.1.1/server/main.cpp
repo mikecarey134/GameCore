@@ -91,5 +91,5 @@ int main(int argc, char** argv)
 	}
 	server.stop();
 	std::cout << "Server stopped" << std::endl;
-	return 0;
+	std::_Exit(0);
 }
