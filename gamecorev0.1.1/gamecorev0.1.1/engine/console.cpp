@@ -1,6 +1,5 @@
-#include "console/Stdafx.h"
 #include "console.h"
-#include "defaultCmds.h"
+#include "consoleCommands.h"
 
 
 //=========================================================================================

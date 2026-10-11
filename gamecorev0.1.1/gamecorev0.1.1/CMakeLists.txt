@@ -118,15 +118,17 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/mapLoader.cpp ${ENGINE_DIR}/mapLoader.h
   ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/OrbitCamera.h
   ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/MouseCapture.h
-  ${ENGINE_DIR}/InputRouter.cpp ${ENGINE_DIR}/InputRouter.h ${ENGINE_DIR}/InputState.h)
+  ${ENGINE_DIR}/InputRouter.cpp ${ENGINE_DIR}/InputRouter.h ${ENGINE_DIR}/InputState.h
+  ${ENGINE_DIR}/console.cpp ${ENGINE_DIR}/console.h ${ENGINE_DIR}/consoleCommands.cpp ${ENGINE_DIR}/consoleCommands.h
+  ${ENGINE_DIR}/utils.cpp ${ENGINE_DIR}/utils.h ${ENGINE_DIR}/includes.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
 set(GAMECORE_SOURCES
-  ClueObject.cpp console.cpp GameFlow.cpp
+  ClueObject.cpp GameFlow.cpp
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
   main.cpp GameMap.cpp GameLayers.cpp NetworkData.cpp NPC.cpp
-  player.cpp remotePlayer.cpp SolarCycle.cpp utils.cpp
+  player.cpp remotePlayer.cpp SolarCycle.cpp
   WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
 
 add_executable(gamecore ${GAMECORE_SOURCES})
