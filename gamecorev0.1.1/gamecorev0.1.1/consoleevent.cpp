@@ -570,6 +570,13 @@ void consoleevent::update(u32, u32)//update the game throught the gameloop
 		world_->debugDrawWorld(true);
 	}
 	if(pauseMenu)drawPauseMenu();
+	else if(started)
+	{
+		s32 pauseButtons[] = { GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU, GUI::GUI_ID_QUIT_BUTTON };
+		for (int i = 0; i < 4; ++i)
+			if (IGUIElement* button = guienv_->getRootGUIElement()->getElementFromId(pauseButtons[i], true))
+				button->remove();
+	}
 		
 //	if(chatshown){gui_->drawchat(guienv_);}
 	
