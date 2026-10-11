@@ -343,6 +343,30 @@ bool IC_Command_H::invoke(const array<WideString>&, IC_Dispatcher*, IC_MessageSi
 	return true;
 }
 
+IC_Command_LUA::IC_Command_LUA(LuaVM* lua) : IC_Command(L"lua"), lua_(lua)
+{
+	setUsage(L"\\lua <code>");
+	addDescLine("Runs a line of Lua in the game's script state");
+}
+IC_Command_LUA::~IC_Command_LUA()
+{
+}
+bool IC_Command_LUA::invoke(const array<WideString>& args, IC_Dispatcher*, IC_MessageSink*)
+{
+	if (args.size() == 0)
+		throw IC_Error(L"Missing Argument! <code>");
+	std::string code;
+	for (u32 i = 0; i < args.size(); ++i)
+	{
+		if (i > 0)
+			code += ' ';
+		for (u32 j = 0; j < args[i].size(); ++j)
+			code += (char)args[i][j];
+	}
+	lua_->doString(code);
+	return true;
+}
+
 void registerGameCommands(IC_Console& console, player* thePlayer, irrBulletWorld* world, irr::IrrlichtDevice* device, mapLoader* currentMap)
 {
 	console.registerCommand(new IC_Command_TP(thePlayer));

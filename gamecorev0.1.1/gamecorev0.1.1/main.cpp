@@ -33,6 +33,7 @@
 #include "MouseCapture.h"
 #include "GameLayers.h"
 #include "ConsoleLayer.h"
+#include "defaultCmds.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "Config_Reader.h"	
@@ -181,6 +182,7 @@ int main(void)
 		gameFlow.getConsole().logMessage_ANSI(ELL_ERROR, message.c_str());
 		std::cerr << message << std::endl;
 	});
+	gameFlow.getConsole().registerCommand(new IC_Command_LUA(&luaVM));
 	InputRouter inputRouter;
 	GameplayLayer gameplayLayer(gameFlow, inputRouter.state());
 	inputRouter.push(&gameplayLayer);

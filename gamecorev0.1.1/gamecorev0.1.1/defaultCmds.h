@@ -7,6 +7,7 @@
 #include "player.h"
 #include<irrbullet.h>
 #include "GameMap.h"
+#include "LuaVM.h"
 
 //
 //	Default Command Set
@@ -130,6 +131,16 @@ private:
 	player* thePlayer_;
 };
 
+
+class IC_Command_LUA : public IC_Command
+{
+public:
+	IC_Command_LUA(LuaVM* lua);
+	virtual ~IC_Command_LUA();
+	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
+private:
+	LuaVM* lua_;
+};
 
 void registerGameCommands(IC_Console& console, player* thePlayer, irrBulletWorld* world, irr::IrrlichtDevice* device, mapLoader* currentMap);
 
