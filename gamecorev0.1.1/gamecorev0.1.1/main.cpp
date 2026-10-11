@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 	
 	//setup the irrlicht devices here
 	IrrlichtDevice *device = createDevice(smoke ? EDT_NULL : config_reader.get_driver(),//drivers
-	dimension2d<u32>(800,600),16,config_reader.get_full_screen()
+	config_reader.get_window_size(),16,config_reader.get_full_screen()
 	,config_reader.get_s_buffer(),config_reader.get_vsinc());
 	if(!device)//if device fails to load exit
 	{
