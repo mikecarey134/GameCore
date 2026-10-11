@@ -25,7 +25,8 @@ class btKinematicCharacterController;
 class IKinematicCharacterController
 {
     public:
-        IKinematicCharacterController(irrBulletWorld* const world);
+        IKinematicCharacterController(irrBulletWorld* const world, irr::f32 radius = PLAYER_BOUNDING_WIDTH,
+            irr::f32 height = PLAYER_BOUNDING_HEIGHT, irr::f32 stepHeight = 0.35f, bool collidesWithCharacters = true);
         ~IKinematicCharacterController();
 
         void reset();

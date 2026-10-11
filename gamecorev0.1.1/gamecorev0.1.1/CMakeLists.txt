@@ -32,6 +32,18 @@ endif()
 add_library(irrlicht_engine INTERFACE)
 target_include_directories(irrlicht_engine SYSTEM INTERFACE "${IRRLICHT_INCLUDE_DIR}")
 target_link_libraries(irrlicht_engine INTERFACE ${IRRLICHT_LINK})
+if(WIN32)
+  target_link_libraries(irrlicht_engine INTERFACE ws2_32 opengl32)
+elseif(APPLE)
+  target_link_libraries(irrlicht_engine INTERFACE "-framework Cocoa" "-framework OpenGL" "-framework IOKit")
+else()
+  find_package(OpenGL REQUIRED)
+  find_package(X11 REQUIRED)
+  target_link_libraries(irrlicht_engine INTERFACE OpenGL::GL X11::X11 X11::Xext)
+  if(TARGET X11::Xxf86vm)
+    target_link_libraries(irrlicht_engine INTERFACE X11::Xxf86vm)
+  endif()
+endif()
 
 set(BULLET_ROOT "${THIRD_PARTY}/bullet-2.77")
 file(GLOB_RECURSE BULLET_SOURCES
@@ -131,7 +143,6 @@ endforeach()
 
 set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/engine")
 add_library(gamecore_engine STATIC
-  ${ENGINE_DIR}/kinematiccharactercontroller.cpp ${ENGINE_DIR}/kinematiccharactercontroller.h
   ${ENGINE_DIR}/ChatQueue.cpp ${ENGINE_DIR}/ChatQueue.h
   ${ENGINE_DIR}/ParticleSystem.cpp ${ENGINE_DIR}/ParticleSystem.h
   ${ENGINE_DIR}/Config_Reader.cpp ${ENGINE_DIR}/Config_Reader.h
@@ -149,7 +160,14 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/ActionMap.h
   ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine gamecore_net PRIVATE miniaudio lua51)
+target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio lua51)
+
+add_library(gamecore_physics STATIC
+  ${ENGINE_DIR}/physics/PhysicsWorld.h ${ENGINE_DIR}/physics/CharacterController.h
+  ${ENGINE_DIR}/physics/BulletBackend.cpp
+  ${ENGINE_DIR}/kinematiccharactercontroller.cpp ${ENGINE_DIR}/kinematiccharactercontroller.h)
+target_include_directories(gamecore_physics PUBLIC "${ENGINE_DIR}")
+target_link_libraries(gamecore_physics PUBLIC irrlicht_engine PRIVATE irrbullet)
 
 add_library(gamecore_net STATIC
   ${ENGINE_DIR}/net/ByteStream.cpp ${ENGINE_DIR}/net/ByteStream.h
@@ -203,7 +221,7 @@ target_include_directories(net_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/invent
 target_link_libraries(net_tests PRIVATE gamecore_server_core game_client_net Threads::Threads)
 add_test(NAME net_tests COMMAND net_tests)
 
-foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
+foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physics game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
@@ -217,21 +235,9 @@ foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol 
 endforeach()
 target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
 
-if(WIN32)
-  target_link_libraries(gamecore PRIVATE ws2_32 opengl32)
-  if(MSVC)
-    target_link_options(gamecore PRIVATE
-      /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
-  endif()
-elseif(APPLE)
-  target_link_libraries(gamecore PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework IOKit")
-else()
-  find_package(OpenGL REQUIRED)
-  find_package(X11 REQUIRED)
-  target_link_libraries(gamecore PRIVATE OpenGL::GL X11::X11 X11::Xext)
-  if(TARGET X11::Xxf86vm)
-    target_link_libraries(gamecore PRIVATE X11::Xxf86vm)
-  endif()
+if(MSVC)
+  target_link_options(gamecore PRIVATE
+    /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
 endif()
 
 set_target_properties(gamecore PROPERTIES

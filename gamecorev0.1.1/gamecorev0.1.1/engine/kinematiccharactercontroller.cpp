@@ -1,6 +1,7 @@
 #include "kinematiccharactercontroller.h"
 
-IKinematicCharacterController::IKinematicCharacterController(irrBulletWorld* const world) : World(world)
+IKinematicCharacterController::IKinematicCharacterController(irrBulletWorld* const world, irr::f32 radius, irr::f32 height,
+	irr::f32 stepHeight, bool collidesWithCharacters) : World(world)
 {
     btTransform startTransform;
 	startTransform.setIdentity();
@@ -8,17 +9,17 @@ IKinematicCharacterController::IKinematicCharacterController(irrBulletWorld* con
 
 	GhostObject = new btPairCachingGhostObject();
 	GhostObject->setWorldTransform(startTransform);
-	btScalar characterHeight = PLAYER_BOUNDING_HEIGHT;
-	btScalar characterWidth = PLAYER_BOUNDING_WIDTH;
-	Capsule = new btCapsuleShape(characterWidth,characterHeight);
+	Capsule = new btCapsuleShape(radius,height);
 	GhostObject->setCollisionShape(Capsule);
 	GhostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT | btCollisionObject::CF_KINEMATIC_OBJECT);
 	
 
-	btScalar stepHeight = btScalar(0.35);
 	Character = new btKinematicCharacterController(GhostObject,Capsule,stepHeight);
 	
-	World->getPointer()->addCollisionObject(GhostObject,btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter|btBroadphaseProxy::AllFilter);
+	short mask = btBroadphaseProxy::StaticFilter|btBroadphaseProxy::AllFilter;
+	if (!collidesWithCharacters)
+		mask &= ~btBroadphaseProxy::CharacterFilter;
+	World->getPointer()->addCollisionObject(GhostObject,btBroadphaseProxy::CharacterFilter, mask);
 	
 	World->getPointer()->addAction(Character);
 
