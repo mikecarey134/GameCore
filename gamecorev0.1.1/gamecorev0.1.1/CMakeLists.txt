@@ -58,15 +58,7 @@ target_include_directories(irrbullet SYSTEM PUBLIC "${IRRBULLET_COPY}")
 target_link_libraries(irrbullet PUBLIC bullet irrlicht_engine)
 target_compile_options(irrbullet PRIVATE ${QUIET_THIRD_PARTY})
 
-file(GLOB RAKNET_SOURCES "${THIRD_PARTY}/raknet/Source/*.cpp")
-add_library(raknet STATIC ${RAKNET_SOURCES})
-target_include_directories(raknet SYSTEM PUBLIC "${THIRD_PARTY}/raknet/Source")
-target_compile_options(raknet PRIVATE ${QUIET_THIRD_PARTY})
 find_package(Threads REQUIRED)
-target_link_libraries(raknet PUBLIC Threads::Threads)
-if(WIN32)
-  target_link_libraries(raknet PUBLIC ws2_32)
-endif()
 
 file(GLOB LUA_SOURCES "${THIRD_PARTY}/lua-5.1.5/src/*.c")
 list(REMOVE_ITEM LUA_SOURCES

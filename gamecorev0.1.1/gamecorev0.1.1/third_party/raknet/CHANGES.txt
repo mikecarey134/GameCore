@@ -1,9 +1,0 @@
-RakNet, from github.com/facebookarchive/RakNet at commit
-1a169895a900c9fc4841c556e16514182b75faf8 (2015-02-27).
-
-Only Source/ is included, without its CMakeLists.txt.
-
-Altered source:
-  Source/ReplicaManager3.cpp, line 141
-    Compares the returned pointer with 0 instead of false, which current
-    compilers reject.
