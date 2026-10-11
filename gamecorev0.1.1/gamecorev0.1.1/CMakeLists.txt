@@ -155,14 +155,18 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/LuaVM.h
   ${ENGINE_DIR}/DebugOverlay.cpp ${ENGINE_DIR}/DebugOverlay.h
   ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/ActionMap.h
-  ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h
+  ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h)
+target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
+target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine gamecore_net PRIVATE miniaudio lua51)
+
+add_library(gamecore_net STATIC
   ${ENGINE_DIR}/net/ByteStream.cpp ${ENGINE_DIR}/net/ByteStream.h
   ${ENGINE_DIR}/net/MessageFrame.cpp ${ENGINE_DIR}/net/MessageFrame.h
   ${ENGINE_DIR}/net/MessageRouter.cpp ${ENGINE_DIR}/net/MessageRouter.h ${ENGINE_DIR}/net/Transport.h
   ${ENGINE_DIR}/net/LoopbackTransport.cpp ${ENGINE_DIR}/net/LoopbackTransport.h
   ${ENGINE_DIR}/net/EnetTransport.cpp ${ENGINE_DIR}/net/EnetTransport.h)
-target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio lua51 enet)
+target_include_directories(gamecore_net PUBLIC "${ENGINE_DIR}")
+target_link_libraries(gamecore_net PRIVATE enet)
 
 set(GAMECORE_SOURCES
   ClueObject.cpp GameFlow.cpp
@@ -181,15 +185,21 @@ add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test
   engine/tests/byte_stream_test.cpp engine/tests/message_frame_test.cpp
   engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp
   engine/tests/enet_transport_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
-  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
-  ${ENGINE_DIR}/net/ByteStream.cpp ${ENGINE_DIR}/net/MessageFrame.cpp
-  ${ENGINE_DIR}/net/MessageRouter.cpp ${ENGINE_DIR}/net/LoopbackTransport.cpp
-  ${ENGINE_DIR}/net/EnetTransport.cpp)
+  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 enet)
+target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 gamecore_net)
 add_test(NAME engine_tests COMMAND engine_tests)
 
-foreach(target gamecore_engine gamecore engine_tests)
+add_library(game_protocol STATIC protocol/GameMessages.cpp protocol/GameMessages.h)
+target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(game_protocol PUBLIC gamecore_net)
+
+add_executable(server_tests server/tests/main.cpp server/tests/protocol_test.cpp)
+target_include_directories(server_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+target_link_libraries(server_tests PRIVATE game_protocol)
+add_test(NAME server_tests COMMAND server_tests)
+
+foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol server_tests)
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
