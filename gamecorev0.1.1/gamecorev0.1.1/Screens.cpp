@@ -240,7 +240,7 @@ void drawLoading(IrrlichtDevice* device)
 	driver->beginScene(true, false, irr::video::SColor(255,0,0,0));
 
 	driver->getTexture("bill/creepyman.jpg");
-	driver->getTexture("bill/loading.jpg");
+	driver->getTexture("bill/loading.png");
 
 	//driver->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
 	//driver->draw2DImage(titleImage,position2d<s32>(100,100),rect<s32>(40,40,600,300),NULL,SColor(255,255,255,255), false);
