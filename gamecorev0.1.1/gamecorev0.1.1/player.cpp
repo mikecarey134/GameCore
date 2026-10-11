@@ -540,12 +540,19 @@ void player::kill()
 }
 
 //early player weapon switching system
-void player::switch_weap(int)
+void player::switch_weap(int type)
 {
-	characterModel_->setVisible(false);
+	common_paths model_path;
+	const char* meshes[] = { model_path.model_paths[player_model_type_].c_str(), "characters/stick_mike_knife.ms3d" };
+	if (type < 0 || type > 1)
+		return;
 
-	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(smgr_->getMesh("characters/stick_mike_knife.ms3d"),
-		0,-1,getPosition());
-	characterModel_->setScale(vector3df(3.0f,3.0f,3.0f));
-
+	s32 start = characterModel_->getStartFrame();
+	s32 end = characterModel_->getEndFrame();
+	characterModel_->setMesh(smgr_->getMesh(meshes[type]));
+	characterModel_->setFrameLoop(start, end);
+	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
+	setTexture(model_path.skin_paths[player_model_type_].c_str());
+	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
+	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 }
