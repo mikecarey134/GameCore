@@ -32,6 +32,7 @@
 #include "GameMap.h"
 #include "MouseCapture.h"
 #include "GameLayers.h"
+#include "Screens.h"
 #include "ConsoleLayer.h"
 #include "defaultCmds.h"
 #include "InteractiveObject.h"
@@ -121,6 +122,7 @@ int main(void)
 	}
 
 	GUI theGui(device);//create an instance of gui
+	Hud hud(device);
 	theGui.drawIntro();//draw our intro 
 
 
@@ -311,7 +313,7 @@ int main(void)
 					
 				
 					if (!gameFlow.getIsInventory())
-						theGui.drawHUD(&thePlayer);
+						hud.draw(thePlayer);
 				    chat_queue.draw();
 					gameFlow.displayconsole(frameDeltaTime);
 					

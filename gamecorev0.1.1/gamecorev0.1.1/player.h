@@ -101,9 +101,9 @@ public:
 	float                               getPlayerSpeed() { return playerSpeed_; }
 	const char*                         getChatMessage() { return chat_message_; }
 	irr::scene::ICameraSceneNode*       getCamera     () { return camera_.getNode(); }
-	int                                 getHealth     () { return playerHealth_; }
+	int                                 getHealth     () const { return playerHealth_; }
 	int                                 getHunger     () { return playerHunger_; }
-	int                                 getWater      () { return playerWater_; }
+	int                                 getWater      () const { return playerWater_; }
 
 	//playerData&                         getPlayerData () {return data_;}
 	int                                 get_model_type() { return player_model_type_;}

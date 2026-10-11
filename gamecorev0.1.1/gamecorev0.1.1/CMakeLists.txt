@@ -129,7 +129,7 @@ target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE m
 set(GAMECORE_SOURCES
   ClueObject.cpp GameFlow.cpp
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
-  main.cpp GameMap.cpp GameLayers.cpp NetworkData.cpp NPC.cpp
+  main.cpp GameMap.cpp GameLayers.cpp Screens.cpp NetworkData.cpp NPC.cpp
   player.cpp remotePlayer.cpp SolarCycle.cpp
   WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
 
