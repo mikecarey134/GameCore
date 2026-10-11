@@ -102,25 +102,35 @@ foreach(target gamecore_inventory gamecore_inventory_ui inventory_ui_tests)
   set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 endforeach()
 
+add_library(gamecore_engine STATIC
+  kinematiccharactercontroller.cpp kinematiccharactercontroller.h ChatQueue.cpp ChatQueue.h
+  ParticleSystem.cpp ParticleSystem.h Config_Reader.cpp Config_Reader.h
+  InteractiveObject.h SAppcontext.h)
+target_include_directories(gamecore_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${IRRKLANG_INCLUDE_DIR}")
+target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine)
+
 set(GAMECORE_SOURCES
-  ChatQueue.cpp ClueObject.cpp Config_Reader.cpp console.cpp consoleevent.cpp
+  ClueObject.cpp console.cpp consoleevent.cpp
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
-  kinematiccharactercontroller.cpp main.cpp mapLoader.cpp NetworkData.cpp NPC.cpp
-  ParticleSystem.cpp player.cpp remotePlayer.cpp SolarCycle.cpp utils.cpp
+  main.cpp mapLoader.cpp NetworkData.cpp NPC.cpp
+  player.cpp remotePlayer.cpp SolarCycle.cpp utils.cpp
   WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
 
 add_executable(gamecore ${GAMECORE_SOURCES})
-target_include_directories(gamecore PRIVATE "${IRRKLANG_INCLUDE_DIR}")
-if(MSVC)
-  target_compile_options(gamecore PRIVATE /W4)
-  target_compile_definitions(gamecore PRIVATE _CRT_SECURE_NO_WARNINGS)
-else()
-  target_compile_options(gamecore PRIVATE -Wall -Wextra -pedantic)
-endif()
-if(APPLE)
-  target_compile_definitions(gamecore PRIVATE GL_SILENCE_DEPRECATION)
-endif()
-set_target_properties(gamecore PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+target_link_libraries(gamecore PRIVATE gamecore_engine)
+
+foreach(target gamecore_engine gamecore)
+  if(MSVC)
+    target_compile_options(${target} PRIVATE /W4)
+    target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
+  else()
+    target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic)
+  endif()
+  if(APPLE)
+    target_compile_definitions(${target} PRIVATE GL_SILENCE_DEPRECATION)
+  endif()
+  set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+endforeach()
 target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet lua51 irrlicht_engine ${IRRKLANG_LIBRARY} ${CMAKE_DL_LIBS})
 
 if(WIN32)
