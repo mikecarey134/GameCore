@@ -30,7 +30,7 @@ GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guien
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr)
+							inventoryScreen_(nullptr), debugOverlay_(device, world)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
@@ -223,8 +223,6 @@ remotePlayer* GameFlow::findRemotePlayer (std::string nodeName)
 
 void GameFlow::update(u32, u32)//update the game throught the gameloop
 {
-	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
-
 	if (!player_->isDead())
 	{
 		if ((player_->getXDir() != 0.0f || player_->getZDir() != 0.0f) && player_->isOnGround())
@@ -265,8 +263,7 @@ void GameFlow::update(u32, u32)//update the game throught the gameloop
 		drawMessage(L"T Was Pressed!");
 	if(debug)
 	{
-		gui_->drawDebug(font ,driver_,player_->getPosition());
-		world_->debugDrawWorld(true);
+		debugOverlay_.draw(player_->getPosition());
 	}
 	if(pauseMenu)drawPauseMenu();
 	else if(started)

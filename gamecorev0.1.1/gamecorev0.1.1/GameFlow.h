@@ -19,6 +19,7 @@
 #include "player.h"
 #include "NPC.h"
 #include "GameMap.h"
+#include "DebugOverlay.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
@@ -118,4 +119,5 @@ private:
 	//debugging get rid of this at some point
 	std::ofstream coords;
 	InventoryScreen* inventoryScreen_;
+	DebugOverlay debugOverlay_;
 };

@@ -122,7 +122,8 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/console.cpp ${ENGINE_DIR}/console.h ${ENGINE_DIR}/consoleCommands.cpp ${ENGINE_DIR}/consoleCommands.h
   ${ENGINE_DIR}/utils.cpp ${ENGINE_DIR}/utils.h ${ENGINE_DIR}/includes.h
   ${ENGINE_DIR}/ConsoleLayer.cpp ${ENGINE_DIR}/ConsoleLayer.h
-  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/LuaVM.h)
+  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/LuaVM.h
+  ${ENGINE_DIR}/DebugOverlay.cpp ${ENGINE_DIR}/DebugOverlay.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio lua51)
 
