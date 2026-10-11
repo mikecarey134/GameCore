@@ -59,6 +59,11 @@ InternalServer::~InternalServer(void)
 {
 }
 
+float InternalServer::seconds() const
+{
+	return std::chrono::duration<float>(std::chrono::steady_clock::now() - started_).count();
+}
+
 NetClient::Events InternalServer::events()
 {
 	NetClient::Events events;
@@ -67,7 +72,7 @@ NetClient::Events InternalServer::events()
 	};
 	events.joined = [this](const NetClient::Remote& remote) { networkData_.add(remote.id, remote.name, remote.model); };
 	events.left = [this](uint16_t id) { networkData_.remove(id); };
-	events.moved = [this](const NetClient::Remote& remote) { networkData_.place(remote.id, remote.state); };
+	events.moved = [this](const NetClient::Remote& remote) { networkData_.place(remote.id, remote.state, seconds()); };
 	events.died = [this](uint16_t id) { networkData_.hide(id); };
 	events.respawned = [this](const NetClient::Remote& remote) { networkData_.show(remote.id); };
 	events.damaged = [this](uint16_t) {
@@ -101,6 +106,7 @@ void InternalServer::messageLoop(player& thePlayer, irr::gui::IGUIFont*)
 		irr::core::vector3df rotation = thePlayer.getRotation();
 		client_.update(protocol::State{ 0, { position.X, position.Y, position.Z }, { rotation.X, rotation.Y, rotation.Z },
 			(uint8_t)thePlayer.get_curr_state() });
+		networkData_.update(seconds());
 	}
 	else
 	{

@@ -181,10 +181,28 @@ void remotePlayer::setId(uint16_t id)
 	characterModel_->setName(modelName);
 }
 
+void remotePlayer::addSnapshot(uint16_t seq, const vector3df& position, const vector3df& rotation, float now)
+{
+	const float at[3] = { position.X, position.Y, position.Z };
+	motion_.addSnapshot(seq, at, rotation.Y, now);
+	lastRotation_ = rotation;
+}
+
+void remotePlayer::follow(float now)
+{
+	Pose pose;
+	if (dead_ || !character_ || !motion_.sample(now - Interpolator::DELAY, pose))
+		return;
+	setposition(vector3df(pose.position[0], pose.position[1], pose.position[2]));
+	setRotation(vector3df(lastRotation_.X, pose.yaw, lastRotation_.Z));
+	drawName();
+}
+
 void remotePlayer::hide()
 {
 	if (!character_)
 		return;
+	motion_.reset();
 	dead_ = true;
 	characterModel_->setVisible(false);
 	rem_player_shadow_->setVisible(false);

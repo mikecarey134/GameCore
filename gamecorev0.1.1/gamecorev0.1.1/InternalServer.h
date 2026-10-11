@@ -34,6 +34,7 @@ public:
 
 private:
 	NetClient::Events events();
+	float seconds() const;
 
 	EnetTransport transport_;
 	NetworkData networkData_;

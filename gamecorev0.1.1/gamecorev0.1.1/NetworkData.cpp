@@ -36,15 +36,20 @@ void NetworkData::remove(uint16_t id)
 	players_.erase(player);
 }
 
-void NetworkData::place(uint16_t id, const protocol::State& state)
+void NetworkData::place(uint16_t id, const protocol::State& state, float now)
 {
 	std::map<uint16_t, remotePlayer>::iterator player = players_.find(id);
 	if (player == players_.end())
 		return;
-	player->second.setposition(irr::core::vector3df(state.pos[0], state.pos[1], state.pos[2]));
-	player->second.setRotation(irr::core::vector3df(state.rot[0], state.rot[1], state.rot[2]));
-	player->second.drawName();
+	player->second.addSnapshot(state.seq, irr::core::vector3df(state.pos[0], state.pos[1], state.pos[2]),
+		irr::core::vector3df(state.rot[0], state.rot[1], state.rot[2]), now);
 	player->second.setState(state.state);
+}
+
+void NetworkData::update(float now)
+{
+	for (std::map<uint16_t, remotePlayer>::iterator player = players_.begin(); player != players_.end(); ++player)
+		player->second.follow(now);
 }
 
 void NetworkData::hide(uint16_t id)

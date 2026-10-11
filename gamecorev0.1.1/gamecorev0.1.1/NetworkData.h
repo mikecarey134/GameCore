@@ -24,7 +24,8 @@ public:
 
 	void add(uint16_t id, const std::string& name, uint8_t model);
 	void remove(uint16_t id);
-	void place(uint16_t id, const protocol::State& state);
+	void place(uint16_t id, const protocol::State& state, float now);
+	void update(float now);
 	void hide(uint16_t id);
 	void show(uint16_t id);
 	remotePlayer* findByNode(const std::string& nodeName);

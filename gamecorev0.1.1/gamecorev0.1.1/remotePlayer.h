@@ -15,6 +15,7 @@
 #include"kinematiccharactercontroller.h"
 #include"exampleframework.h"
 #include"common.h"
+#include "net/Interpolator.h"
 
 class remotePlayer
 {
@@ -38,6 +39,8 @@ public:
 	void                 hide               ();
 	void                 show               ();
 	void                 setId              (uint16_t id);
+	void                 addSnapshot        (uint16_t seq, const irr::core::vector3df& position, const irr::core::vector3df& rotation, float now);
+	void                 follow             (float now);
 	uint16_t             getId              () const { return id_; }
 
     void                 drawName();
@@ -100,5 +103,7 @@ private:
 
 	bool beingDamaged_;
 	uint16_t id_ = 0;
+	Interpolator motion_;
+	irr::core::vector3df lastRotation_;
 	bool dead_;
 };
