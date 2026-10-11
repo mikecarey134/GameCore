@@ -47,6 +47,16 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 }
 consoleevent::~consoleevent(){ coords.close();}
 
+static const s32 mainMenuButtons[] = { consoleevent::GUI_ID_START, consoleevent::GUI_ID_OPTIONS, consoleevent::GUI_ID_CREDITS, GUI::GUI_ID_QUIT_BUTTON };
+static const s32 pauseMenuButtons[] = { consoleevent::GUI_ID_RESUME, consoleevent::GUI_ID_PAUSE_OPTIONS, consoleevent::GUI_ID_GOTO_MAIN_MENU, GUI::GUI_ID_QUIT_BUTTON };
+
+static void removeButtons(IGUIEnvironment* guienv, const s32 (&ids)[4])
+{
+	for (int i = 0; i < 4; ++i)
+		if (IGUIElement* button = guienv->getRootGUIElement()->getElementFromId(ids[i], true))
+			button->remove();
+}
+
 bool consoleevent::OnEvent(const irr::SEvent& event)
 {
 	if (inventory && inventoryScreen_ && inventoryScreen_->onEvent(event))
@@ -296,7 +306,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 					{
 						
 						started = true;
-						guienv_->clear(); //Clear out the main menu buttons when game starts
+						removeButtons(guienv_, mainMenuButtons); //Clear out the main menu buttons when game starts
 					}
 					
 					return true;
@@ -313,7 +323,7 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 				case GUI_ID_GOTO_MAIN_MENU:
 					started = false;
 					pauseMenu = false;
-					guienv_->clear();
+					removeButtons(guienv_, pauseMenuButtons);
 					engine_->stopAllSounds();
 					engine_->play2D("sounds/button-25.wav",false);
 					
@@ -571,12 +581,7 @@ void consoleevent::update(u32, u32)//update the game throught the gameloop
 	}
 	if(pauseMenu)drawPauseMenu();
 	else if(started)
-	{
-		s32 pauseButtons[] = { GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU, GUI::GUI_ID_QUIT_BUTTON };
-		for (int i = 0; i < 4; ++i)
-			if (IGUIElement* button = guienv_->getRootGUIElement()->getElementFromId(pauseButtons[i], true))
-				button->remove();
-	}
+		removeButtons(guienv_, pauseMenuButtons);
 		
 //	if(chatshown){gui_->drawchat(guienv_);}
 	
