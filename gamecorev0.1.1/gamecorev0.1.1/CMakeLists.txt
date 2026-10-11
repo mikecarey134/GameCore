@@ -159,9 +159,10 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/net/ByteStream.cpp ${ENGINE_DIR}/net/ByteStream.h
   ${ENGINE_DIR}/net/MessageFrame.cpp ${ENGINE_DIR}/net/MessageFrame.h
   ${ENGINE_DIR}/net/MessageRouter.cpp ${ENGINE_DIR}/net/MessageRouter.h ${ENGINE_DIR}/net/Transport.h
-  ${ENGINE_DIR}/net/LoopbackTransport.cpp ${ENGINE_DIR}/net/LoopbackTransport.h)
+  ${ENGINE_DIR}/net/LoopbackTransport.cpp ${ENGINE_DIR}/net/LoopbackTransport.h
+  ${ENGINE_DIR}/net/EnetTransport.cpp ${ENGINE_DIR}/net/EnetTransport.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio lua51)
+target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio lua51 enet)
 
 set(GAMECORE_SOURCES
   ClueObject.cpp GameFlow.cpp
@@ -178,12 +179,14 @@ add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test
   engine/tests/lua_vm_test.cpp engine/tests/action_map_test.cpp
   engine/tests/ui_anchor_test.cpp engine/tests/window_size_test.cpp
   engine/tests/byte_stream_test.cpp engine/tests/message_frame_test.cpp
-  engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
+  engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp
+  engine/tests/enet_transport_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
   ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
   ${ENGINE_DIR}/net/ByteStream.cpp ${ENGINE_DIR}/net/MessageFrame.cpp
-  ${ENGINE_DIR}/net/MessageRouter.cpp ${ENGINE_DIR}/net/LoopbackTransport.cpp)
+  ${ENGINE_DIR}/net/MessageRouter.cpp ${ENGINE_DIR}/net/LoopbackTransport.cpp
+  ${ENGINE_DIR}/net/EnetTransport.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51)
+target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 enet)
 add_test(NAME engine_tests COMMAND engine_tests)
 
 foreach(target gamecore_engine gamecore engine_tests)
