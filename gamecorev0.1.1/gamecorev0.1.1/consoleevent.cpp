@@ -243,40 +243,6 @@ bool consoleevent::onEvent(const irr::SEvent& event)
 			}
 		}
 
-	    if (event.KeyInput.PressedDown)
-		{
-			if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == IC_Console::IC_KEY_TILDE && !pauseMenu)
-			{//handle the ~ key for the console
-				if(!console.isVisible())
-				{
-					console.setVisible(true);
-					
-					return true;
-				}
-				else if(!event.KeyInput.Control)
-				{
-					console.setVisible(false);
-					return true;
-				}
-				//KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
-			}
-			if(console.isVisible())
-			{	
-
-				console.handleKeyPress(event.KeyInput.Char, event.KeyInput.Key,event.KeyInput.Shift, event.KeyInput.Control);
-				return true;
-			}
-		}
-	}
-
-	else if(event.EventType == irr::EET_LOG_TEXT_EVENT)
-	{
-		console.logMessage_ANSI(event.LogEvent.Level,event.LogEvent.Text);
-		return true;
-	}
-	else if(event.EventType == irr::EET_MOUSE_INPUT_EVENT)
-	{
-		return console.isVisible();
 	}
 	
 	if (event.EventType == EET_GUI_EVENT)

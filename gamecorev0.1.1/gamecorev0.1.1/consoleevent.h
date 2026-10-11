@@ -51,6 +51,7 @@ public:
 	void setInputState(const InputState* input) { input_ = input; }
 
 	bool isConsoleVisible(){return console.isVisible();}
+	IC_Console& getConsole() { return console; }
 
 	bool isPaused()		{ return (pauseMenu || inventory || chatshown); }
 

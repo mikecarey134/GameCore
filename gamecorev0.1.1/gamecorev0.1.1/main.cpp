@@ -31,6 +31,7 @@
 #include "InternalServer.h"
 #include "GameMap.h"
 #include "MouseCapture.h"
+#include "GameLayers.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "Config_Reader.h"	
@@ -176,6 +177,8 @@ int main(void)
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
 	InputRouter inputRouter;
 	inputRouter.push(&crecv);
+	ConsoleLayer consoleLayer(crecv);
+	inputRouter.push(&consoleLayer);
 	crecv.setInputState(&inputRouter.state());
 	device->setEventReceiver(&inputRouter);
 	MouseCapture mouseCapture(device->getCursorControl());
