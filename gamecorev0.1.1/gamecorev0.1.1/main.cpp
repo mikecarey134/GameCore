@@ -59,7 +59,6 @@ using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-using namespace RakNet;
 
 #if defined(_WIN32) && !defined(_WINDOWS_)
 #define WIN32_LEAN_AND_MEAN
@@ -253,6 +252,8 @@ int main(int argc, char** argv)
 		const u32 frameDeltaTime = now - then;	// Time in milliseconds
 		then = now;	
 
+		Client.messageLoop(thePlayer,guienv->getBuiltInFont());
+
 		if (smoke || device->isWindowActive())//if a window is running
 		{	
 				mouseCapture.setCaptured(gameFlow.getStarted() && !gameFlow.getPaused() && !gameFlow.getIsInventory());
@@ -276,8 +277,6 @@ int main(int argc, char** argv)
 					if (engine->isCurrentlyPlaying("sounds/discovery.mp3"))//if we are starting
 						engine->removeSoundSource("sounds/discovery.mp3");//remove the main menu sounds
 
-					//internal client loops for input
-					Client.messageLoop(thePlayer,guienv->getBuiltInFont());
 				}
 
 				driver->beginScene(true,true,video::SColor(255,0,0,0));

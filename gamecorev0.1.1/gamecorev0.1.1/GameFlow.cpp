@@ -114,24 +114,7 @@ void GameFlow::addClueObject(ClueObject* object)
 
 remotePlayer* GameFlow::findRemotePlayer (std::string nodeName)
 {
-	//std::map<std::string,remotePlayer> rms = client_->getNetworkData()->getRemotePlayers();
-	std::map<std::string,remotePlayer>::iterator it = client_->getNetworkData()->getRemotePlayers().begin();
-	remotePlayer* rm = &it->second;
-
-	std::string rmName;
-	if (!rm->isDead())
-		rmName = rm->getPSceneNode()->getName();
-
-	while (rmName != nodeName && it != client_->getNetworkData()->getRemotePlayers().end())
-	{
-		rm = &it->second;
-		if (!rm->isDead())
-			rmName = rm->getPSceneNode()->getName();
-
-		++it;
-	}
-
-	return rm;
+	return client_->getNetworkData()->findByNode(nodeName);
 }
 
 void GameFlow::draw()

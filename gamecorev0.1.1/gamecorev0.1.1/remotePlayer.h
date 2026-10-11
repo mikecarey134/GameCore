@@ -8,6 +8,7 @@
 #include<irrlicht.h>
 #include "SoundEngine.h"
 #include<irrbullet.h>
+#include <cstdint>
 #include <string>
 
 #include<string>
@@ -34,6 +35,10 @@ public:
 	irr::core::vector3df calculateCameraPos	();
 	void				 nodeSelector		();
 	void                 delete_player      ();
+	void                 hide               ();
+	void                 show               ();
+	void                 setId              (uint16_t id);
+	uint16_t             getId              () const { return id_; }
 
     void                 drawName();
 	
@@ -94,5 +99,6 @@ private:
 	common_paths paths_;
 
 	bool beingDamaged_;
+	uint16_t id_ = 0;
 	bool dead_;
 };

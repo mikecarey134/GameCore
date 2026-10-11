@@ -200,7 +200,8 @@ bool GameplayLayer::onEvent(const SEvent& event)
 				}
 				else if (game_.player_->enemyPlayerInRange())
 				{
-					game_.findRemotePlayer(game_.player_->getSelectedNodeName())->damage();
+					if (remotePlayer* target = game_.findRemotePlayer(game_.player_->getSelectedNodeName()))
+						target->damage();
 					//findRemotePlayer(player_->getSelectedNodeName())->damage();
 				}
 			}

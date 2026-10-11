@@ -1,44 +1,20 @@
-
-
 //////////////////////////////////////////////////////////////////////////
 /*
- BSD License 
- For RakNet software
-
- Copyright (c) 2014, Oculus VR, Inc.
- All rights reserved.*/
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-/*
-	InternalServer.h 
+	InternalServer.h
 	By : Michael Carey
 	Purpose : provide communication to game Server from the client side
 	in the forms of chat and player data
 */
 //////////////////////////////////////////////////////////////////////////
 
-
-
-
 #pragma once
-#include "MessageIdentifiers.h"
-#include "RakPeerInterface.h"
-#include "RakNetStatistics.h"
-#include "RakNetTypes.h"
-#include "BitStream.h"
-#include "PacketLogger.h"
+#include <chrono>
 #include "player.h"
 #include "NetworkData.h"
-#include"remotePlayer.h"
-#include"ChatQueue.h"
-
-#define SERVER_PORT "1080"
-#define CLIENT_PORT "1000"
-#define ADDRESS "108.15.178.29"
-#define MAX_MESSAGE_SIZE 2080
-#define MAX_IP_SIZE 50
+#include "remotePlayer.h"
+#include "ChatQueue.h"
+#include "client/NetClient.h"
+#include "net/EnetTransport.h"
 
 class InternalServer
 {
@@ -52,23 +28,17 @@ public:
 	void messageLoop(player& thePlayer, irr::gui::IGUIFont* font);
 	bool emptyMess(const char* message);
 	void shutdown(player& thePlayer);
-	bool isOnline(){return online_;}
+	bool isOnline(){return client_.isOnline();}
 
 	NetworkData* getNetworkData() { return &networkData_; }
-	
-	
+
 private:
-	bool online_;
+	NetClient::Events events();
 
-
-	//need to have an array of clients to send updates
-	//std::vector<remotePlayer> clients_;
-	RakNet::RakPeerInterface* client_;
-	// Holds packets
-	RakNet::Packet* p;
-	//unsigned char packetIdentifier;
-	bool isServer;
+	EnetTransport transport_;
 	NetworkData networkData_;
 	ChatQueue* message_buffer_;
+	player* player_;
+	std::chrono::steady_clock::time_point started_;
+	NetClient client_;
 };
-unsigned char GetPacketIdentifier(RakNet::Packet *p);

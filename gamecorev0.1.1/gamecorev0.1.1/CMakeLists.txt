@@ -222,7 +222,7 @@ foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol 
   endif()
   set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 endforeach()
-target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet irrlicht_engine ${CMAKE_DL_LIBS})
+target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
 
 if(WIN32)
   target_link_libraries(gamecore PRIVATE ws2_32 opengl32)

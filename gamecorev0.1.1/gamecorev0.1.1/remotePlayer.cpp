@@ -173,6 +173,35 @@ void remotePlayer::drawName()
 		characterModel_->getPosition().Z));
 
 }
+void remotePlayer::setId(uint16_t id)
+{
+	id_ = id;
+	string<char> modelName = TYPE_PLAYER;
+	modelName += (u32)id;
+	characterModel_->setName(modelName);
+}
+
+void remotePlayer::hide()
+{
+	if (!character_)
+		return;
+	dead_ = true;
+	characterModel_->setVisible(false);
+	rem_player_shadow_->setVisible(false);
+	nameDisplay_->setVisible(false);
+}
+
+void remotePlayer::show()
+{
+	if (!character_)
+		return;
+	dead_ = false;
+	playerHealth_ = PLAYER_HEALTH;
+	characterModel_->setVisible(true);
+	rem_player_shadow_->setVisible(true);
+	nameDisplay_->setVisible(true);
+}
+
 void remotePlayer::setName(const std::string& name)
 {
 	internalName_ = name;
@@ -184,9 +213,6 @@ void remotePlayer::setName(const std::string& name)
 
 	}
 	name_+=">";//postfix 
-	string<char> modelName = TYPE_PLAYER;
-	modelName += name_;
-	characterModel_->setName(modelName);
 	//create < player_name >
 
 }
