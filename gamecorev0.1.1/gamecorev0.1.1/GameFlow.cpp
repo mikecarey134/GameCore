@@ -37,7 +37,9 @@ GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guien
 									//add world psychics to the console
 	console.loadDefaultCommands(device);//load the default commands help echo etc
 	registerGameCommands(console, thePlayer, world, device, currentMap_);
-	console.initializeConsole(guienv, dimension2d<s32>(800,500));//prepare the console
+	dimension2d<u32> screen = driver->getScreenSize();
+	console.getConfig().dimensionRatios.Y = 0.5f;
+	console.initializeConsole(guienv, dimension2d<s32>((s32)screen.Width, (s32)screen.Height));//prepare the console
 	console.setVisible(false);
 
 

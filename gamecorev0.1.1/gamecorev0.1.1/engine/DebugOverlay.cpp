@@ -1,4 +1,5 @@
 #include "DebugOverlay.h"
+#include "UiAnchor.h"
 #include <irrbullet.h>
 #ifdef _WIN32
 #include "windows.h"
@@ -79,10 +80,10 @@ void DebugOverlay::draw(const vector3df& nodePosition)
 	
 	fpsstr+="\n-------------------------";
 
-	driver->draw2DRectangle(SColor(100,0,0,0), rect<s32>(670,10,790,180));
+	driver->draw2DRectangle(SColor(100,0,0,0), anchored(rect<s32>(670,10,790,180), 1.0f, 0.0f, driver->getScreenSize()));
 
 	font->draw(fpsstr,//draw current fps for debugging
-		rect<s32>(680,20,680,0),SColor(255,255,255,255));//set up the color
+		anchored(rect<s32>(680,20,680,0), 1.0f, 0.0f, driver->getScreenSize()),SColor(255,255,255,255));//set up the color
 
 	world_->debugDrawWorld(true);
 }

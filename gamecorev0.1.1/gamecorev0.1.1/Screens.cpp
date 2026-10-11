@@ -2,6 +2,7 @@
 #include "player.h"
 #include "GameFlow.h"
 #include "ClueObject.h"
+#include "UiAnchor.h"
 
 using namespace irr;
 using namespace core;
@@ -34,6 +35,7 @@ namespace
 void Hud::draw(const player& thePlayer)
 {
 	IVideoDriver* driver = device_->getVideoDriver();
+	dimension2d<u32> screen = driver->getScreenSize();
 
 	SColor healthColor;
 	//draw health color based on how much health they have
@@ -42,22 +44,22 @@ void Hud::draw(const player& thePlayer)
 	else if(thePlayer.getHealth() >=1 && thePlayer.getHealth() < 30){healthColor = red;}
 	else healthColor = blue;
 
-	driver->draw2DRectangle(SColor(150,0,0,0), rect<s32>(290,530, 560,570));
-	driver->draw2DRectangle(healthColor, rect<s32>(300,540, 300+core::clamp(thePlayer.getHealth(),0,100)*5/2,560));
+	driver->draw2DRectangle(SColor(150,0,0,0), anchored(rect<s32>(290,530, 560,570), 0.5f, 1.0f, screen));
+	driver->draw2DRectangle(healthColor, anchored(rect<s32>(300,540, 300+core::clamp(thePlayer.getHealth(),0,100)*5/2,560), 0.5f, 1.0f, screen));
 
 	//draw the health bar
-	driver->draw2DRectangle(SColor(150,0,0,0), rect<s32>(660,458, 760,570));
+	driver->draw2DRectangle(SColor(150,0,0,0), anchored(rect<s32>(660,458, 760,570), 1.0f, 1.0f, screen));
 
 	//draw the current weapon
 	ITexture* currentWeapon = driver->getTexture("bill/icons/hand-small.jpg");
-	driver->draw2DImage(currentWeapon, position2d<s32>(670,470),rect<s32>(0,0,80,90));
+	driver->draw2DImage(currentWeapon, anchored(rect<s32>(670,470,750,560), 1.0f, 1.0f, screen).UpperLeftCorner,rect<s32>(0,0,80,90));
 
 	IGUIFont* font2 = device_->getGUIEnvironment()->getFont("bill/console.bmp");
 	core::stringw fpsstr;//draw the current hunger and water levels
 	fpsstr += "Water:";
 	
 	font2->draw(fpsstr,//draw current fps for debugging
-		rect<s32>(370,480, 470 ,560),white);//set up the color
+		anchored(rect<s32>(370,480, 470 ,560), 0.5f, 1.0f, screen),white);//set up the color
 
 	SColor color;
 	//draw health color based on how much health they have
@@ -67,7 +69,7 @@ void Hud::draw(const player& thePlayer)
 	fpsstr="";
 	fpsstr += thePlayer.getWater();
 	font2->draw(fpsstr,//draw current fps for debugging
-		rect<s32>(410,480, 510 ,560),color);//set up the color
+		anchored(rect<s32>(410,480, 510 ,560), 0.5f, 1.0f, screen),color);//set up the color
 }
 
 void MainMenuScreen::draw()//draws the main menu for the game
@@ -75,24 +77,25 @@ void MainMenuScreen::draw()//draws the main menu for the game
 	IGUIEnvironment* guienv = device_->getGUIEnvironment();
 	IVideoDriver* driver = device_->getVideoDriver();
 	IGUISkin* skin = guienv->getSkin();
+	dimension2d<u32> screen = driver->getScreenSize();
 	
 	//add a button to our gui here
 	
 	ITexture* backgroundImage = driver->getTexture("bill/theuninvitedlogo.jpg");
 	//ITexture* titleImage = driver->getTexture("bill/logo.png");
 
-	driver->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
+	driver->draw2DImage(backgroundImage,letterboxed(screen),rect<s32>(0,0,800,600));
 	//driver->draw2DImage(titleImage,position2d<s32>(0,0),rect<s32>(0,0,424,127),NULL,SColor(255,255,255,255), true);
 
 	if (!guienv->getRootGUIElement()->getElementFromId(GameFlow::GUI_ID_CREDITS, true))
 	{
-		guienv->addButton(rect<s32>(330,200,450,240), 0, GameFlow::GUI_ID_START,
+		guienv->addButton(anchored(rect<s32>(330,200,450,240), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_START,
 			L"Start", L"Starts the game");
-		guienv->addButton(rect<s32>(330,260,450,300), 0, GameFlow::GUI_ID_OPTIONS,
+		guienv->addButton(anchored(rect<s32>(330,260,450,300), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_OPTIONS,
 			L"Options", L"Adjust game settings");
-		guienv->addButton(rect<s32>(330,320,450,360), 0, GameFlow::GUI_ID_CREDITS,
+		guienv->addButton(anchored(rect<s32>(330,320,450,360), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_CREDITS,
 			L"Credits", L"Click to see who made the game");
-		guienv->addButton(rect<s32>(330,380,450,420), 0, GameFlow::GUI_ID_QUIT_BUTTON,
+		guienv->addButton(anchored(rect<s32>(330,380,450,420), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_QUIT_BUTTON,
 			L"Exit", L"Exit to the Desktop");
 	}
 
@@ -102,7 +105,7 @@ void MainMenuScreen::draw()//draws the main menu for the game
 	if(font)
 		skin->setFont(font);
 	
-	font->draw("v0.1.1 (alpha)",rect<s32>(20,570,20,590),SColor(255,255,255,255));
+	font->draw("v0.1.1 (alpha)",anchored(rect<s32>(20,570,20,590), 0.0f, 1.0f, screen),SColor(255,255,255,255));
 
 	guienv->drawAll();
 	
@@ -120,23 +123,24 @@ void PauseScreen::draw()// render the pause menu
 	//guienv->drawAll();
 
 	IGUISkin* skin = guienv->getSkin();
+	dimension2d<u32> screen = driver->getScreenSize();
 	//guienv = device_->getGUIEnvironment();
 	//guienv->drawAll();
 	//add a button to our gui here	
-	driver->draw2DRectangle(SColor(150,0,0,0),rect<s32>(320,150,500,450));
+	driver->draw2DRectangle(SColor(150,0,0,0),anchored(rect<s32>(320,150,500,450), 0.5f, 0.5f, screen));
 
 	ITexture* titleImage = driver->getTexture("bill/pauselogo.png");
-	driver->draw2DImage(titleImage,position2d<s32>(290,150),rect<s32>(0,0,240,38),NULL,SColor(255,255,255,255), true);
+	driver->draw2DImage(titleImage,anchored(rect<s32>(290,150,530,188), 0.5f, 0.5f, screen).UpperLeftCorner,rect<s32>(0,0,240,38),NULL,SColor(255,255,255,255), true);
 
 	if (!guienv->getRootGUIElement()->getElementFromId(GameFlow::GUI_ID_GOTO_MAIN_MENU, true))
 	{
-		guienv->addButton(rect<s32>(350,285,470,315), 0, GameFlow::GUI_ID_RESUME,
+		guienv->addButton(anchored(rect<s32>(350,285,470,315), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_RESUME,
 			L"Resume", L"Unpauses the game");
-		guienv->addButton(rect<s32>(350,325,470,355), 0, GameFlow::GUI_ID_PAUSE_OPTIONS,
+		guienv->addButton(anchored(rect<s32>(350,325,470,355), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_PAUSE_OPTIONS,
 			L"Options", L"Set up game things");
-		guienv->addButton(rect<s32>(350,365,470,395), 0, GameFlow::GUI_ID_GOTO_MAIN_MENU,
+		guienv->addButton(anchored(rect<s32>(350,365,470,395), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_GOTO_MAIN_MENU,
 			L"Main Menu", L"Goes back to the main menu");
-		guienv->addButton(rect<s32>(350,405,470,435), 0, GameFlow::GUI_ID_QUIT_BUTTON,
+		guienv->addButton(anchored(rect<s32>(350,405,470,435), 0.5f, 0.5f, screen), 0, GameFlow::GUI_ID_QUIT_BUTTON,
 			L"Quit", L"Exits Program");
 	}
 
@@ -170,10 +174,11 @@ void NoteScreen::draw(const ClueObject& clue)
 {
 	IVideoDriver* driver = device_->getVideoDriver();
 	const string<char>& message = clue.getMessage();
-	int posX = 500;
-	int posY = 100;
 	int width = 250;
 	int height = 400;
+	position2d<s32> corner = anchored(rect<s32>(500,100,500+width,100+height), 1.0f, 0.5f, driver->getScreenSize()).UpperLeftCorner;
+	int posX = corner.X;
+	int posY = corner.Y;
 
 	int textHeigt = 50;
 	int charWidth = 15;
@@ -226,7 +231,7 @@ void drawIntro(IrrlichtDevice* device)
 
 	ITexture* backgroundImage = device->getVideoDriver()->getTexture("bill/intro.jpg");
 
-	device->getVideoDriver()->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
+	device->getVideoDriver()->draw2DImage(backgroundImage,letterboxed(device->getVideoDriver()->getScreenSize()),rect<s32>(0,0,800,600));
 	device->getGUIEnvironment()->drawAll();
 	device->getVideoDriver()->endScene();
 
@@ -251,7 +256,7 @@ void drawLoading(IrrlichtDevice* device)
 
 	irr::gui::IGUIFont* font = guienv->getFont("bill/bigfont.png");
 
-	font->draw(L"LOADING...", irr::core::rect<irr::s32>(325,275,475,325), irr::video::SColor(255,255,255,255));
+	font->draw(L"LOADING...", anchored(irr::core::rect<irr::s32>(325,275,475,325), 0.5f, 0.5f, driver->getScreenSize()), irr::video::SColor(255,255,255,255));
 
 	driver->endScene();
 

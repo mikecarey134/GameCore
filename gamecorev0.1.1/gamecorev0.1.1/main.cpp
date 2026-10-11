@@ -34,6 +34,7 @@
 #include "Screens.h"
 #include "ConsoleLayer.h"
 #include "ActionMap.h"
+#include "UiAnchor.h"
 #include "defaultCmds.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
@@ -151,7 +152,7 @@ int main(int argc, char** argv)
 	context.counter = 0;
 
 	//init the chat buffer display that shows all player chat
-	ChatQueue chat_queue(device,rect<s32>(0,580,580,500),5000,true,500);
+	ChatQueue chat_queue(device,anchored(rect<s32>(0,420,580,500), 0.0f, 1.0f, driver->getScreenSize()),5000,true,500,true,false);
 	//set up the chat buffers font
 	chat_queue.setFont(device->getGUIEnvironment()->getFont("bill/console.bmp"));
 
