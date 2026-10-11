@@ -15,7 +15,6 @@
 #include <list>
 #include "console.h"
 #include "SAppcontext.h"
-#include "GUI.h"
 #include "player.h"
 #include "NPC.h"
 #include "GameMap.h"
@@ -33,16 +32,16 @@
 class InventoryScreen;
 
 
-class GameFlow : public GUI
+class GameFlow
 {
 public:
 	friend class NPC;
 	friend class Player;
 
-	enum{GUI_ID_START = 0, GUI_ID_OPTIONS, GUI_ID_CREDITS, GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU};
+	enum{GUI_ID_START = 0, GUI_ID_OPTIONS, GUI_ID_CREDITS, GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU, GUI_ID_QUIT_BUTTON};
 
 	GameFlow(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
-		irr::video::IVideoDriver* driver,SAppContext & Context,GUI* gui, 
+		irr::video::IVideoDriver* driver,SAppContext & Context,
 		/*irr::scene::ICameraSceneNode* camera,*/ gamecore::SoundEngine* engine, 
 		player* thePlayer, irrBulletWorld* world, NPC* npc, GameMap* currentMap, InternalServer* client);
 	
@@ -64,11 +63,6 @@ public:
 	bool getIsConsole()    {return console.isVisible();}
 
 	void displayconsole(const u32 dm){console.renderConsole(guienv_,driver_,dm);}
-	void drawIntro     ();
-	void drawMainMenu  ();
-	void drawNotes();
-
-	void drawMessage   (const wchar_t* message);
 	void newRound      ();
 	void goToMainMenu  ();
 	void startPressed  ();
@@ -82,6 +76,7 @@ public:
 	remotePlayer* findRemotePlayer(std::string nodeName);
 
 	void update(irr::u32 then, irr::u32 now);
+	void draw();
 	
 	void clear_console(){console.clearMessages();}
 	
@@ -96,7 +91,6 @@ private:
 	irr::IrrlichtDevice * device_;
 	irr::video::IVideoDriver* driver_;
 	SAppContext & Context_;
-	GUI* gui_;
 	player* player_;
 	//std::list<remotePlayer*> remotePlayers_;
 	NPC* npc_;
@@ -105,7 +99,6 @@ private:
 	bool pauseMenu;
 	bool started;
 	bool chatshown;
-	bool creditsDisplayed;
 	bool inventory;
 	gamecore::SoundEngine* engine_;
 	GameMap* currentMap_;
@@ -120,6 +113,7 @@ private:
 	//debugging get rid of this at some point
 	std::ofstream coords;
 	InventoryScreen* inventoryScreen_;
+	Hud hud_;
 	DebugOverlay debugOverlay_;
 	MainMenuScreen mainMenu_;
 	PauseScreen pause_;

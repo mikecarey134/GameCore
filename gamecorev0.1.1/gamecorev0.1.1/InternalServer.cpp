@@ -108,7 +108,7 @@ InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,const cha
 InternalServer::~InternalServer(void)
 {
 }
-void InternalServer::messageLoop(player& thePlayer, GUI&,irr::gui::IGUIFont*)
+void InternalServer::messageLoop(player& thePlayer, irr::gui::IGUIFont*)
 {
 	
 	if (online_ == true)//if the online parameter is set maybe we will have a user set this

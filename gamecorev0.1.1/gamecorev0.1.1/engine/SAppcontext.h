@@ -22,5 +22,4 @@ struct SAppContext
 {
 	IrrlichtDevice *device;
 	s32				counter;
-	IGUIListBox*	listbox;
 };

@@ -70,7 +70,6 @@ bool MenuLayer::onEvent(const SEvent& event)
 	if (event.EventType == EET_GUI_EVENT)
 		{
 			s32 id = event.GUIEvent.Caller->getID();
-			IGUIEnvironment* env = game_.Context_.device->getGUIEnvironment();
 
 			switch(event.GUIEvent.EventType)
 			{
@@ -79,14 +78,6 @@ bool MenuLayer::onEvent(const SEvent& event)
 					game_.player_->setChatMessage("");
 					game_.chatshown = false;
 					
-				}
-				break;
-
-			case EGET_SCROLL_BAR_CHANGED:
-				if (id == GameFlow::GUI_ID_TRANSPARENCY_SCROLL_BAR)
-				{
-					s32 pos = ((IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
-					game_.setSkinTransparency(pos, env->getSkin());
 				}
 				break;
 
@@ -103,15 +94,6 @@ bool MenuLayer::onEvent(const SEvent& event)
 					game_.startPressed();
 					return true;
 
-				case GameFlow::GUI_ID_CREDITS:
-					{
-						if (!game_.creditsDisplayed)
-						{
-							game_.creditsDisplayed = true;
-						}
-					}
-					return true;
-
 				case GameFlow::GUI_ID_GOTO_MAIN_MENU:
 					game_.goToMainMenu();
 					return true;
@@ -123,29 +105,10 @@ bool MenuLayer::onEvent(const SEvent& event)
 					
 					return true;
 					
-				case GameFlow::GUI_ID_FILE_OPEN_BUTTON:
-					game_.Context_.listbox->addItem(L"File open");
-					// There are some options for the file open dialog
-					// We set the title, make it a modal window, and make sure
-					// that the working directory is restored after the dialog
-					// is finished.
-					env->addFileOpenDialog(L"Please choose a file.", true, 0, -1, true);
-					return true;
-
 				default:
 					return false;
 				}
 				break;
-
-			case EGET_FILE_SELECTED:
-				{
-					// show the model filename, selected in the file dialog
-					IGUIFileOpenDialog* dialog =
-						(IGUIFileOpenDialog*)event.GUIEvent.Caller;
-					game_.Context_.listbox->addItem(dialog->getFileName());
-				}
-				break;
-			
 
 			default:
 				break;

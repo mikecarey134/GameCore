@@ -18,8 +18,8 @@ namespace
 				button->remove();
 	}
 
-	const s32 mainMenuButtons[] = { GameFlow::GUI_ID_START, GameFlow::GUI_ID_OPTIONS, GameFlow::GUI_ID_CREDITS, GUI::GUI_ID_QUIT_BUTTON };
-	const s32 pauseMenuButtons[] = { GameFlow::GUI_ID_RESUME, GameFlow::GUI_ID_PAUSE_OPTIONS, GameFlow::GUI_ID_GOTO_MAIN_MENU, GUI::GUI_ID_QUIT_BUTTON };
+	const s32 mainMenuButtons[] = { GameFlow::GUI_ID_START, GameFlow::GUI_ID_OPTIONS, GameFlow::GUI_ID_CREDITS, GameFlow::GUI_ID_QUIT_BUTTON };
+	const s32 pauseMenuButtons[] = { GameFlow::GUI_ID_RESUME, GameFlow::GUI_ID_PAUSE_OPTIONS, GameFlow::GUI_ID_GOTO_MAIN_MENU, GameFlow::GUI_ID_QUIT_BUTTON };
 }
 
 namespace
@@ -92,7 +92,7 @@ void MainMenuScreen::draw()//draws the main menu for the game
 			L"Options", L"Adjust game settings");
 		guienv->addButton(rect<s32>(330,320,450,360), 0, GameFlow::GUI_ID_CREDITS,
 			L"Credits", L"Click to see who made the game");
-		guienv->addButton(rect<s32>(330,380,450,420), 0, GUI::GUI_ID_QUIT_BUTTON,
+		guienv->addButton(rect<s32>(330,380,450,420), 0, GameFlow::GUI_ID_QUIT_BUTTON,
 			L"Exit", L"Exit to the Desktop");
 	}
 
@@ -136,7 +136,7 @@ void PauseScreen::draw()// render the pause menu
 			L"Options", L"Set up game things");
 		guienv->addButton(rect<s32>(350,365,470,395), 0, GameFlow::GUI_ID_GOTO_MAIN_MENU,
 			L"Main Menu", L"Goes back to the main menu");
-		guienv->addButton(rect<s32>(350,405,470,435), 0, GUI::GUI_ID_QUIT_BUTTON,
+		guienv->addButton(rect<s32>(350,405,470,435), 0, GameFlow::GUI_ID_QUIT_BUTTON,
 			L"Quit", L"Exits Program");
 	}
 

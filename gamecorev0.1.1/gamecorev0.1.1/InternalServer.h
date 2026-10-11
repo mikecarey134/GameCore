@@ -30,7 +30,6 @@
 #include "BitStream.h"
 #include "PacketLogger.h"
 #include "player.h"
-#include "GUI.h"
 #include "NetworkData.h"
 #include"remotePlayer.h"
 #include"ChatQueue.h"
@@ -50,7 +49,7 @@ public:
         ,int remote_port, int local_port,ChatQueue* message_buffer, player* thePlayer);
 
 	~InternalServer(void);
-	void messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font);
+	void messageLoop(player& thePlayer, irr::gui::IGUIFont* font);
 	bool emptyMess(const char* message);
 	void shutdown(player& thePlayer);
 	bool isOnline(){return online_;}

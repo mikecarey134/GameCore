@@ -121,8 +121,6 @@ int main(void)
 		return 1;
 	}
 
-	GUI theGui(device);//create an instance of gui
-	Hud hud(device);
 	drawIntro(device);//draw our intro 
 
 
@@ -179,7 +177,7 @@ int main(void)
 	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
-	GameFlow gameFlow(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
+	GameFlow gameFlow(device,guienv,driver,context, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
 	luaVM.setLogger([&gameFlow](const std::string& message) {
 		gameFlow.getConsole().logMessage_ANSI(ELL_ERROR, message.c_str());
 		std::cerr << message << std::endl;
@@ -251,20 +249,13 @@ int main(void)
 				mouseCapture.setCaptured(gameFlow.getStarted() && !gameFlow.getPaused() && !gameFlow.getIsInventory());
 				mouseCapture.beginFrame();
 				
-				if (!gameFlow.getStarted())//draw the main menu
+				if (!gameFlow.getStarted())
 				{
-					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a black background
-					
-
 					if (!engine->isCurrentlyPlaying("sounds/discovery.mp3"))
 						engine->play2D("sounds/discovery.mp3", true);//startup the main menu track
-					
-					gameFlow.drawMainMenu();				
 				}
-				else //otherwise play the game
+				else
 				{
-					//if we have started our game
-					if(gameFlow.getStarted()){
 					if (!gameMusic || gameMusic->isFinished())
 					{
 						if (gameMusic)
@@ -273,54 +264,43 @@ int main(void)
 					}
 					if (gameMusic->getIsPaused() != gameFlow.getPaused())
 						gameMusic->setIsPaused(gameFlow.getPaused());
-					}
+					if (engine->isCurrentlyPlaying("sounds/discovery.mp3"))//if we are starting
+						engine->removeSoundSource("sounds/discovery.mp3");//remove the main menu sounds
 
 					//internal client loops for input
-					Client.messageLoop(thePlayer,theGui,guienv->getBuiltInFont());
-					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a white background
-
-					if (engine->isCurrentlyPlaying("sounds/discovery.mp3"))//if we are starting
-							engine->removeSoundSource("sounds/discovery.mp3");//remove the main menu sounds
-
-					//driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
-
-					
-						if (!gameFlow.getPaused() && !gameFlow.getIsInventory())//is the game paused
-						{
-						}
-
-						
-						smgr->drawAll();
-					
-
-						world->stepSimulation(frameDeltaTime*0.001f, 120);//bullet psysics
-						gameFlow.update(then,now);//update our game here
-
-						//we dont want the camera to update while the player is stationary
-						if (!gameFlow.getPaused() && !gameFlow.getIsInventory()&& !gameFlow.getIsConsole())
-						{			
-							thePlayer.moveCameraControl(mouseCapture.delta());
-							testClue.update();
-
-							if(!npc_tester.isDead() && npc_tester.isLoaded() == DONE_LOADING)
-								npc_tester.moveNPC();//move our npc 
-	
-							gameFlow.playerNpcCollisionCheck();
-						}
-						else
-							thePlayer.haltCamera();
-					
-					
-				
-					if (!gameFlow.getIsInventory())
-						hud.draw(thePlayer);
-					gameFlow.drawNotes();
-				    chat_queue.draw();
-					gameFlow.displayconsole(frameDeltaTime);
-					
+					Client.messageLoop(thePlayer,guienv->getBuiltInFont());
 				}
-			
-			
+
+				driver->beginScene(true,true,video::SColor(255,0,0,0));
+
+				if (gameFlow.getStarted())
+				{
+					smgr->drawAll();
+					world->stepSimulation(frameDeltaTime*0.001f, 120);//bullet psysics
+					gameFlow.update(then,now);//update our game here
+
+					//we dont want the camera to update while the player is stationary
+					if (!gameFlow.getPaused() && !gameFlow.getIsInventory()&& !gameFlow.getIsConsole())
+					{
+						thePlayer.moveCameraControl(mouseCapture.delta());
+						testClue.update();
+
+						if(!npc_tester.isDead() && npc_tester.isLoaded() == DONE_LOADING)
+							npc_tester.moveNPC();//move our npc 
+
+						gameFlow.playerNpcCollisionCheck();
+					}
+					else
+						thePlayer.haltCamera();
+				}
+
+				gameFlow.draw();
+				if (gameFlow.getStarted())
+				{
+					chat_queue.draw();
+					gameFlow.displayconsole(frameDeltaTime);
+				}
+
 			driver->endScene();
 
 		}

@@ -24,13 +24,13 @@ using namespace gamecore;
 
 
 GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
-						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI* gui,
+						   irr::video::IVideoDriver* driver, SAppContext & Context,
 						   gamecore::SoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
 						   NPC* npc, GameMap* currentMap, InternalServer* client):
-							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
+							guienv_(guienv),device_(device),driver_(driver),Context_(Context),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
-							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr), debugOverlay_(device, world), mainMenu_(device), pause_(device), death_(device), note_(device)
+							inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
+							inventoryScreen_(nullptr), hud_(device), debugOverlay_(device, world), mainMenu_(device), pause_(device), death_(device), note_(device)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
@@ -46,11 +46,6 @@ GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guien
 }
 GameFlow::~GameFlow(){ coords.close();}
 
-
-void GameFlow::drawMainMenu()//draws the main menu for the game
-{
-	mainMenu_.draw();
-}
 
 void GameFlow::drawInventory ()
 {
@@ -137,11 +132,29 @@ remotePlayer* GameFlow::findRemotePlayer (std::string nodeName)
 	return rm;
 }
 
-void GameFlow::drawNotes()
+void GameFlow::draw()
 {
+	if (!started)
+	{
+		mainMenu_.draw();
+		return;
+	}
+
+	if (!inventory)
+		hud_.draw(*player_);
 	for (std::list<ClueObject*>::iterator clue = clueObjects_.begin(); clue != clueObjects_.end(); ++clue)
 		if ((*clue)->isNoteShowing())
 			note_.draw(**clue);
+	if (player_->isDead() && !pauseMenu)
+		death_.draw();
+	if (inventory)
+		drawInventory();
+	if (pauseMenu)
+		pause_.draw();
+	else
+		pause_.hide();
+	if (debug)
+		debugOverlay_.draw(player_->getPosition());
 }
 
 void GameFlow::update(u32, u32)//update the game throught the gameloop
@@ -178,48 +191,8 @@ void GameFlow::update(u32, u32)//update the game throught the gameloop
 			npc_->loadModel(npcSpawns[rand() % npcSpawns.size()]);
 	}
 
-	if (started && player_->isDead() && !pauseMenu)
-		death_.draw();
-
-	if(chatshown)
-		drawMessage(L"T Was Pressed!");
-	if(debug)
-	{
-		debugOverlay_.draw(player_->getPosition());
-	}
-	if(pauseMenu)pause_.draw();
-	else if(started)
-		pause_.hide();
-		
-//	if(chatshown){gui_->drawchat(guienv_);}
-	
-	if(inventory) drawInventory();
-	if(!started)
-		drawMainMenu();//guienv_->drawAll();
-
-	
 	//add the coords to a log in order to get positions for grass nodes
 	//coords << player_->getPosition().X << " " << player_->getPosition().Y << " " << player_->getPosition().Z << "\n" ;
-	
-}
-
-void GameFlow::drawMessage(const wchar_t*)
-{
-	/*stringw msg;
-	msg+= message;
-	device_->getGUIEnvironment()->drawAll();
-	//device_->getVideoDriver()->draw2DRectangle(SColor(150,0,0,0), rect<s32>(20,400, 400,550));
-	ebox_ = device_->getGUIEnvironment()->addEditBox(L"",rect<s32>(10,400, 260,550),true,0,10);
-	//gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
-
-	ebox_->getActiveFont();
-	ebox_->setEnabled(true);
-	ebox_->setMax(40);
-	guienv_->setFocus(ebox_);*/
-	
-	
-
-	//gui_->addDialogBox(message);
 	
 }
 
