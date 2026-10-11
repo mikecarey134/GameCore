@@ -202,9 +202,9 @@ add_executable(gamecore_server server/main.cpp)
 target_link_libraries(gamecore_server PRIVATE gamecore_server_core Threads::Threads)
 
 add_executable(server_tests server/tests/main.cpp server/tests/protocol_test.cpp server/tests/game_server_test.cpp
-  server/tests/server_console_test.cpp)
+  server/tests/server_console_test.cpp server/tests/integration_test.cpp)
 target_include_directories(server_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(server_tests PRIVATE gamecore_server_core)
+target_link_libraries(server_tests PRIVATE gamecore_server_core Threads::Threads)
 add_test(NAME server_tests COMMAND server_tests)
 
 foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol gamecore_server_core gamecore_server server_tests)
