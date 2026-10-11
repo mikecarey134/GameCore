@@ -17,18 +17,21 @@ jobs:
             configure: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
             keep_going: -- -k
             exe: ./gamecore
+            server_exe: build/gamecore_server
             binaries: gamecore
           - os: macos-14
             install: brew install irrlicht
             configure: ""
             keep_going: -- -k
             exe: ./gamecore
+            server_exe: build/gamecore_server
             binaries: gamecore
           - os: windows-2022
             install: vcpkg install irrlicht:x64-windows
             configure: -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
             keep_going: ""
             exe: ./Release/gamecore.exe
+            server_exe: build/Release/gamecore_server.exe
             binaries: Release/gamecore.exe Release/*.dll
     defaults:
       run:
@@ -76,6 +79,10 @@ jobs:
             echo "::error::The smoke run could not load some game data"
             exit 1
           fi
+
+      - name: Server smoke run
+        timeout-minutes: 2
+        run: ${{ matrix.server_exe }} --smoke
 
       - name: Collect binary
         id: collect
