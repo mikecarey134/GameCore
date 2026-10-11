@@ -93,11 +93,13 @@ jobs:
         run: |
           mkdir -p "$GITHUB_WORKSPACE/dist"
           cp ${{ matrix.binaries }} "$GITHUB_WORKSPACE/dist/"
+          cp "$GITHUB_WORKSPACE/${{ matrix.server_exe }}" "$GITHUB_WORKSPACE/dist/"
           printf '%s\n' \
             "GameCore build of commit $GITHUB_SHA for ${{ matrix.os }}." \
             "This is the binary only. Run it from the game data directory (gamecorev0.1.1/gamecorev0.1.1 in the repository)," \
             "next to config/, map/, models/, sounds/ and the other data folders, or it will not find its files." \
             "Linux and macOS builds need Irrlicht 1.8 installed (libirrlicht or Homebrew irrlicht)." \
+            "gamecore_server is the dedicated server; it needs no game data: gamecore_server [--port 25515]." \
             > "$GITHUB_WORKSPACE/dist/RUN.txt"
           echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
