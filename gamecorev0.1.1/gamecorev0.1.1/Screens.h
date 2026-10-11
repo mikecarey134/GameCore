@@ -15,4 +15,26 @@ private:
 	irr::IrrlichtDevice* device_;
 };
 
+class MainMenuScreen
+{
+public:
+	explicit MainMenuScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	void draw();
+	void hide();
+
+private:
+	irr::IrrlichtDevice* device_;
+};
+
+class PauseScreen
+{
+public:
+	explicit PauseScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	void draw();
+	void hide();
+
+private:
+	irr::IrrlichtDevice* device_;
+};
+
 #endif

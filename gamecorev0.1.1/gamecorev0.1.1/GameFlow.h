@@ -20,6 +20,7 @@
 #include "NPC.h"
 #include "GameMap.h"
 #include "DebugOverlay.h"
+#include "Screens.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
@@ -66,7 +67,6 @@ public:
 	void drawIntro     ();
 	void drawMainMenu  ();
 
-	void drawPauseMenu ();
 	void drawMessage   (const wchar_t* message);
 	void newRound      ();
 	void goToMainMenu  ();
@@ -120,4 +120,6 @@ private:
 	std::ofstream coords;
 	InventoryScreen* inventoryScreen_;
 	DebugOverlay debugOverlay_;
+	MainMenuScreen mainMenu_;
+	PauseScreen pause_;
 };
