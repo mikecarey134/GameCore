@@ -121,9 +121,10 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/InputRouter.cpp ${ENGINE_DIR}/InputRouter.h ${ENGINE_DIR}/InputState.h
   ${ENGINE_DIR}/console.cpp ${ENGINE_DIR}/console.h ${ENGINE_DIR}/consoleCommands.cpp ${ENGINE_DIR}/consoleCommands.h
   ${ENGINE_DIR}/utils.cpp ${ENGINE_DIR}/utils.h ${ENGINE_DIR}/includes.h
-  ${ENGINE_DIR}/ConsoleLayer.cpp ${ENGINE_DIR}/ConsoleLayer.h)
+  ${ENGINE_DIR}/ConsoleLayer.cpp ${ENGINE_DIR}/ConsoleLayer.h
+  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/LuaVM.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
+target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio lua51)
 
 set(GAMECORE_SOURCES
   ClueObject.cpp GameFlow.cpp
@@ -137,9 +138,9 @@ target_include_directories(gamecore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gamecore PRIVATE gamecore_engine)
 
 add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test.cpp engine/tests/input_router_test.cpp
-  ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp)
+  engine/tests/lua_vm_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp ${ENGINE_DIR}/LuaVM.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(engine_tests PRIVATE irrlicht_engine)
+target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51)
 add_test(NAME engine_tests COMMAND engine_tests)
 
 foreach(target gamecore_engine gamecore engine_tests)
