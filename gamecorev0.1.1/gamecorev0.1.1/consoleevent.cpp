@@ -29,7 +29,7 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr)
+							input_(0), inventoryScreen_(nullptr)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
@@ -39,8 +39,6 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 	console.initializeConsole(guienv, dimension2d<s32>(800,500));//prepare the console
 	console.setVisible(false);
 
-	for (u32 i=0; i < KEY_KEY_CODES_COUNT; ++i)
-		KeyIsDown[i] = false;
 
 
 
@@ -57,7 +55,7 @@ static void removeButtons(IGUIEnvironment* guienv, const s32 (&ids)[4])
 			button->remove();
 }
 
-bool consoleevent::OnEvent(const irr::SEvent& event)
+bool consoleevent::onEvent(const irr::SEvent& event)
 {
 	bool dismissPress = (event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.PressedDown) ||
 		(event.EventType == irr::EET_MOUSE_INPUT_EVENT && event.MouseInput.Event == EMIE_RMOUSE_PRESSED_DOWN);
@@ -155,7 +153,6 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 
 	if(event.EventType == irr::EET_KEY_INPUT_EVENT )
 	{
-		KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
 
 		if(!console.isVisible() && !pauseMenu && !player_->isDead()&&!chatshown)  //handle player movement keyboard controls
 		{
@@ -383,12 +380,12 @@ bool consoleevent::OnEvent(const irr::SEvent& event)
 
 bool consoleevent::IsKeyDown(irr::EKEY_CODE keyCode) const
 {
-	return KeyIsDown[keyCode];
+	return input_->isKeyDown(keyCode);
 }
 
 bool consoleevent::IsKeyUp(irr::EKEY_CODE keyCode) const
 {
-	return !KeyIsDown[keyCode];
+	return input_->isKeyUp(keyCode);
 }
 
 void consoleevent::drawMainMenu()//draws the main menu for the game

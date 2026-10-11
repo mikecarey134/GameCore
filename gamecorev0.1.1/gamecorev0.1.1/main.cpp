@@ -174,7 +174,10 @@ int main(void)
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
 	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
-	device->setEventReceiver(&crecv);
+	InputRouter inputRouter;
+	inputRouter.push(&crecv);
+	crecv.setInputState(&inputRouter.state());
+	device->setEventReceiver(&inputRouter);
 	MouseCapture mouseCapture(device->getCursorControl());
 
 	inventory::Catalog itemCatalog;

@@ -117,7 +117,8 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/SoundEngine.cpp ${ENGINE_DIR}/SoundEngine.h
   ${ENGINE_DIR}/mapLoader.cpp ${ENGINE_DIR}/mapLoader.h
   ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/OrbitCamera.h
-  ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/MouseCapture.h)
+  ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/MouseCapture.h
+  ${ENGINE_DIR}/InputRouter.cpp ${ENGINE_DIR}/InputRouter.h ${ENGINE_DIR}/InputState.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
@@ -132,7 +133,8 @@ add_executable(gamecore ${GAMECORE_SOURCES})
 target_include_directories(gamecore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gamecore PRIVATE gamecore_engine)
 
-add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp)
+add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test.cpp engine/tests/input_router_test.cpp
+  ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
 target_link_libraries(engine_tests PRIVATE irrlicht_engine)
 add_test(NAME engine_tests COMMAND engine_tests)

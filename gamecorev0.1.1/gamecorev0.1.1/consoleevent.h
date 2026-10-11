@@ -18,6 +18,7 @@
 #include "GUI.h"
 #include "player.h"
 #include "NPC.h"
+#include "InputRouter.h"
 #include "GameMap.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
@@ -31,7 +32,7 @@
 class InventoryScreen;
 
 
-class consoleevent : public irr::IEventReceiver, public GUI
+class consoleevent : public InputLayer, public GUI
 {
 public:
 	friend class NPC;
@@ -46,7 +47,8 @@ public:
 	
 	~consoleevent();
 
-	bool OnEvent(const irr::SEvent& event);
+	bool onEvent(const irr::SEvent& event) override;
+	void setInputState(const InputState* input) { input_ = input; }
 
 	bool isConsoleVisible(){return console.isVisible();}
 
@@ -116,7 +118,7 @@ private:
 	std::list<ClueObject*> clueObjects_; 
 
 	// We use this array to store the current state of each key
-	bool KeyIsDown[irr::KEY_KEY_CODES_COUNT];
+	const InputState* input_;
 
 
 	//debugging get rid of this at some point
