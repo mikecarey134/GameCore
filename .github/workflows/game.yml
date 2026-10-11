@@ -70,7 +70,12 @@ jobs:
       - name: Smoke run
         timeout-minutes: 5
         working-directory: gamecorev0.1.1/gamecorev0.1.1
-        run: ${{ matrix.exe }} --smoke
+        run: |
+          ${{ matrix.exe }} --smoke 2>&1 | tee "$RUNNER_TEMP/smoke.log"
+          if grep -E "Could not|FATAL ERROR" "$RUNNER_TEMP/smoke.log"; then
+            echo "::error::The smoke run could not load some game data"
+            exit 1
+          fi
 
       - name: Collect binary
         id: collect
