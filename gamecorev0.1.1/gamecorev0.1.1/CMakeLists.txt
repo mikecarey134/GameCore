@@ -194,12 +194,15 @@ add_library(game_protocol STATIC protocol/GameMessages.cpp protocol/GameMessages
 target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(game_protocol PUBLIC gamecore_net)
 
-add_executable(server_tests server/tests/main.cpp server/tests/protocol_test.cpp)
+add_library(gamecore_server_core STATIC server/GameServer.cpp server/GameServer.h)
+target_link_libraries(gamecore_server_core PUBLIC game_protocol)
+
+add_executable(server_tests server/tests/main.cpp server/tests/protocol_test.cpp server/tests/game_server_test.cpp)
 target_include_directories(server_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(server_tests PRIVATE game_protocol)
+target_link_libraries(server_tests PRIVATE gamecore_server_core)
 add_test(NAME server_tests COMMAND server_tests)
 
-foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol server_tests)
+foreach(target gamecore_engine gamecore engine_tests gamecore_net game_protocol gamecore_server_core server_tests)
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
