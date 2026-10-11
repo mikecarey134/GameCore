@@ -204,6 +204,7 @@ int main(void)
 	u32 then = device->getTimer()->getTime();
 
 	engine->play2D("sounds/discovery.mp3", true);	
+	ISound* gameMusic = 0;
 
 	
 	//clear the console before the game starts
@@ -233,8 +234,14 @@ int main(void)
 				{
 					//if we have started our game
 					if(crecv.getStarted()){
-					if (!engine->isCurrentlyPlaying("sounds/sunshine.mp3"))
-						engine->play2D("sounds/sunshine.mp3", true);//startup the main track				
+					if (!gameMusic || gameMusic->isFinished())
+					{
+						if (gameMusic)
+							gameMusic->drop();
+						gameMusic = engine->play2D("sounds/sunshine.mp3", true, false, true);//startup the main track
+					}
+					if (gameMusic->getIsPaused() != crecv.getPaused())
+						gameMusic->setIsPaused(crecv.getPaused());
 					}
 
 					//internal client loops for input
