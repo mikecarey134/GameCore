@@ -2,6 +2,7 @@
 #include "client/NetClient.h"
 #include "server/GameServer.h"
 #include "net/LoopbackTransport.h"
+#include "net/Interpolator.h"
 #include <memory>
 
 using namespace protocol;
@@ -345,4 +346,82 @@ TEST_CASE("a kick takes the client offline even if the server does not hang up")
 	CHECK_FALSE(a.client.isOnline());
 	CHECK(a.seen.hasLine("server full"));
 	CHECK(a.seen.left == std::vector<uint16_t>{ 2 });
+}
+
+namespace
+{
+	std::vector<uint8_t> relayedState(uint16_t id, uint16_t seq, float x)
+	{
+		return encode(STATE, RelayedState{ id, State{ seq, { x, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, 0 } });
+	}
+
+	std::vector<uint16_t> movedSeqs(const TestClient& client)
+	{
+		std::vector<uint16_t> seqs;
+		for (size_t i = 0; i < client.seen.moved.size(); ++i)
+			seqs.push_back(client.seen.moved[i].state.seq);
+		return seqs;
+	}
+}
+
+TEST_CASE("a state older than the last one seen from that player is dropped")
+{
+	uint32_t now = 1000;
+	LoopbackNetwork network;
+	LoopbackTransport fakeServer(network);
+	REQUIRE(fakeServer.listen(GameServer::DEFAULT_PORT, 8));
+	TestClient a(network, now);
+	REQUIRE(a.client.connect("localhost", GameServer::DEFAULT_PORT, "mikey", 1));
+	a.client.update(a.local);
+	PeerId client = NO_PEER;
+	typesReceived(fakeServer, client);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0 }, { 3, "zed", 0 } } }), Reliable);
+	const uint16_t order[] = { 5, 4, 5, 6 };
+	for (uint16_t seq : order)
+		fakeServer.send(client, relayedState(2, seq, seq), Unreliable);
+	fakeServer.send(client, relayedState(3, 1, 1.0f), Unreliable);
+	a.client.update(a.local);
+	CHECK(movedSeqs(a) == std::vector<uint16_t>{ 5, 6, 1 });
+	CHECK(a.client.players().at(2).state.pos[0] == 6.0f);
+}
+
+TEST_CASE("state sequence numbers wrap from 65535 to 0")
+{
+	uint32_t now = 1000;
+	LoopbackNetwork network;
+	LoopbackTransport fakeServer(network);
+	REQUIRE(fakeServer.listen(GameServer::DEFAULT_PORT, 8));
+	TestClient a(network, now);
+	REQUIRE(a.client.connect("localhost", GameServer::DEFAULT_PORT, "mikey", 1));
+	a.client.update(a.local);
+	PeerId client = NO_PEER;
+	typesReceived(fakeServer, client);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0 } } }), Reliable);
+	fakeServer.send(client, relayedState(2, 65534, 1.0f), Unreliable);
+	fakeServer.send(client, relayedState(2, 65535, 2.0f), Unreliable);
+	fakeServer.send(client, relayedState(2, 0, 3.0f), Unreliable);
+	fakeServer.send(client, relayedState(2, 65535, 9.0f), Unreliable);
+	a.client.update(a.local);
+	CHECK(movedSeqs(a) == std::vector<uint16_t>{ 65534, 65535, 0 });
+}
+
+TEST_CASE_FIXTURE(ClientFixture, "over a lossy, reordering link the remote player never moves backwards in time")
+{
+	TestClient& a = joined("mikey");
+	TestClient& b = joined("dan");
+	b.transport.setUnreliableLoss(0.3f, 0.3f, 11);
+	a.seen.moved.clear();
+	for (int frame = 0; frame < 200; ++frame)
+	{
+		now += 10;
+		b.local.pos[0] = (float)frame;
+		server.tick();
+		a.client.update(a.local);
+		b.client.update(b.local);
+	}
+	std::vector<uint16_t> seqs = movedSeqs(a);
+	CHECK(seqs.size() > 10);
+	CHECK(seqs.size() < 40);
+	for (size_t i = 1; i < seqs.size(); ++i)
+		CHECK(isNewerSeq(seqs[i], seqs[i - 1]));
 }

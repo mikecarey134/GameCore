@@ -1,4 +1,5 @@
 #include "NetClient.h"
+#include "net/Interpolator.h"
 
 using namespace protocol;
 
@@ -174,6 +175,8 @@ void NetClient::onState(ByteReader& in)
 	if (found == players_.end())
 		return;
 	Remote& remote = found->second;
+	if (remote.hasState && !isNewerSeq(relayed.state.seq, remote.state.seq))
+		return;
 	remote.state = relayed.state;
 	remote.hasState = true;
 	if (!remote.alive)
