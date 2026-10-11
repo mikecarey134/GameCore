@@ -1,6 +1,6 @@
 #include "DebugOverlay.h"
 #include "UiAnchor.h"
-#include <irrbullet.h>
+#include "physics/PhysicsWorld.h"
 #ifdef _WIN32
 #include "windows.h"
 #include "psapi.h"
@@ -85,5 +85,5 @@ void DebugOverlay::draw(const vector3df& nodePosition)
 	font->draw(fpsstr,//draw current fps for debugging
 		anchored(rect<s32>(680,20,680,0), 1.0f, 0.0f, driver->getScreenSize()),SColor(255,255,255,255));//set up the color
 
-	world_->debugDrawWorld(true);
+	physics_->drawDebug(driver);
 }

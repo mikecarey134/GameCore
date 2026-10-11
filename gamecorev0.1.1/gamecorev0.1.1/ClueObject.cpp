@@ -8,7 +8,7 @@ using namespace io;
 using namespace gui;
 
 ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-					   irrBulletWorld*, irr::video::IVideoDriver*, GameMap* theMap, LuaVM& lua) : 
+					   irr::video::IVideoDriver*, GameMap* theMap, LuaVM& lua) : 
 						device_(device), theMap_(theMap), lua_(lua) 
 {
 	type_ = TYPE_CLUE;
@@ -22,9 +22,6 @@ ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device,
 
 	model_->setID(IDFlag_IsPickable);
 
-	//clueCollisionObject_ = new IBoxShape(model_, model_->getBoundingBox().getVolume()*(f32)0.001);
-
-	//world_->addRigidBody(clueCollisionObject_);
 	//model_->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 
 	//model_->setPosition(clueProperties_.location_);

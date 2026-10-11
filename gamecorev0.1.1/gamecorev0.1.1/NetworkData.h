@@ -20,7 +20,7 @@ class NetworkData
 {
 public:
 	NetworkData(irr::IrrlichtDevice* device, irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
-		gamecore::SoundEngine* engine, irrBulletWorld* world);
+		gamecore::SoundEngine* engine, PhysicsWorld* physics);
 
 	void add(uint16_t id, const std::string& name, uint8_t model);
 	void remove(uint16_t id);
@@ -38,7 +38,7 @@ private:
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
 	gamecore::SoundEngine* engine_;
-	irrBulletWorld* world_;
+	PhysicsWorld* physics_;
 	std::map<uint16_t, remotePlayer> players_;
 };
 

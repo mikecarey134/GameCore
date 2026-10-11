@@ -4,7 +4,6 @@
 
 #include<irrlicht.h>
 #include "SoundEngine.h"
-#include<irrbullet.h>
 #include "LuaVM.h"
 #include <vector>
 #include <iostream>
@@ -26,7 +25,7 @@ private:
 
 public:
 	ClueObject(irr::core::string<char> filename, irr::IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-				irrBulletWorld* world, irr::video::IVideoDriver* driver, GameMap* theMap, LuaVM& lua);
+				irr::video::IVideoDriver* driver, GameMap* theMap, LuaVM& lua);
 	~ClueObject() {}
 
 	const irr::core::string<char> getObjectType() const { return type_; }

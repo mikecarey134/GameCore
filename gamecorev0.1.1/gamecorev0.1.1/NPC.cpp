@@ -7,6 +7,7 @@
 
 
 #include"NPC.h"
+#include <iostream>
 
 using namespace irr;
 using namespace gamecore;
@@ -17,15 +18,14 @@ using namespace io;
 using namespace gui;
 
 NPC::NPC(IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
-		 irrBulletWorld* world, irr::video::IVideoDriver* driver, LuaVM& lua) : 
-			device_(device), smgr_(smgr), driver_(driver), world_(world), lua_(lua),npcHealth_(NPC_HEALTH),
+		 PhysicsWorld* physics, irr::video::IVideoDriver* driver, LuaVM& lua) : 
+			device_(device), smgr_(smgr), driver_(driver), physics_(physics), lua_(lua),npcHealth_(NPC_HEALTH),
 				isLoaded_(NOT_LOADED),isHit_(false),isDead_(false)
 {
-	character_ = new IKinematicCharacterController(world_);
+	CharacterSettings settings;
+	settings.gravity = NPC_EARTH_GRAVITY;
+	character_ = physics_->addCharacter(settings);
 	lua_.doFile("scripts/pickDir.lua");
-	//character_->setUseGhostSweepTest(true);
-	
-	character_->setGravity(NPC_EARTH_GRAVITY);//set the NPC gravity for jumping
 	/*
 	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh("characters/stick_dan.ms3d"),
 		0, IDFlag_IsPickable);
@@ -86,9 +86,9 @@ void NPC::moveNPC()
 	}
 	//std::cout << AIdirection_.X << " " << AIdirection_.Z << std::endl;
 
-	characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+	characterModel_->setPosition(character_->position());
 
-	character_->setPositionIncrementPerSimulatorStep(AIdirection_* NPC_SPEED);
+	character_->setWalk(AIdirection_* NPC_SPEED * 60.0f);
 
 	drawNPCHealth();
 }

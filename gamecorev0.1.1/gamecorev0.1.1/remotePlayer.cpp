@@ -12,10 +12,7 @@
 #include "player.h"
 #include<irrlicht.h>
 #include "SoundEngine.h"
-#include<irrbullet.h>
 #include<string>
-#include"kinematiccharactercontroller.h"
-#include"exampleframework.h"
 
 
 using namespace irr;
@@ -28,13 +25,18 @@ using namespace gui;
 
 
 remotePlayer::remotePlayer(IrrlichtDevice* device,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
-						   SoundEngine* engine, irrBulletWorld* world,int model_type):
-world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
+						   SoundEngine* engine, PhysicsWorld* physics,int model_type):
+physics_(physics),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_(false), dead_(false)
 {
 	
 
-	character_ = new IKinematicCharacterController(world_);
+	CharacterSettings settings;
+	settings.gravity = PLAYER_EARTH_GRAVITY;
+	settings.jumpSpeed = PLAYER_JUMP_FORCE;
+	settings.maxSlope = PI/4;
+	settings.collidesWithCharacters = false;
+	character_ = physics_->addCharacter(settings);
 	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
 
 	//characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
@@ -53,12 +55,6 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
 	characterModel_->setTriangleSelector(selector);
 	
-	character_->setGravity(PLAYER_EARTH_GRAVITY);
-
-	character_->setJumpForce(PLAYER_JUMP_FORCE);
-
-	character_->setMaxSlope(PI/4);
-
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
@@ -102,13 +98,13 @@ void remotePlayer::animate(EMD2_ANIMATION_TYPE animation)
 void remotePlayer::setposition(irr::core::vector3df pos)
 {
 	 character_->warp(pos); 
-	 characterModel_->setPosition(character_->getWorldTransform().getTranslation());//set the player at the correct pos
+	 characterModel_->setPosition(character_->position());//set the player at the correct pos
 	 rem_player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
 }
 
 void remotePlayer::jump()
 {
-	if (character_->isOnGround()){
+	if (character_->onGround()){
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
 	}

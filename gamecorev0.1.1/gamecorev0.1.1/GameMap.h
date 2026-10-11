@@ -12,7 +12,7 @@ class NPC;
 class GameMap : public mapLoader
 {
 public:
-	GameMap(irr::IrrlichtDevice* device, irr::video::IVideoDriver* driver, irr::scene::ISceneManager* smgr, irrBulletWorld* world);
+	GameMap(irr::IrrlichtDevice* device, irr::video::IVideoDriver* driver, irr::scene::ISceneManager* smgr, PhysicsWorld* physics);
 
 	const std::vector<irr::core::vector3df> getClueLocations() const { return clueLocations_; }
 	void setClue(ClueObject* clue) { clue_ = clue; }

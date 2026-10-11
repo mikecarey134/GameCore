@@ -38,10 +38,10 @@ bool IC_Command_TP::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 		throw IC_Error(L"No Valid Arguments! <X><Y><Z>");
 }
 
-IC_Command_RB::IC_Command_RB(player* thePlayer,irrBulletWorld* theWorld,irr::IrrlichtDevice* device) : IC_Command(L"rb")
+IC_Command_RB::IC_Command_RB(player* thePlayer,PhysicsWorld* physics,irr::IrrlichtDevice* device) : IC_Command(L"rb")
 {
 	player_ = thePlayer;
-	theWorld_ = theWorld;
+	physics_ = physics;
 	device_ = device;
 
 	setUsage("/rb <Filename> <Scale>");
@@ -60,7 +60,6 @@ bool IC_Command_RB::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 	{
 		irr::scene::IMeshSceneNode* node;
 		const wchar_t* scale = args[1].c_str();
-		ICollisionShape* shape;
 		node = device_->getSceneManager()->addMeshSceneNode(device_->getSceneManager()->getMesh(args[0]));
 		node->setScale(vector3df((f32)_wtof(scale),(f32)_wtof(scale),(f32)_wtof(scale)));
 		node->setPosition(vector3df(player_->getPosition().X-10,player_->getPosition().Y,player_->getPosition().Z-10));
@@ -71,9 +70,7 @@ bool IC_Command_RB::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 		node->setTriangleSelector(selector);
 
 		node->setID(/*player::*/IDFlag_IsPickable);
-		shape = new IBoxShape(node, node->getBoundingBox().getVolume()*(irr::f32)0.001);
-		
-		theWorld_->addRigidBody(shape);
+		physics_->addDynamicBox(node, node->getBoundingBox().getVolume()*(irr::f32)0.001);
 		
 	}
 	else//otherwise display an error
@@ -85,9 +82,9 @@ bool IC_Command_RB::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 //////////////////////////////////////////////////////////////////////////
 //Toggle the worlds gravity
 //////////////////////////////////////////////////////////////////////////
-IC_Command_GV::IC_Command_GV(irrBulletWorld* world) : IC_Command(L"gv")
+IC_Command_GV::IC_Command_GV(PhysicsWorld* physics) : IC_Command(L"gv")
 {
-	world_ = world;
+	physics_ = physics;
 
 	setUsage("/gv <gravity>");
 	addDescLine("sets the world's gravity");
@@ -99,7 +96,7 @@ bool IC_Command_GV::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 {
 	if (args.size()==1)
 	{
-		world_->setGravity(vector3df(0,(f32)_wtof(args[0].c_str()),0));
+		physics_->setGravity((f32)_wtof(args[0].c_str()));
 	}
 	else
 		throw IC_Error(L"Missing Argument! <Gravity>");
@@ -366,11 +363,11 @@ bool IC_Command_LUA::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Me
 	return true;
 }
 
-void registerGameCommands(IC_Console& console, player* thePlayer, irrBulletWorld* world, irr::IrrlichtDevice* device, mapLoader* currentMap)
+void registerGameCommands(IC_Console& console, player* thePlayer, PhysicsWorld* physics, irr::IrrlichtDevice* device, mapLoader* currentMap)
 {
 	console.registerCommand(new IC_Command_TP(thePlayer));
-	console.registerCommand(new IC_Command_RB(thePlayer, world, device));
-	console.registerCommand(new IC_Command_GV(world));
+	console.registerCommand(new IC_Command_RB(thePlayer, physics, device));
+	console.registerCommand(new IC_Command_GV(physics));
 	console.registerCommand(new IC_Command_PGV(thePlayer));
 	console.registerCommand(new IC_Command_P_SPEED(thePlayer));
 	console.registerCommand(new IC_Command_PH(thePlayer));

@@ -41,10 +41,10 @@ namespace
 
 InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,const char*,
 							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-							   gamecore::SoundEngine* engine, irrBulletWorld* world, char* ip,
+							   gamecore::SoundEngine* engine, PhysicsWorld* physics, char* ip,
 							   int remote_port, int,ChatQueue* message_buffer,
 							   player* thePlayer):
-							   networkData_(device,smgr,driver,engine,world),
+							   networkData_(device,smgr,driver,engine,physics),
 							   message_buffer_(message_buffer), player_(thePlayer),
 							   started_(std::chrono::steady_clock::now()),
 							   client_(transport_, [this] {

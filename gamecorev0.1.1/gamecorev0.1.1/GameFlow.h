@@ -10,7 +10,6 @@
 #pragma once
 #include <fstream>
 #include <irrlicht.h>
-#include <irrbullet.h>
 #include "SoundEngine.h"
 #include <list>
 #include "console.h"
@@ -22,7 +21,6 @@
 #include "Screens.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
-#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "InternalServer.h"
 
 
@@ -43,7 +41,7 @@ public:
 	GameFlow(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,
 		/*irr::scene::ICameraSceneNode* camera,*/ gamecore::SoundEngine* engine, 
-		player* thePlayer, irrBulletWorld* world, NPC* npc, GameMap* currentMap, InternalServer* client);
+		player* thePlayer, PhysicsWorld* physics, NPC* npc, GameMap* currentMap, InternalServer* client);
 	
 	~GameFlow();
 
@@ -69,7 +67,6 @@ public:
 	void drawInventory ();
 	void setInventoryScreen(InventoryScreen* screen) { inventoryScreen_ = screen; }
 
-	void playerNpcCollisionCheck();
 
 	void addClueObject(ClueObject* object); 
 
@@ -94,7 +91,6 @@ private:
 	player* player_;
 	//std::list<remotePlayer*> remotePlayers_;
 	NPC* npc_;
-	irrBulletWorld* world_;
 	bool debug;
 	bool pauseMenu;
 	bool started;

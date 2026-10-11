@@ -21,7 +21,7 @@ class InternalServer
 public:
 	InternalServer(bool online,irr::IrrlichtDevice* device,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		gamecore::SoundEngine* engine, irrBulletWorld* world, char* ip
+		gamecore::SoundEngine* engine, PhysicsWorld* physics, char* ip
         ,int remote_port, int local_port,ChatQueue* message_buffer, player* thePlayer);
 
 	~InternalServer(void);

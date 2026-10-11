@@ -5,7 +5,7 @@
 #include "common.h"
 #include "console.h"
 #include "player.h"
-#include<irrbullet.h>
+#include "physics/PhysicsWorld.h"
 #include "GameMap.h"
 #include "LuaVM.h"
 
@@ -30,12 +30,12 @@ class IC_Command_RB : public IC_Command
 {
 	enum{DEFAULT_ARGS = 3};
 public:
-	IC_Command_RB(player* thePlayer,irrBulletWorld* theWorld,irr::IrrlichtDevice* device);
+	IC_Command_RB(player* thePlayer,PhysicsWorld* physics,irr::IrrlichtDevice* device);
 	virtual ~IC_Command_RB();
 	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
 private:
 	player* player_;
-	irrBulletWorld* theWorld_;
+	PhysicsWorld* physics_;
 	irr::IrrlichtDevice* device_;
 
 };
@@ -43,11 +43,11 @@ private:
 class IC_Command_GV : public IC_Command
 {
 public:
-	IC_Command_GV(irrBulletWorld* world);
+	IC_Command_GV(PhysicsWorld* physics);
 	virtual ~IC_Command_GV();
 	bool invoke(const array<WideString>& args, IC_Dispatcher* pDispatcher, IC_MessageSink* pOutput);
 private:
-	irrBulletWorld* world_;
+	PhysicsWorld* physics_;
 
 };
 
@@ -142,6 +142,6 @@ private:
 	LuaVM* lua_;
 };
 
-void registerGameCommands(IC_Console& console, player* thePlayer, irrBulletWorld* world, irr::IrrlichtDevice* device, mapLoader* currentMap);
+void registerGameCommands(IC_Console& console, player* thePlayer, PhysicsWorld* physics, irr::IrrlichtDevice* device, mapLoader* currentMap);
 
 #endif

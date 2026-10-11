@@ -5,7 +5,6 @@
 */
 /************************************************************************/
 
-#include <irrbullet.h>
 #include "player.h"
 #include <fstream>
 
@@ -19,8 +18,8 @@ using namespace gui;
 
 
 player::player(IrrlichtDevice* device,const ActionMap& actions,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, SoundEngine* engine, 
-			   irrBulletWorld* world, std::string player_name,int model_type):
-camera_(smgr),world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
+			   PhysicsWorld* physics, std::string player_name,int model_type):
+camera_(smgr),physics_(physics),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0), player_name_(player_name),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
 									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2f,0.2f),dimension2df(4.0,4.0))
@@ -142,7 +141,7 @@ void player::animate(EMD2_ANIMATION_TYPE animation)
 void player::jump()
 {
 	//animate the player on jump
-	if (character_->isOnGround()){
+	if (character_->onGround()){
 		player_jump_= engine_->play2D("sounds/jump.mp3");
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
@@ -238,7 +237,7 @@ void player::moveCameraControl(const irr::core::position2df& mouseDelta)
 		
 		characterModel_->setVisible(true);
 
-		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+		characterModel_->setPosition(character_->position());
 
 		vector3df rot(0, camera_.getMoveYaw(), 0);
 		characterModel_->setRotation(rot);
@@ -251,9 +250,9 @@ void player::moveCameraControl(const irr::core::position2df& mouseDelta)
 
 		m.transformVect(direction);
 
-		character_->setPositionIncrementPerSimulatorStep(direction*0.3f);
+		character_->setWalk(direction*0.3f*60.0f);
 
-		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+		characterModel_->setPosition(character_->position());
 		//manage shadow
 		//player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-3.8f,getPosition().Z));
 		//player_shadow_->setScale(vector3df(.35,.35,.35));
@@ -481,10 +480,11 @@ void player::kill()
 
 void player::createCharacter()
 {
-	character_ = new IKinematicCharacterController(world_);
-	character_->setGravity(PLAYER_EARTH_GRAVITY);
-	character_->setJumpForce(PLAYER_JUMP_FORCE);
-	character_->setMaxSlope((f32)(PI / 1.8));
+	CharacterSettings settings;
+	settings.gravity = PLAYER_EARTH_GRAVITY;
+	settings.jumpSpeed = PLAYER_JUMP_FORCE;
+	settings.maxSlope = (f32)(PI / 1.8);
+	character_ = physics_->addCharacter(settings);
 }
 
 void player::respawn(vector3df pos)

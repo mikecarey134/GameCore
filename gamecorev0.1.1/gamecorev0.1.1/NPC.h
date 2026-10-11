@@ -8,14 +8,12 @@
 #pragma once
 #include<irrlicht.h>
 #include "SoundEngine.h"
-#include<irrbullet.h>
 
 #include "LuaVM.h"
 
 #include<string>
 #include"common.h"
-#include"kinematiccharactercontroller.h"
-#include"exampleframework.h"
+#include "physics/PhysicsWorld.h"
 //#include"player.h"
 
 #define NPC_EARTH_GRAVITY 150.0f
@@ -28,10 +26,10 @@ private:
 	irr::IrrlichtDevice* device_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
-	irrBulletWorld* world_;
+	PhysicsWorld* physics_;
 	LuaVM& lua_;
 
-	IKinematicCharacterController* character_;
+	CharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 
 	irr::core::vector3df AIdirection_;
@@ -46,7 +44,7 @@ private:
 	
 public:
 	NPC(irr::IrrlichtDevice* device, /*char* filename,*/ irr::scene::ISceneManager* smgr,
-		irrBulletWorld* world, irr::video::IVideoDriver* driver, LuaVM& lua);
+		PhysicsWorld* physics, irr::video::IVideoDriver* driver, LuaVM& lua);
 
 	~NPC(void);
 
@@ -67,5 +65,4 @@ public:
 
 	void drawNPCHealth();
 
-	IKinematicCharacterController* getKinematicChar() { return character_; }
 };

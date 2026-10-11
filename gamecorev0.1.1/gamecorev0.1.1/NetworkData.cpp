@@ -10,8 +10,8 @@ By: Michael Carey
 #include <cstdlib>
 
 NetworkData::NetworkData(irr::IrrlichtDevice* device, irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
-						 gamecore::SoundEngine* engine, irrBulletWorld* world)
-	: device_(device), smgr_(smgr), driver_(driver), engine_(engine), world_(world)
+						 gamecore::SoundEngine* engine, PhysicsWorld* physics)
+	: device_(device), smgr_(smgr), driver_(driver), engine_(engine), physics_(physics)
 {
 }
 
@@ -21,7 +21,7 @@ void NetworkData::add(uint16_t id, const std::string& name, uint8_t model)
 		return;
 	if (model >= common_paths().model_paths.size())
 		model = 0;
-	players_.insert(std::make_pair(id, remotePlayer(device_, smgr_, driver_, engine_, world_, model)));
+	players_.insert(std::make_pair(id, remotePlayer(device_, smgr_, driver_, engine_, physics_, model)));
 	remotePlayer& added = players_[id];
 	added.setId(id);
 	added.setName(name);

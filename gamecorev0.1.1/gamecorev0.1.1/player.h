@@ -11,7 +11,6 @@
 #include "ActionMap.h"
 #include<irrlicht.h>
 #include "SoundEngine.h"
-#include<irrbullet.h>
 #include<string>
 #include<vector>
 
@@ -19,8 +18,7 @@
 #include "common.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
-#include"kinematiccharactercontroller.h"
-#include"exampleframework.h"
+#include "physics/PhysicsWorld.h"
 //#include "NPC.h"
 #include "remotePlayer.h"
 #include "ParticleSystem.h"
@@ -50,7 +48,7 @@ public:
 
 	player(irr::IrrlichtDevice* device,const ActionMap& actions,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		gamecore::SoundEngine* engine, irrBulletWorld* world, std::string player_name,int model_type);
+		gamecore::SoundEngine* engine, PhysicsWorld* physics, std::string player_name,int model_type);
 	
 	
 	~player(void);
@@ -82,7 +80,7 @@ public:
 
 	irr::f32 getXDir () const		{ return xDirection_; }
 	irr::f32 getZDir () const		{ return zDirection_; }
-	bool isOnGround        ()           { return character_ && character_->isOnGround();  }
+	bool isOnGround        ()           { return character_ && character_->onGround();  }
 	bool isEnemyInRange	   ()			{ return enemyInRange_; }
 	bool enemyNPCInRange   ()			{ return enemyNPCInRange_; }
 	bool enemyPlayerInRange()			{ return enemyPlayerInRange_; }
@@ -131,14 +129,14 @@ public:
 
 private:
 	void createCharacter();
-	IKinematicCharacterController* character_;
+	CharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 	irr::scene::IMeshSceneNode* player_shadow_;
 
 	OrbitCamera camera_;
 	irr::scene::ICameraSceneNode* fpsCam_;
 
-	irrBulletWorld* world_;
+	PhysicsWorld* physics_;
 	irr::IrrlichtDevice* device_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;

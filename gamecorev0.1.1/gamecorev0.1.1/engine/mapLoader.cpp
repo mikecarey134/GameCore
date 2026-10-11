@@ -9,8 +9,8 @@ using namespace io;
 using namespace gui;
 
 
-mapLoader::mapLoader (IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, irrBulletWorld* world): 
-device_(device), driver_(driver), smgr_(smgr), world_(world)
+mapLoader::mapLoader (IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, PhysicsWorld* physics): 
+device_(device), driver_(driver), smgr_(smgr), physics_(physics)
 {
 	mapName_ = "";
 }
@@ -43,58 +43,17 @@ void mapLoader::loadMap()
 		ESCENE_NODE_TYPE type = node->getType();
 		if(type == ESNT_MESH || type == ESNT_OCTREE || type == ESNT_CUBE || type == ESNT_SPHERE)
 		{
-			if(prefix == "rigid")
+			if(prefix == "rigid" && suffix == "box")
 			{
-				ICollisionShape* shape = 0;
-
-				if(suffix == "mesh")
-					shape = new IGImpactMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), node->getBoundingBox().getVolume()*(irr::f32)0.001);
-
-				else if(suffix == "box")
-					shape = new IBoxShape(node, node->getBoundingBox().getVolume()*(f32)0.001);
-
-				else if(suffix == "sphere")
-					shape = new ISphereShape(node, node->getBoundingBox().getVolume()*(f32)0.001);
-
-				if(shape)
-					bodies_.push_back(world_->addRigidBody(shape));
-
+				bodies_.push_back(physics_->addDynamicBox(node, node->getBoundingBox().getVolume()*(f32)0.001));
 				node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 			}
 
 			else if(prefix == "static")
-			{
-			
-				IBvhTriangleMeshShape* shape = new IBvhTriangleMeshShape(node, static_cast<IMeshSceneNode*>(node)->getMesh(), 0.0f);
-				bodies_.push_back(world_->addRigidBody(shape));
-				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
-				//node->setID(IDFlag_IsPickable);
-	
+				bodies_.push_back(physics_->addStaticMesh(static_cast<IMeshSceneNode*>(node)));
 
-
-				//selector = smgr_->createTriangleSelectorFromBoundingBox(node);
-				//node->setTriangleSelector(selector);
-
-			}
-
-			else if(prefix == "soft")
-			{
-				ISoftBody* softbody = world_->addSoftBody(static_cast<IMeshSceneNode*>(node));
-				bodies_.push_back(softbody);
-				softbody->setTotalMass(0.1f, false);
-				softbody->setActivationState(EAS_DISABLE_DEACTIVATION);
-				node->setMaterialFlag(EMF_BACK_FACE_CULLING, false);
-				node->setAutomaticCulling(EAC_OFF);
-
-				softbody->getConfiguration().liftCoefficient = 0.0;
-				softbody->getConfiguration().dragCoefficient = 0.0;
-				softbody->getConfiguration().dampingCoefficient = 0.0;
-				softbody->getConfiguration().poseMatchingCoefficient = 0.0f;
-				softbody->getConfiguration().positionsSolverIterations = 56;
-				softbody->updateConfiguration();
-			}
-
-
+			else if(prefix == "rigid" || prefix == "soft")
+				device_->getLogger()->log("Skipping unsupported physics node", name.c_str(), ELL_WARNING);
 		}
 		//node->setDebugDataVisible(EDS_BBOX);
 		if(node->getType() != ESNT_SKY_BOX)
@@ -124,10 +83,7 @@ void mapLoader::loadMap()
 void mapLoader::closeMap()
 {
 	for (size_t i = 0; i < bodies_.size(); ++i)
-	{
-		bodies_[i]->includeNodeOnRemoval(false);
-		world_->removeCollisionObject(bodies_[i]);
-	}
+		physics_->removeBody(bodies_[i]);
 	bodies_.clear();
 
 	for (size_t i = 0; i < mapNodes_.size(); ++i)

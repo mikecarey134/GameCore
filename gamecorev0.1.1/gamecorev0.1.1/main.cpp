@@ -12,9 +12,8 @@
 //#define CONSOLE
 //comment out if you don't want to see the Debug console
 
-#include "exampleframework.h"
 #include "ChatQueue.h"
-#include <irrbullet.h>
+#include "physics/PhysicsWorld.h"
 #include <irrlicht.h>
 #include "SoundEngine.h"
 #include <iostream>
@@ -140,11 +139,8 @@ int main(int argc, char** argv)
 	ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
 	//keymap userkeys;
 
-	//set up the bullet physics here for our world
-	irrBulletWorld* world;//the irrbullet world 
-	world = createIrrBulletWorld(device, true, true);
-	world->setDebugMode(EPDM_DrawAabb | EPDM_DrawContactPoints);
-	world->setGravity(vector3df(0,-20,0));
+	PhysicsWorld* world = PhysicsWorld::create(device);
+	world->setGravity(-20.0f);
 
 	SAppContext context;//guiEvent stuff
 	context.device = device;
@@ -227,7 +223,7 @@ int main(int argc, char** argv)
 	thePlayer.spawn(spawns[rand() % spawns.size()]);
 	//thePlayer.setUpCameraCollisions();
 
-	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap,luaVM);
+	ClueObject testClue("models/clue/clue2.obj",device,smgr,driver,&currentMap,luaVM);
 
 	//player.addClue(testClue);
 	gameFlow.addClueObject(&testClue);
@@ -284,7 +280,7 @@ int main(int argc, char** argv)
 				if (gameFlow.getStarted())
 				{
 					smgr->drawAll();
-					world->stepSimulation(frameDeltaTime*0.001f, 120);//bullet psysics
+					world->step(frameDeltaTime*0.001f);
 					gameFlow.update(then,now);//update our game here
 
 					//we dont want the camera to update while the player is stationary
@@ -295,8 +291,6 @@ int main(int argc, char** argv)
 
 						if(!npc_tester.isDead() && npc_tester.isLoaded() == DONE_LOADING)
 							npc_tester.moveNPC();//move our npc 
-
-						gameFlow.playerNpcCollisionCheck();
 					}
 					else
 						thePlayer.haltCamera();

@@ -7,13 +7,11 @@
 #pragma once
 #include<irrlicht.h>
 #include "SoundEngine.h"
-#include<irrbullet.h>
 #include <cstdint>
 #include <string>
 
 #include<string>
-#include"kinematiccharactercontroller.h"
-#include"exampleframework.h"
+#include "physics/PhysicsWorld.h"
 #include"common.h"
 #include "net/Interpolator.h"
 
@@ -23,7 +21,7 @@ public:
 	remotePlayer(){}
 	remotePlayer(irr::IrrlichtDevice* device,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		gamecore::SoundEngine* engine, irrBulletWorld* world, int model_type);
+		gamecore::SoundEngine* engine, PhysicsWorld* physics, int model_type);
 
 	~remotePlayer(void);
 
@@ -60,7 +58,7 @@ public:
 
 	irr::f32 getXDir () const		{ return xDirection_; }
 	irr::f32 getZDir () const		{ return zDirection_; }
-	bool isOnGround        ()           { return character_->isOnGround();  }
+	bool isOnGround        ()           { return character_->onGround();  }
 	bool isBeingDamaged		()			{ return beingDamaged_; }
 
 	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () {return characterModel_;}
@@ -73,11 +71,11 @@ public:
 
 private:
 	void idle();
-	IKinematicCharacterController* character_;
+	CharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 	irr::scene::IMeshSceneNode* rem_player_shadow_;
 
-	irrBulletWorld* world_;
+	PhysicsWorld* physics_;
 	irr::IrrlichtDevice* device_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;

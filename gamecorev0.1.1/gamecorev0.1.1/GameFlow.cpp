@@ -25,18 +25,18 @@ using namespace gamecore;
 
 GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,
-						   gamecore::SoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
+						   gamecore::SoundEngine* engine, player* thePlayer, PhysicsWorld* physics, 
 						   NPC* npc, GameMap* currentMap, InternalServer* client):
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),player_(thePlayer),							
-							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
+							npc_(npc), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr), hud_(device), debugOverlay_(device, world), mainMenu_(device), pause_(device), death_(device), note_(device)
+							inventoryScreen_(nullptr), hud_(device), debugOverlay_(device, physics), mainMenu_(device), pause_(device), death_(device), note_(device)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
 									//add world psychics to the console
 	console.loadDefaultCommands(device);//load the default commands help echo etc
-	registerGameCommands(console, thePlayer, world, device, currentMap_);
+	registerGameCommands(console, thePlayer, physics, device, currentMap_);
 	dimension2d<u32> screen = driver->getScreenSize();
 	console.getConfig().dimensionRatios.Y = 0.5f;
 	console.initializeConsole(guienv, dimension2d<s32>((s32)screen.Width, (s32)screen.Height));//prepare the console
@@ -53,50 +53,6 @@ void GameFlow::drawInventory ()
 {
 	if (inventoryScreen_)
 		inventoryScreen_->draw();
-}
-
-void GameFlow::playerNpcCollisionCheck()
-{
-	//player_->getPSceneNode()->
-	/*
-	for(int i=0; i < world_->getNumManifolds(); i++)
-	{
-		ICollisionCallbackInformation *info = world_->getCollisionCallback(i);
-
-		bool hasCollideAttribute = (info->getBody0()->getAttributes()->existsAttribute("collide"));
-		ICollisionObject* obj = (hasCollideAttribute) ? info->getBody0() : info->getBody1();
-
-		if(obj->getAttributes()->existsAttribute("collide") && obj->getAttributes()->getAttributeAsBool("collide") == true)
-		{
-			obj->getAttributes()->setAttribute("collide", false);
-			world_->addToDeletionQueue(obj);
-		}
-
-		obj = (hasCollideAttribute) ? info->getBody1() : info->getBody0();
-		if(obj->getAttributes()->existsAttribute("vehicle"))
-		{
-			if(obj->getAttributes()->existsAttribute("destroyable"))
-			{
-					// Since we set a reference to the raycast vehicle of each tank, it will be removed automatically
-					// by irrBullet when the object is removed!
-					world_->removeCollisionObject(obj);				
-			}
-		}
-
-		delete info;
-	}
-	
-	//player_->getKinematicChar()->getGhostObject()->setCompanionId(0);
-	//npc_.character_->GhostObject->setCompanionId(1);
-
-	if (npc_.getKinematicChar()->getGhostObject()->checkCollideWith(player_->getKinematicChar()->getGhostObject()))
-	{
-		npc_.isHit() = true;
-		std::cout << npc_.getHealth() << std::endl;
-	}
-	else
-		npc_.isHit() = false;
-		*/
 }
 
 void GameFlow::addClueObject(ClueObject* object)

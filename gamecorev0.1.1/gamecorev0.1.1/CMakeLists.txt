@@ -160,7 +160,7 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/ActionMap.h
   ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio lua51)
+target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio lua51)
 
 add_library(gamecore_physics STATIC
   ${ENGINE_DIR}/physics/PhysicsWorld.h ${ENGINE_DIR}/physics/CharacterController.h
@@ -181,7 +181,7 @@ target_link_libraries(gamecore_net PRIVATE enet)
 
 set(GAMECORE_SOURCES
   ClueObject.cpp GameFlow.cpp
-  defaultCmds.cpp exampleframework.cpp GrassNode.cpp InternalServer.cpp
+  defaultCmds.cpp GrassNode.cpp InternalServer.cpp
   main.cpp GameMap.cpp GameLayers.cpp Screens.cpp NetworkData.cpp NPC.cpp
   player.cpp remotePlayer.cpp SolarCycle.cpp
   WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
@@ -238,7 +238,7 @@ foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physi
   endif()
   set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 endforeach()
-target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
+target_link_libraries(gamecore PRIVATE gamecore_inventory_ui game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
 
 if(MSVC)
   target_link_options(gamecore PRIVATE

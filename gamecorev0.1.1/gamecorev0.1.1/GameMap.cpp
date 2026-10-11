@@ -8,8 +8,8 @@ using namespace core;
 using namespace scene;
 using namespace video;
 
-GameMap::GameMap(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, irrBulletWorld* world)
-	: mapLoader(device, driver, smgr, world), clue_(0), npc_(0)
+GameMap::GameMap(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, PhysicsWorld* physics)
+	: mapLoader(device, driver, smgr, physics), clue_(0), npc_(0)
 {
 }
 
