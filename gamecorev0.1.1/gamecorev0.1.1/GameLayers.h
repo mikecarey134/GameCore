@@ -6,16 +6,6 @@
 class GameFlow;
 namespace gamecore { class SoundEngine; }
 
-class ConsoleLayer : public InputLayer
-{
-public:
-	explicit ConsoleLayer(GameFlow& game) : game_(game) {}
-	bool onEvent(const irr::SEvent& event) override;
-
-private:
-	GameFlow& game_;
-};
-
 class NoteLayer : public InputLayer
 {
 public:

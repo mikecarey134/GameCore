@@ -32,6 +32,7 @@
 #include "GameMap.h"
 #include "MouseCapture.h"
 #include "GameLayers.h"
+#include "ConsoleLayer.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "Config_Reader.h"	
@@ -186,7 +187,7 @@ int main(void)
 	inputRouter.push(&inventoryLayer);
 	NoteLayer noteLayer(gameFlow);
 	inputRouter.push(&noteLayer);
-	ConsoleLayer consoleLayer(gameFlow);
+	ConsoleLayer consoleLayer(gameFlow.getConsole(), [&gameFlow]() { return !gameFlow.getPaused(); });
 	inputRouter.push(&consoleLayer);
 	device->setEventReceiver(&inputRouter);
 	MouseCapture mouseCapture(device->getCursorControl());
