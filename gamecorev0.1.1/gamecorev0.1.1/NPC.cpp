@@ -102,7 +102,11 @@ void NPC::luaSetDir()
 	lua_getglobal(L, "setDirection");
 
 	if (lua_pcall(L,0,3,0) != EXIT_SUCCESS)
-		exit(1);
+	{
+		std::cerr << "pickDir.lua setDirection failed: " << lua_tostring(L, -1) << std::endl;
+		lua_close(L);
+		return;
+	}
 
 	AIdirection_.X = (f32)lua_tonumber(L, -3);
 	AIdirection_.Z = (f32)lua_tonumber(L, -2);

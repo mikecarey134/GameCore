@@ -72,13 +72,19 @@ vector3df ClueObject::setLocation()
 
 	lua_pushinteger(L, theMap_->getClueLocations().size());
 
+	int selection = 0;
 	if (lua_pcall(L,1,1,0) != EXIT_SUCCESS)
-		exit(1);
-
-	int selection = (int)lua_tointeger(L, -1);
+		std::cerr << "ClueSetup.lua pickRandomLocation failed: " << lua_tostring(L, -1) << std::endl;
+	else
+		selection = (int)lua_tointeger(L, -1);
 	lua_close(L);
 
-	return theMap_->getClueLocations()[selection];
+	const std::vector<vector3df> locations = theMap_->getClueLocations();
+	if (locations.empty())
+		return vector3df(0,0,0);
+	if (selection < 0 || selection >= (int)locations.size())
+		selection = 0;
+	return locations[selection];
 }
 
 string<char> ClueObject::setClueMsg()
@@ -90,10 +96,11 @@ string<char> ClueObject::setClueMsg()
 
 	lua_getglobal(L, "setupClueMsg");
 
+	string<char> msg = "";
 	if (lua_pcall(L,0,1,0) != EXIT_SUCCESS)
-		exit(1);
-
-	string<char> msg = lua_tostring(L, -1);
+		std::cerr << "ClueSetup.lua setupClueMsg failed: " << lua_tostring(L, -1) << std::endl;
+	else if (lua_tostring(L, -1))
+		msg = lua_tostring(L, -1);
 	lua_close(L);
 
 	return msg;	
