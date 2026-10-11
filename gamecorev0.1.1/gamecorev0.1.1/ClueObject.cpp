@@ -8,8 +8,8 @@ using namespace io;
 using namespace gui;
 
 ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-					   irrBulletWorld*, irr::video::IVideoDriver* driver, GameMap* theMap, LuaVM& lua) : 
-						device_(device), driver_(driver), theMap_(theMap), lua_(lua) 
+					   irrBulletWorld*, irr::video::IVideoDriver*, GameMap* theMap, LuaVM& lua) : 
+						device_(device), theMap_(theMap), lua_(lua) 
 {
 	type_ = TYPE_CLUE;
 	lua_.doFile("scripts/ClueSetup.lua");
@@ -75,8 +75,6 @@ void ClueObject::update()
 	{
 		model_->setRotation(irr::core::vector3df(model_->getRotation().X, model_->getRotation().Y+1, model_->getRotation().Z));
 	}
-	else if (clueProperties_.showClue_)
-		drawClueMessage();
 }
 
 
@@ -103,58 +101,6 @@ string<char> ClueObject::setClueMsg()
 		msg = results[0].asString().c_str();
 
 	return msg;	
-}
-
-void ClueObject::drawClueMessage() 
-{	
-	int posX = 500;
-	int posY = 100;
-	int width = 250;
-	int height = 400;
-
-	int textHeigt = 50;
-	int charWidth = 15;
-	int textOffset = 40;
-
-	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/console.bmp");//device_->getGUIEnvironment()->getBuiltInFont();
-
-	//clueProperties_.showClue_ = true;
-	ITexture* note = driver_->getTexture("textures/bloodyNote.png");
-	
-	driver_->draw2DImage(note,position2d<s32>(posX,posY),rect<s32>(0,0,width,height),NULL,SColor(255,255,255,255), true);
-
-	int lineStart = 0;
-	int lineLength = 20;
-	int i = lineLength;
-	int j = 0;
-	string<char> line;
-	while (i < (int)clueProperties_.clueMessage_.size())
-	{
-		j = 0;	
-		if (clueProperties_.clueMessage_[i] != ' ')
-		{					
-			while ((i+j < (int)clueProperties_.clueMessage_.size()) && clueProperties_.clueMessage_[i-j] != ' ')
-				++j;
-		}
-		
-		line = clueProperties_.clueMessage_.subString(lineStart,lineLength);
-		lineStart += lineLength-j;
-		i += lineLength;
-		posY += textOffset;
-		
-		font->draw(line, 
-				   rect<s32>(posX+textOffset, posY+textOffset, 
-							 posX+(line.size()*charWidth), posY+textOffset+textHeigt),
-				   SColor(255,0,0,0));
-	}
-	//Draw the last line, since the quits before it prints. 
-	//Might want to find a better way to do this
-	line = clueProperties_.clueMessage_.subString(lineStart+1, clueProperties_.clueMessage_.size()-lineStart);
-	posY += textOffset;
-	font->draw(line, 
-		rect<s32>(posX+textOffset, posY+textOffset, 
-		posX+(line.size()*charWidth), posY+textOffset+textHeigt),
-		SColor(255,0,0,0));
 }
 
 void ClueObject::eraseModelFromWorld()

@@ -4,6 +4,7 @@
 #include <irrlicht.h>
 
 class player;
+class ClueObject;
 
 class Hud
 {
@@ -36,5 +37,28 @@ public:
 private:
 	irr::IrrlichtDevice* device_;
 };
+
+class DeathScreen
+{
+public:
+	explicit DeathScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	void draw();
+
+private:
+	irr::IrrlichtDevice* device_;
+};
+
+class NoteScreen
+{
+public:
+	explicit NoteScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	void draw(const ClueObject& clue);
+
+private:
+	irr::IrrlichtDevice* device_;
+};
+
+void drawIntro(irr::IrrlichtDevice* device);
+void drawLoading(irr::IrrlichtDevice* device);
 
 #endif

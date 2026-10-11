@@ -1,11 +1,13 @@
 #include "Screens.h"
 #include "player.h"
 #include "GameFlow.h"
+#include "ClueObject.h"
 
 using namespace irr;
 using namespace core;
 using namespace video;
 using namespace gui;
+using namespace scene;
 
 namespace
 {
@@ -151,4 +153,107 @@ void PauseScreen::draw()// render the pause menu
 void PauseScreen::hide()
 {
 	removeButtons(device_->getGUIEnvironment(), pauseMenuButtons);
+}
+
+void DeathScreen::draw()
+{
+	gui::IGUIFont* deathFont = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
+	dimension2d<u32> screen = device_->getVideoDriver()->getScreenSize();
+	if (deathFont)
+	{
+		deathFont->draw(L"You died", rect<s32>(0, screen.Height/2 - 60, screen.Width, screen.Height/2), SColor(255,200,0,0), true, true);
+		deathFont->draw(L"Press Esc for Main Menu", rect<s32>(0, screen.Height/2, screen.Width, screen.Height/2 + 40), SColor(255,255,255,255), true, true);
+	}
+}
+
+void NoteScreen::draw(const ClueObject& clue)
+{
+	IVideoDriver* driver = device_->getVideoDriver();
+	const string<char>& message = clue.getMessage();
+	int posX = 500;
+	int posY = 100;
+	int width = 250;
+	int height = 400;
+
+	int textHeigt = 50;
+	int charWidth = 15;
+	int textOffset = 40;
+
+	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/console.bmp");//device_->getGUIEnvironment()->getBuiltInFont();
+
+	//clueProperties_.showClue_ = true;
+	ITexture* note = driver->getTexture("textures/bloodyNote.png");
+	
+	driver->draw2DImage(note,position2d<s32>(posX,posY),rect<s32>(0,0,width,height),NULL,SColor(255,255,255,255), true);
+
+	int lineStart = 0;
+	int lineLength = 20;
+	int i = lineLength;
+	int j = 0;
+	string<char> line;
+	while (i < (int)message.size())
+	{
+		j = 0;	
+		if (message[i] != ' ')
+		{					
+			while ((i+j < (int)message.size()) && message[i-j] != ' ')
+				++j;
+		}
+		
+		line = message.subString(lineStart,lineLength);
+		lineStart += lineLength-j;
+		i += lineLength;
+		posY += textOffset;
+		
+		font->draw(line, 
+				   rect<s32>(posX+textOffset, posY+textOffset, 
+							 posX+(line.size()*charWidth), posY+textOffset+textHeigt),
+				   SColor(255,0,0,0));
+	}
+	//Draw the last line, since the quits before it prints. 
+	//Might want to find a better way to do this
+	line = message.subString(lineStart+1, message.size()-lineStart);
+	posY += textOffset;
+	font->draw(line, 
+		rect<s32>(posX+textOffset, posY+textOffset, 
+		posX+(line.size()*charWidth), posY+textOffset+textHeigt),
+		SColor(255,0,0,0));
+}
+
+void drawIntro(IrrlichtDevice* device)
+{
+	device->getVideoDriver()->beginScene(true, false, irr::video::SColor(255,0,0,0));
+
+	ITexture* backgroundImage = device->getVideoDriver()->getTexture("bill/intro.jpg");
+
+	device->getVideoDriver()->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
+	device->getGUIEnvironment()->drawAll();
+	device->getVideoDriver()->endScene();
+
+
+}
+
+void drawLoading(IrrlichtDevice* device)
+{
+	IVideoDriver* driver = device->getVideoDriver();
+	IGUIEnvironment* guienv = device->getGUIEnvironment();
+	driver->beginScene(true, false, irr::video::SColor(255,0,0,0));
+
+	driver->getTexture("bill/creepyman.jpg");
+	driver->getTexture("bill/loading.jpg");
+
+	//driver->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
+	//driver->draw2DImage(titleImage,position2d<s32>(100,100),rect<s32>(40,40,600,300),NULL,SColor(255,255,255,255), false);
+
+	guienv->drawAll();
+
+
+
+	irr::gui::IGUIFont* font = guienv->getFont("bill/bigfont.png");
+
+	font->draw(L"LOADING...", irr::core::rect<irr::s32>(325,275,475,325), irr::video::SColor(255,255,255,255));
+
+	driver->endScene();
+
+
 }

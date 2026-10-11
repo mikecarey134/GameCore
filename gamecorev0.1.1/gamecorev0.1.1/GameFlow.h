@@ -66,6 +66,7 @@ public:
 	void displayconsole(const u32 dm){console.renderConsole(guienv_,driver_,dm);}
 	void drawIntro     ();
 	void drawMainMenu  ();
+	void drawNotes();
 
 	void drawMessage   (const wchar_t* message);
 	void newRound      ();
@@ -122,4 +123,6 @@ private:
 	DebugOverlay debugOverlay_;
 	MainMenuScreen mainMenu_;
 	PauseScreen pause_;
+	DeathScreen death_;
+	NoteScreen note_;
 };

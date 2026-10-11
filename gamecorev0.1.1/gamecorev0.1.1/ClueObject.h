@@ -35,13 +35,13 @@ public:
 	void placeOnMap();
 	void reset();
 	bool isNoteShowing() const { return clueProperties_.showClue_; }
+	const irr::core::string<char>& getMessage() const { return clueProperties_.clueMessage_; }
 	void hideNote() { clueProperties_.showClue_ = false; }
 	irr::core::vector3df setLocation();
 	irr::core::string<char> setClueMsg();
 	irr::scene::ISceneNode* getModel () const { return model_; }
 	const bool& isFound() const				  { return clueProperties_.isFound_; }
 
-	void drawClueMessage();
 
 	void eraseModelFromWorld();
 
@@ -52,7 +52,6 @@ private:
 	irr::scene::ISceneNode* model_;
 
 	irr::IrrlichtDevice* device_;
-	irr::video::IVideoDriver* driver_;
 	GameMap* theMap_;
 	LuaVM& lua_;
 };

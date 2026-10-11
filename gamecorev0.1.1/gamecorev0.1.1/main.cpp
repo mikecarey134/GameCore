@@ -123,7 +123,7 @@ int main(void)
 
 	GUI theGui(device);//create an instance of gui
 	Hud hud(device);
-	theGui.drawIntro();//draw our intro 
+	drawIntro(device);//draw our intro 
 
 
 	
@@ -156,7 +156,7 @@ int main(void)
 	//set up the chat buffers font
 	chat_queue.setFont(device->getGUIEnvironment()->getFont("bill/console.bmp"));
 
-	theGui.drawloading(driver,guienv);//load gui and display loading while the computer is working
+	drawLoading(device);//load gui and display loading while the computer is working
 	
 
 	//Loading map now handled in its own class
@@ -314,6 +314,7 @@ int main(void)
 				
 					if (!gameFlow.getIsInventory())
 						hud.draw(thePlayer);
+					gameFlow.drawNotes();
 				    chat_queue.draw();
 					gameFlow.displayconsole(frameDeltaTime);
 					

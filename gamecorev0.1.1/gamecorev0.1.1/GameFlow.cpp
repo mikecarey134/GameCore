@@ -30,7 +30,7 @@ GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guien
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr), debugOverlay_(device, world), mainMenu_(device), pause_(device)
+							inventoryScreen_(nullptr), debugOverlay_(device, world), mainMenu_(device), pause_(device), death_(device), note_(device)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
@@ -137,6 +137,13 @@ remotePlayer* GameFlow::findRemotePlayer (std::string nodeName)
 	return rm;
 }
 
+void GameFlow::drawNotes()
+{
+	for (std::list<ClueObject*>::iterator clue = clueObjects_.begin(); clue != clueObjects_.end(); ++clue)
+		if ((*clue)->isNoteShowing())
+			note_.draw(**clue);
+}
+
 void GameFlow::update(u32, u32)//update the game throught the gameloop
 {
 	if (!player_->isDead())
@@ -172,15 +179,7 @@ void GameFlow::update(u32, u32)//update the game throught the gameloop
 	}
 
 	if (started && player_->isDead() && !pauseMenu)
-	{
-		gui::IGUIFont* deathFont = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
-		dimension2d<u32> screen = driver_->getScreenSize();
-		if (deathFont)
-		{
-			deathFont->draw(L"You died", rect<s32>(0, screen.Height/2 - 60, screen.Width, screen.Height/2), SColor(255,200,0,0), true, true);
-			deathFont->draw(L"Press Esc for Main Menu", rect<s32>(0, screen.Height/2, screen.Width, screen.Height/2 + 40), SColor(255,255,255,255), true, true);
-		}
-	}
+		death_.draw();
 
 	if(chatshown)
 		drawMessage(L"T Was Pressed!");
