@@ -1,0 +1,18 @@
+# Key bindings: one action per line, "action = Key" or "action = Key, Key" for more than one key.
+# Lines starting with # are ignored. Remove the # in front of a line to change that binding.
+# Key names: A-Z, 0-9, F1-F12, Space, Escape, Grave, Tab, Return, Back, Delete,
+# Up, Down, Left, Right, Shift, Ctrl, Alt, MouseLeft, MouseRight, MouseMiddle
+#
+# move_forward = W
+# move_back = S
+# move_left = A
+# move_right = D
+# jump = Space
+# inventory = E
+# lamp = F
+# chat = T
+# debug = F3
+# console = Grave
+# pause = Escape
+# attack = MouseLeft
+# pickup = MouseRight
