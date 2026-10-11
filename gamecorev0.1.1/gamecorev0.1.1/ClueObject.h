@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "common.h"
-#include "mapLoader.h"
+#include "GameMap.h"
 
 class ClueObject: public InteractiveObject
 {
@@ -26,7 +26,7 @@ private:
 
 public:
 	ClueObject(irr::core::string<char> filename, irr::IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-				irrBulletWorld* world, irr::video::IVideoDriver* driver, mapLoader* theMap);
+				irrBulletWorld* world, irr::video::IVideoDriver* driver, GameMap* theMap);
 	~ClueObject() {}
 
 	const irr::core::string<char> getObjectType() const { return type_; }
@@ -49,5 +49,5 @@ private:
 
 	irr::IrrlichtDevice* device_;
 	irr::video::IVideoDriver* driver_;
-	mapLoader* theMap_;
+	GameMap* theMap_;
 };

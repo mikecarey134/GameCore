@@ -475,7 +475,7 @@ bool IC_Command_LM::invoke(const array<WideString>& args, IC_Dispatcher*, IC_Mes
 				newMap += (char)args[0][i];
 			
 			currentMap_->closeMap();
-			currentMap_->setMap(newMap);
+			currentMap_->setMap(PREFIX + newMap);
 			currentMap_->loadMap();
 			house_spawn spawn;
 			thePlayer_->setposition(spawn.get_spawn());

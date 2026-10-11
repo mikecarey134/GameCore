@@ -110,14 +110,14 @@ endforeach()
 add_library(gamecore_engine STATIC
   kinematiccharactercontroller.cpp kinematiccharactercontroller.h ChatQueue.cpp ChatQueue.h
   ParticleSystem.cpp ParticleSystem.h Config_Reader.cpp Config_Reader.h
-  InteractiveObject.h SAppcontext.h SoundEngine.cpp SoundEngine.h)
+  InteractiveObject.h SAppcontext.h SoundEngine.cpp SoundEngine.h mapLoader.cpp mapLoader.h)
 target_include_directories(gamecore_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
 set(GAMECORE_SOURCES
   ClueObject.cpp console.cpp consoleevent.cpp
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
-  main.cpp mapLoader.cpp NetworkData.cpp NPC.cpp
+  main.cpp GameMap.cpp NetworkData.cpp NPC.cpp
   player.cpp remotePlayer.cpp SolarCycle.cpp utils.cpp
   WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
 

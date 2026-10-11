@@ -3,32 +3,32 @@
 
 #include <irrlicht.h>
 #include <irrbullet.h>
+#include <string>
 #include <vector>
-
-#define PREFIX "map/"
 
 class mapLoader
 {
 public:
 	mapLoader (irr::IrrlichtDevice* device, irr::video::IVideoDriver* driver, irr::scene::ISceneManager* smgr, irrBulletWorld* world);
 
-	~mapLoader() {}
+	virtual ~mapLoader() {}
 
-	void setMap (std::string mapName) { mapName_ = PREFIX; mapName_ += mapName.c_str(); }
+	void setMap (std::string mapPath) { mapName_ = mapPath.c_str(); }
 
 	void loadMap();
 	void closeMap();
 
-	const std::vector<irr::core::vector3df> getClueLocations() const { return clueLocations_; }
+protected:
+	virtual void onMapLoaded() {}
+	virtual void onMapClosed() {}
 
-private:
 	irr::IrrlichtDevice* device_;
 	irr::video::IVideoDriver* driver_;
 	irr::scene::ISceneManager* smgr_;
 	irrBulletWorld* world_;
 
+private:
 	irr::core::string<char> mapName_;
-	std::vector<irr::core::vector3df> clueLocations_;
 	std::vector<ICollisionObject*> bodies_;
 	std::vector<irr::scene::ISceneNode*> mapNodes_;
 };

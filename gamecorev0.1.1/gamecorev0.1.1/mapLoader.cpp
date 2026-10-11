@@ -1,9 +1,5 @@
 #include "mapLoader.h"
-#include "common.h"
-#include "GrassNode.h"
 #include <vector>
-
-#define MAX_GRASS = 2000
 
 using namespace irr;
 using namespace core;
@@ -69,22 +65,6 @@ void mapLoader::loadMap()
 				bodies_.push_back(world_->addRigidBody(shape));
 				//node->setMaterialFlag(EMF_BACK_FACE_CULLING,true);
 				//node->setID(IDFlag_IsPickable);
-
-				if(suffix == "landscape")
-				{
-					
-					GrassNode* grass_node;
-					std::vector<GrassNode*> grass;
-
-					
-					for(int g = 0; g < 100;++g){
-						grass_node = new GrassNode(device_,vector3df(0,0,0));
-						grass_node->set_position(vector3df((f32)(rand()%200) ,(f32)(rand() % 1 + (-9)), (f32)(rand()% 200)));
-						grass.push_back(grass_node);
-					}
-
-
-				}
 	
 
 
@@ -117,23 +97,9 @@ void mapLoader::loadMap()
 		node->setAutomaticCulling(EAC_BOX);//cull unneeded primitives 
 	}
 
-	vector3df clueLocation(167, -4, 67);
-	clueLocations_.push_back(clueLocation);
-	clueLocation = vector3df(114, -4, 80);
-	clueLocations_.push_back(clueLocation);
-
-
 	device_->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
-
-	//temp skybox later we will have one based off the time of day
-	smgr_->addSkyBoxSceneNode(
-		driver_->getTexture("map/sky/bstop.jpg"),
-		driver_->getTexture("map/sky/bstop.jpg"),
-		driver_->getTexture("map/sky/bsleft.jpg"),
-		driver_->getTexture("map/sky/bsright.jpg"),
-		driver_->getTexture("map/sky/bsfront.jpg"),
-		driver_->getTexture("map/sky/bsback.jpg"));
+	onMapLoaded();
 
 	const core::list<ISceneNode*>& after = smgr_->getRootSceneNode()->getChildren();
 	for (core::list<ISceneNode*>::ConstIterator it = after.begin(); it != after.end(); ++it)
@@ -165,5 +131,5 @@ void mapLoader::closeMap()
 		mapNodes_[i]->drop();
 	}
 	mapNodes_.clear();
-	clueLocations_.clear();
+	onMapClosed();
 }

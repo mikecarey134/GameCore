@@ -6,7 +6,7 @@
 #include "console.h"
 #include "player.h"
 #include<irrbullet.h>
-#include "mapLoader.h"
+#include "GameMap.h"
 
 //
 //	Default Command Set

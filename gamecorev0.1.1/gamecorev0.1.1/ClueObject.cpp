@@ -8,7 +8,7 @@ using namespace io;
 using namespace gui;
 
 ClueObject::ClueObject(irr::core::string<char> filename, IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-					   irrBulletWorld*, irr::video::IVideoDriver* driver, mapLoader* theMap) : 
+					   irrBulletWorld*, irr::video::IVideoDriver* driver, GameMap* theMap) : 
 						device_(device), driver_(driver), theMap_(theMap) 
 {
 	type_ = TYPE_CLUE;

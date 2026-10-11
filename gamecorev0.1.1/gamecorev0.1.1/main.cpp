@@ -29,7 +29,7 @@
 #include "NPC.h"
 #include "ParticleSystem.h"
 #include "InternalServer.h"
-#include "mapLoader.h"
+#include "GameMap.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
 #include "Config_Reader.h"	
@@ -154,8 +154,8 @@ int main(void)
 	
 
 	//Loading map now handled in its own class
-	mapLoader currentMap(device,driver,smgr,world);
-	currentMap.setMap("mountains.irr");
+	GameMap currentMap(device,driver,smgr,world);
+	currentMap.setMap(PREFIX "mountains.irr");
 	//currentMap.setMap("nm.irr");
 	//WeaponObject testWeap("characters/knife/knife.obj", device,vector3df(132,37,-57));
 		//takes care of all input devices and events calls update during the gameloop
