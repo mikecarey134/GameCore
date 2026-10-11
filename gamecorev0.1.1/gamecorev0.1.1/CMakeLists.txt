@@ -201,6 +201,11 @@ target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT
 target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 gamecore_net)
 add_test(NAME engine_tests COMMAND engine_tests)
 
+add_executable(physics_tests engine/tests/main.cpp engine/tests/physics_contract_test.cpp)
+target_include_directories(physics_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+target_link_libraries(physics_tests PRIVATE gamecore_physics)
+add_test(NAME physics_tests COMMAND physics_tests)
+
 add_library(game_protocol STATIC protocol/GameMessages.cpp protocol/GameMessages.h)
 target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(game_protocol PUBLIC gamecore_net)
@@ -221,7 +226,7 @@ target_include_directories(net_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/invent
 target_link_libraries(net_tests PRIVATE gamecore_server_core game_client_net Threads::Threads)
 add_test(NAME net_tests COMMAND net_tests)
 
-foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physics game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
+foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physics physics_tests game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
