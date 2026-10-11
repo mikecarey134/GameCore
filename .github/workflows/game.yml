@@ -17,16 +17,19 @@ jobs:
             configure: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
             keep_going: -- -k
             exe: ./gamecore
+            binaries: gamecore
           - os: macos-14
             install: brew install irrlicht
             configure: ""
             keep_going: -- -k
             exe: ./gamecore
+            binaries: gamecore
           - os: windows-2022
             install: vcpkg install irrlicht:x64-windows
             configure: -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
             keep_going: ""
             exe: ./Release/gamecore.exe
+            binaries: Release/gamecore.exe Release/*.dll
     defaults:
       run:
         shell: bash
@@ -68,3 +71,24 @@ jobs:
         timeout-minutes: 5
         working-directory: gamecorev0.1.1/gamecorev0.1.1
         run: ${{ matrix.exe }} --smoke
+
+      - name: Collect binary
+        id: collect
+        working-directory: gamecorev0.1.1/gamecorev0.1.1
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/dist"
+          cp ${{ matrix.binaries }} "$GITHUB_WORKSPACE/dist/"
+          printf '%s\n' \
+            "GameCore build of commit $GITHUB_SHA for ${{ matrix.os }}." \
+            "This is the binary only. Run it from the game data directory (gamecorev0.1.1/gamecorev0.1.1 in the repository)," \
+            "next to config/, map/, models/, sounds/ and the other data folders, or it will not find its files." \
+            "Linux and macOS builds need Irrlicht 1.8 installed (libirrlicht or Homebrew irrlicht)." \
+            > "$GITHUB_WORKSPACE/dist/RUN.txt"
+          echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: gamecore-${{ matrix.os }}-${{ steps.collect.outputs.short }}
+          path: dist/
+          if-no-files-found: error
