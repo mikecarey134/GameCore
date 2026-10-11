@@ -11,7 +11,7 @@
 #include "remotePlayer.h"
 #include "player.h"
 #include<irrlicht.h>
-#include<irrKlang.h>
+#include "SoundEngine.h"
 #include<irrbullet.h>
 #include<string>
 #include"kinematiccharactercontroller.h"
@@ -19,7 +19,7 @@
 
 
 using namespace irr;
-using namespace irrklang;
+using namespace gamecore;
 using namespace core;
 using namespace scene;
 using namespace video;
@@ -28,7 +28,7 @@ using namespace gui;
 
 
 remotePlayer::remotePlayer(IrrlichtDevice* device,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
-						   ISoundEngine* engine, irrBulletWorld* world,int model_type):
+						   SoundEngine* engine, irrBulletWorld* world,int model_type):
 world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_(false), dead_(false)
 {

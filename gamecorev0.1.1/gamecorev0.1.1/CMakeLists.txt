@@ -110,7 +110,7 @@ endforeach()
 add_library(gamecore_engine STATIC
   kinematiccharactercontroller.cpp kinematiccharactercontroller.h ChatQueue.cpp ChatQueue.h
   ParticleSystem.cpp ParticleSystem.h Config_Reader.cpp Config_Reader.h
-  InteractiveObject.h SAppcontext.h irrKlang.cpp irrKlang.h)
+  InteractiveObject.h SAppcontext.h SoundEngine.cpp SoundEngine.h)
 target_include_directories(gamecore_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
@@ -142,7 +142,7 @@ if(WIN32)
   target_link_libraries(gamecore PRIVATE ws2_32 opengl32)
   if(MSVC)
     target_link_options(gamecore PRIVATE
-      /NODEFAULTLIB:irrKlang.lib /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
+      /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
   endif()
 elseif(APPLE)
   target_link_libraries(gamecore PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework IOKit")

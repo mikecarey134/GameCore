@@ -9,7 +9,7 @@
 
 #pragma once
 #include<irrlicht.h>
-#include<irrKlang.h>
+#include "SoundEngine.h"
 #include<irrbullet.h>
 #include<string>
 #include<vector>
@@ -50,7 +50,7 @@ public:
 
 	player(irr::IrrlichtDevice* device,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world, std::string player_name,int model_type);
+		gamecore::SoundEngine* engine, irrBulletWorld* world, std::string player_name,int model_type);
 	
 	
 	~player(void);
@@ -141,10 +141,10 @@ private:
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
 	
-	irrklang::ISoundEngine* engine_;
-	irrklang::ISound* playerSteps_;
-	irrklang::ISound* player_punch_;
-	irrklang::ISound* player_jump_;
+	gamecore::SoundEngine* engine_;
+	gamecore::Sound* playerSteps_;
+	gamecore::Sound* player_punch_;
+	gamecore::Sound* player_jump_;
 	
 
 	irr::f32 xDirection_;

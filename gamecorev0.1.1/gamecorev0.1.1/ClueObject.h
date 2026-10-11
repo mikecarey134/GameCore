@@ -3,7 +3,7 @@
 #include "InteractiveObject.h"
 
 #include<irrlicht.h>
-#include<irrKlang.h>
+#include "SoundEngine.h"
 #include<irrbullet.h>
 #include <lua.hpp>
 #include <vector>

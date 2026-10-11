@@ -1,16 +1,16 @@
-#include "irrKlang.h"
+#include "SoundEngine.h"
 #include <miniaudio.h>
 #include <algorithm>
 #include <cstdio>
 
-namespace irrklang
+namespace gamecore
 {
-	ISound::ISound(const std::string& file, ma_sound* sound, bool tracked)
+	Sound::Sound(const std::string& file, ma_sound* sound, bool tracked)
 		: file_(file), sound_(sound), tracked_(tracked), released_(false), paused_(false), volume_(1.0f)
 	{
 	}
 
-	ISound::~ISound()
+	Sound::~Sound()
 	{
 		if (sound_)
 		{
@@ -19,7 +19,7 @@ namespace irrklang
 		}
 	}
 
-	void ISound::setIsPaused(bool paused)
+	void Sound::setIsPaused(bool paused)
 	{
 		paused_ = paused;
 		if (!sound_)
@@ -30,14 +30,14 @@ namespace irrklang
 			ma_sound_start(sound_);
 	}
 
-	void ISound::setVolume(ik_f32 volume)
+	void Sound::setVolume(float volume)
 	{
 		volume_ = volume;
 		if (sound_)
 			ma_sound_set_volume(sound_, volume);
 	}
 
-	void ISound::stop()
+	void Sound::stop()
 	{
 		paused_ = true;
 		if (!sound_)
@@ -46,12 +46,12 @@ namespace irrklang
 		ma_sound_seek_to_pcm_frame(sound_, 0);
 	}
 
-	bool ISound::isFinished()
+	bool Sound::isFinished()
 	{
 		return !sound_ || (!paused_ && !ma_sound_is_playing(sound_));
 	}
 
-	ISoundEngine::ISoundEngine() : engine_(new ma_engine)
+	SoundEngine::SoundEngine() : engine_(new ma_engine)
 	{
 		if (ma_engine_init(NULL, engine_) != MA_SUCCESS)
 		{
@@ -61,7 +61,7 @@ namespace irrklang
 		}
 	}
 
-	ISoundEngine::~ISoundEngine()
+	SoundEngine::~SoundEngine()
 	{
 		for (size_t i = 0; i < sounds_.size(); ++i)
 			delete sounds_[i];
@@ -72,7 +72,7 @@ namespace irrklang
 		}
 	}
 
-	ISound* ISoundEngine::play2D(const char* file, bool looped, bool startPaused, bool track)
+	Sound* SoundEngine::play2D(const char* file, bool looped, bool startPaused, bool track)
 	{
 		removeFinished();
 
@@ -94,7 +94,7 @@ namespace irrklang
 		if (!sound && !tracked)
 			return 0;
 
-		ISound* result = new ISound(file, sound, tracked);
+		Sound* result = new Sound(file, sound, tracked);
 		sounds_.push_back(result);
 		if (sound)
 			ma_sound_set_looping(sound, looped);
@@ -102,7 +102,7 @@ namespace irrklang
 		return tracked ? result : 0;
 	}
 
-	bool ISoundEngine::isCurrentlyPlaying(const char* file)
+	bool SoundEngine::isCurrentlyPlaying(const char* file)
 	{
 		for (size_t i = 0; i < sounds_.size(); ++i)
 			if (sounds_[i]->file_ == file && sounds_[i]->sound_ && ma_sound_is_playing(sounds_[i]->sound_))
@@ -110,7 +110,7 @@ namespace irrklang
 		return false;
 	}
 
-	void ISoundEngine::removeSoundSource(const char* file)
+	void SoundEngine::removeSoundSource(const char* file)
 	{
 		for (size_t i = 0; i < sounds_.size(); ++i)
 			if (sounds_[i]->file_ == file)
@@ -118,25 +118,25 @@ namespace irrklang
 		removeFinished();
 	}
 
-	void ISoundEngine::stopAllSounds()
+	void SoundEngine::stopAllSounds()
 	{
 		for (size_t i = 0; i < sounds_.size(); ++i)
 			sounds_[i]->stop();
 		removeFinished();
 	}
 
-	void ISoundEngine::setSoundVolume(ik_f32 volume)
+	void SoundEngine::setSoundVolume(float volume)
 	{
 		if (engine_)
 			ma_engine_set_volume(engine_, volume);
 	}
 
-	void ISoundEngine::removeFinished()
+	void SoundEngine::removeFinished()
 	{
 		size_t kept = 0;
 		for (size_t i = 0; i < sounds_.size(); ++i)
 		{
-			ISound* sound = sounds_[i];
+			Sound* sound = sounds_[i];
 			bool owned = !sound->tracked_ || sound->released_;
 			bool idle = !sound->sound_ || !ma_sound_is_playing(sound->sound_);
 			if (owned && idle)
@@ -147,8 +147,8 @@ namespace irrklang
 		sounds_.resize(kept);
 	}
 
-	ISoundEngine* createIrrKlangDevice()
+	SoundEngine* createSoundEngine()
 	{
-		return new ISoundEngine();
+		return new SoundEngine();
 	}
 }

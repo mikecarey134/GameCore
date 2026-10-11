@@ -17,14 +17,14 @@ using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-using namespace irrklang;
+using namespace gamecore;
 
 
 
 
 consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI* gui,
-						   irrklang::ISoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
+						   gamecore::SoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
 						   NPC* npc, mapLoader* currentMap, InternalServer* client):
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 

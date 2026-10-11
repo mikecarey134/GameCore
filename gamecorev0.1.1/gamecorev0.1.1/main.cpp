@@ -16,7 +16,7 @@
 #include "ChatQueue.h"
 #include <irrbullet.h>
 #include <irrlicht.h>
-#include <irrKlang.h>
+#include "SoundEngine.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -47,7 +47,7 @@
 
 //standard irrlicht namespaces
 using namespace irr;
-using namespace irrklang;
+using namespace gamecore;
 using namespace core;
 using namespace scene;
 using namespace video;
@@ -66,7 +66,6 @@ using namespace RakNet;
 #endif
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
-#pragma comment(lib, "irrKlang.lib")
 
 #ifdef CONSOLE//if we want the console displayed
 #else
@@ -123,8 +122,8 @@ int main(void)
 
 	
 	device->setWindowCaption(L"gamecore Build v0.1.1(Alpha)");//set the caption for the window
-	ISoundEngine* engine = createIrrKlangDevice();//add sounds to irrlicht
-	if (!engine)//if the irrklang device fails exit 
+	SoundEngine* engine = createSoundEngine();//add sounds to irrlicht
+	if (!engine)//if the sound engine fails exit 
 	{
 		device->drop();
 		return 1;
@@ -204,7 +203,7 @@ int main(void)
 	u32 then = device->getTimer()->getTime();
 
 	engine->play2D("sounds/discovery.mp3", true);	
-	ISound* gameMusic = 0;
+	Sound* gameMusic = 0;
 
 	
 	//clear the console before the game starts

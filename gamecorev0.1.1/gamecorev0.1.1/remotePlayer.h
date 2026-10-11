@@ -6,7 +6,7 @@
 /************************************************************************/
 #pragma once
 #include<irrlicht.h>
-#include<irrKlang.h>
+#include "SoundEngine.h"
 #include<irrbullet.h>
 #include <string>
 
@@ -21,7 +21,7 @@ public:
 	remotePlayer(){}
 	remotePlayer(irr::IrrlichtDevice* device,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world, int model_type);
+		gamecore::SoundEngine* engine, irrBulletWorld* world, int model_type);
 
 	~remotePlayer(void);
 
@@ -74,8 +74,8 @@ private:
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
 
-	irrklang::ISoundEngine* engine_;
-	irrklang::ISound* player_punch;
+	gamecore::SoundEngine* engine_;
+	gamecore::Sound* player_punch;
 
 	irr::u32 then;
 

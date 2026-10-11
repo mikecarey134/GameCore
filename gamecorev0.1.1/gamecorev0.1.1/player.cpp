@@ -10,7 +10,7 @@
 #include <fstream>
 
 using namespace irr;
-using namespace irrklang;
+using namespace gamecore;
 using namespace core;
 using namespace scene;
 using namespace video;
@@ -18,7 +18,7 @@ using namespace io;
 using namespace gui;
 
 
-player::player(IrrlichtDevice* device,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
+player::player(IrrlichtDevice* device,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, SoundEngine* engine, 
 			   irrBulletWorld* world, std::string player_name,int model_type):
 world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),

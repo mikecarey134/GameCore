@@ -29,7 +29,7 @@ public:
 	//ctor
 	NetworkData(irr::IrrlichtDevice* device,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world, ChatQueue* message_buffer, player* thePlayer);
+		gamecore::SoundEngine* engine, irrBulletWorld* world, ChatQueue* message_buffer, player* thePlayer);
 	//dtor
 	virtual ~NetworkData();
 
@@ -63,7 +63,7 @@ private:
 	irr::IrrlichtDevice* device_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
-	irrklang::ISoundEngine* engine_;
+	gamecore::SoundEngine* engine_;
 	irrBulletWorld* world_;
 	ChatQueue* message_buffer_;
 	common_paths paths_;

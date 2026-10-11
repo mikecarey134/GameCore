@@ -9,7 +9,7 @@
 #include "SolarCycle.h"
 
 using namespace irr;
-using namespace irrklang;
+using namespace gamecore;
 using namespace core;
 using namespace scene;
 using namespace video;

@@ -13,7 +13,7 @@ By: Michael Carey
 
 NetworkData::NetworkData(irr::IrrlichtDevice* device,const char*,
 						 irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-						 irrklang::ISoundEngine* engine, irrBulletWorld* world,ChatQueue* message_buffer, player* thePlayer) : currentPlayers_(0), maxPlayers_(8),
+						 gamecore::SoundEngine* engine, irrBulletWorld* world,ChatQueue* message_buffer, player* thePlayer) : currentPlayers_(0), maxPlayers_(8),
 						 device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),message_buffer_(message_buffer), player_(thePlayer){}
 
 NetworkData::~NetworkData(){}

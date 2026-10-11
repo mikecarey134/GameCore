@@ -11,7 +11,7 @@
 #include <fstream>
 #include <irrlicht.h>
 #include <irrbullet.h>
-#include <irrKlang.h>
+#include "SoundEngine.h"
 #include <list>
 #include "console.h"
 #include "SAppcontext.h"
@@ -41,7 +41,7 @@ public:
 
 	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,GUI* gui, 
-		/*irr::scene::ICameraSceneNode* camera,*/ irrklang::ISoundEngine* engine, 
+		/*irr::scene::ICameraSceneNode* camera,*/ gamecore::SoundEngine* engine, 
 		player* thePlayer, irrBulletWorld* world, NPC* npc, mapLoader* currentMap, InternalServer* client);
 	
 	~consoleevent();
@@ -106,7 +106,7 @@ private:
 	bool chatshown;
 	bool creditsDisplayed;
 	bool inventory;
-	irrklang::ISoundEngine* engine_;
+	gamecore::SoundEngine* engine_;
 	mapLoader* currentMap_;
 	InternalServer* client_;
 	irr::gui::IGUIEditBox* ebox_;

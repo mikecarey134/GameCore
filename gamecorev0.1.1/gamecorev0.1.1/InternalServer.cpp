@@ -36,7 +36,7 @@ using namespace std;
 
 InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,const char* filename,
 							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-							   irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip,
+							   gamecore::SoundEngine* engine, irrBulletWorld* world, char* ip,
 							   int remote_port, int local_port,ChatQueue* message_buffer, 
 							   player* thePlayer): online_(online),
 							   networkData_(device,filename,smgr,driver,engine,world, message_buffer, thePlayer),
