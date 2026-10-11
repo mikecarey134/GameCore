@@ -397,40 +397,10 @@ void IC_Console::loadDefaultCommands(irr::IrrlichtDevice* device)
 	cmd = new IC_Command_EXIT();
 	registerCommand(cmd);
 
-	cmd = new IC_Command_TP (thePlayer_);
-	registerCommand(cmd);
-
-	cmd = new IC_Command_RB (thePlayer_,world_,device);
-	registerCommand(cmd);
-	
-	cmd = new IC_Command_GV(world_);
-	registerCommand(cmd);
-	
-	cmd = new IC_Command_PGV(thePlayer_);
-	registerCommand(cmd);
-
-	cmd = new IC_Command_P_SPEED(thePlayer_);
-	registerCommand(cmd);
-
-	cmd = new IC_Command_PH(thePlayer_);
-	registerCommand(cmd);
-
-	cmd = new IC_Command_SAY(thePlayer_);
-	registerCommand(cmd);
-
-	cmd = new IC_Command_C(thePlayer_);
-	registerCommand(cmd);
-
-	cmd = new IC_Command_H(thePlayer_);
-	registerCommand(cmd);
-
 	cmd = new IC_Command_CLS();
 	registerCommand(cmd);
 
 	cmd = new IC_Command_QUIT();
-	registerCommand(cmd);
-
-	cmd = new IC_Command_LM(currentMap_, thePlayer_);
 	registerCommand(cmd);
 }
 //=========================================================================================

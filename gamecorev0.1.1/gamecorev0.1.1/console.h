@@ -6,9 +6,6 @@
 #include "includes.h"
 #include<exception>
 #include "utils.h"
-#include"player.h"
-#include"mapLoader.h"
-#include<irrbullet.h>
 #include<irrlicht.h>
 
 
@@ -307,23 +304,6 @@ private:
 	WideString currentCommand;
 
 
-	//!the affected player
-	player* thePlayer_;
-	irrBulletWorld* world_;
-	irr::IrrlichtDevice* device_;
-	mapLoader* currentMap_;
-
-
-public:
-
-	//add console extentions
-	void addExtensions(player* thePlayer,irrBulletWorld* world,irr::IrrlichtDevice* device, mapLoader* currentMap)
-	{
-		thePlayer_ = thePlayer;
-		world_=world;
-		device_ = device;
-		currentMap_ = currentMap;
-	}
 };
 //=====================================================================================
 #endif

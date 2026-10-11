@@ -9,6 +9,7 @@
 
 
 #include "GameFlow.h"
+#include "defaultCmds.h"
 #include "InventoryScreen.h"
 
 using namespace irr;
@@ -33,9 +34,9 @@ GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guien
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
-	console.addExtensions(thePlayer,world,device,currentMap_);//register the player in the console
 									//add world psychics to the console
 	console.loadDefaultCommands(device);//load the default commands help echo etc
+	registerGameCommands(console, thePlayer, world, device, currentMap_);
 	console.initializeConsole(guienv, dimension2d<s32>(800,500));//prepare the console
 	console.setVisible(false);
 

@@ -192,4 +192,6 @@ private:
 };
 
 
+void registerGameCommands(IC_Console& console, player* thePlayer, irrBulletWorld* world, irr::IrrlichtDevice* device, mapLoader* currentMap);
+
 #endif

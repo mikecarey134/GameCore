@@ -511,3 +511,17 @@ bool IC_Command_H::invoke(const array<WideString>&, IC_Dispatcher*, IC_MessageSi
 	thePlayer_->damage();
 	return true;
 }
+
+void registerGameCommands(IC_Console& console, player* thePlayer, irrBulletWorld* world, irr::IrrlichtDevice* device, mapLoader* currentMap)
+{
+	console.registerCommand(new IC_Command_TP(thePlayer));
+	console.registerCommand(new IC_Command_RB(thePlayer, world, device));
+	console.registerCommand(new IC_Command_GV(world));
+	console.registerCommand(new IC_Command_PGV(thePlayer));
+	console.registerCommand(new IC_Command_P_SPEED(thePlayer));
+	console.registerCommand(new IC_Command_PH(thePlayer));
+	console.registerCommand(new IC_Command_SAY(thePlayer));
+	console.registerCommand(new IC_Command_C(thePlayer));
+	console.registerCommand(new IC_Command_H(thePlayer));
+	console.registerCommand(new IC_Command_LM(currentMap, thePlayer));
+}
