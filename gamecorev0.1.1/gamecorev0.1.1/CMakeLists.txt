@@ -120,6 +120,7 @@ endif()
 if(APPLE)
   target_compile_definitions(gamecore PRIVATE GL_SILENCE_DEPRECATION)
 endif()
+set_target_properties(gamecore PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 target_link_libraries(gamecore PRIVATE gamecore_inventory_ui irrbullet raknet lua51 irrlicht_engine ${IRRKLANG_LIBRARY} ${CMAKE_DL_LIBS})
 
 if(WIN32)
