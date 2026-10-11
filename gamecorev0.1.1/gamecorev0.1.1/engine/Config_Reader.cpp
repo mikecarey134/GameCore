@@ -9,6 +9,9 @@
 #include <iostream>
 #include <cstring>
 #include "Config_Reader.h"
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
 
 using namespace irr;
 using namespace core;
@@ -21,7 +24,15 @@ using namespace gui;
 Config_Reader::Config_Reader(const char* filename)
 {
 	//make an instance of irrlicht device to read the file
+#ifdef __APPLE__
+	char startDir[4096];
+	bool haveStartDir = getcwd(startDir, sizeof(startDir)) != 0;
+#endif
 	device_ = createDevice(EDT_NULL,dimension2d<u32>(0,0),16,false);
+#ifdef __APPLE__
+	if (haveStartDir && chdir(startDir) != 0)
+		std::cerr << "Could not return to " << startDir << "\n";
+#endif
 	if(!device_)//if we cannot create a device
 	{
 		exit(-1);
@@ -35,6 +46,7 @@ Config_Reader::Config_Reader(const char* filename)
 
 	if(!fs_->existFile(filename_))//if the file exsists
 	{
+		std::cerr << "Config file not found: " << filename_ << "\n";
 		exit(-1);
 	}
 
