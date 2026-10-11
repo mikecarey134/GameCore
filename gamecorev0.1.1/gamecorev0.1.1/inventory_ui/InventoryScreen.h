@@ -16,6 +16,7 @@ public:
 	bool onEvent(const irr::SEvent& event);
 	void draw();
 	void close();
+	void setCloseKeyName(const std::string& name) { closeKeyName_ = name; }
 
 private:
 	void drawFrame();
@@ -38,6 +39,7 @@ private:
 	inventory::InventoryLayout layout_;
 	std::unique_ptr<inventory::InventoryController> controller_;
 	std::string loadError_;
+	std::string closeKeyName_ = "E";
 	int mouseX_;
 	int mouseY_;
 };

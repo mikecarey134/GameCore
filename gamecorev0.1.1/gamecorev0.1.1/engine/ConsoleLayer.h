@@ -4,16 +4,18 @@
 #include <functional>
 #include "InputRouter.h"
 #include "console.h"
+#include "ActionMap.h"
 
 class ConsoleLayer : public InputLayer
 {
 public:
-	explicit ConsoleLayer(IC_Console& console, std::function<bool()> canToggle = nullptr)
-		: console_(console), canToggle_(canToggle) {}
+	ConsoleLayer(IC_Console& console, const ActionMap& actions, std::function<bool()> canToggle = nullptr)
+		: console_(console), actions_(actions), canToggle_(canToggle) {}
 	bool onEvent(const irr::SEvent& event) override;
 
 private:
 	IC_Console& console_;
+	const ActionMap& actions_;
 	std::function<bool()> canToggle_;
 };
 

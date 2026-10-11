@@ -22,7 +22,6 @@
 #include <ctime>
 #include "common.h"
 #include "SAppcontext.h"
-#include "keymap.h"
 #include "console.h"
 #include "GameFlow.h"
 #include "player.h"
@@ -34,6 +33,7 @@
 #include "GameLayers.h"
 #include "Screens.h"
 #include "ConsoleLayer.h"
+#include "ActionMap.h"
 #include "defaultCmds.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
@@ -166,7 +166,11 @@ int main(int argc, char** argv)
 		//takes care of all input devices and events calls update during the gameloop
 
 	//load our player into the scene
-	player thePlayer(device,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
+	ActionMap actions;
+	bindDefaultActions(actions);
+	actions.loadFile("config/keybinds.txt", [](const std::string& message) { std::cerr << message << std::endl; });
+
+	player thePlayer(device,actions,"characters/stick_mike.ms3d",smgr,driver, engine, world,config_reader.get_player_name()
 		,config_reader.get_model());
 
 	SolarCycle sun(device,vector3df(thePlayer.getPosition().X,thePlayer.getPosition().Y+400,thePlayer.getPosition().Z));
@@ -185,17 +189,17 @@ int main(int argc, char** argv)
 	});
 	gameFlow.getConsole().registerCommand(new IC_Command_LUA(&luaVM));
 	InputRouter inputRouter;
-	GameplayLayer gameplayLayer(gameFlow, inputRouter.state());
+	GameplayLayer gameplayLayer(gameFlow, actions, inputRouter.state());
 	inputRouter.push(&gameplayLayer);
-	DebugLayer debugLayer(gameFlow);
+	DebugLayer debugLayer(gameFlow, actions);
 	inputRouter.push(&debugLayer);
-	MenuLayer menuLayer(gameFlow);
+	MenuLayer menuLayer(gameFlow, actions);
 	inputRouter.push(&menuLayer);
-	InventoryLayer inventoryLayer(gameFlow, engine);
+	InventoryLayer inventoryLayer(gameFlow, actions, engine);
 	inputRouter.push(&inventoryLayer);
 	NoteLayer noteLayer(gameFlow);
 	inputRouter.push(&noteLayer);
-	ConsoleLayer consoleLayer(gameFlow.getConsole(), [&gameFlow]() { return !gameFlow.getPaused(); });
+	ConsoleLayer consoleLayer(gameFlow.getConsole(), actions, [&gameFlow]() { return !gameFlow.getPaused(); });
 	inputRouter.push(&consoleLayer);
 	device->setEventReceiver(&inputRouter);
 	MouseCapture mouseCapture(device->getCursorControl());
@@ -213,6 +217,7 @@ int main(int argc, char** argv)
 	InventoryScreen inventoryScreen = itemsLoaded
 		? InventoryScreen(device, backpack, itemCatalog)
 		: InventoryScreen(device, itemProblem);
+	inventoryScreen.setCloseKeyName(actions.keyName("inventory"));
 	gameFlow.setInventoryScreen(&inventoryScreen);
 
 	device->getGUIEnvironment()->getFont("bill/bigfont.png");

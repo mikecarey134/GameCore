@@ -4,6 +4,23 @@
 
 using namespace irr;
 
+void bindDefaultActions(ActionMap& actions)
+{
+	actions.bind("move_forward", KEY_KEY_W);
+	actions.bind("move_back", KEY_KEY_S);
+	actions.bind("move_left", KEY_KEY_A);
+	actions.bind("move_right", KEY_KEY_D);
+	actions.bind("jump", KEY_SPACE);
+	actions.bind("inventory", KEY_KEY_E);
+	actions.bind("lamp", KEY_KEY_F);
+	actions.bind("chat", KEY_KEY_T);
+	actions.bind("debug", KEY_F3);
+	actions.bind("console", KEY_OEM_3);
+	actions.bind("pause", KEY_ESCAPE);
+	actions.bind("attack", KEY_LBUTTON);
+	actions.bind("pickup", KEY_RBUTTON);
+}
+
 bool NoteLayer::onEvent(const SEvent& event)
 {
 	bool dismissPress = (event.EventType == EET_KEY_INPUT_EVENT && event.KeyInput.PressedDown) ||
@@ -24,8 +41,7 @@ bool NoteLayer::onEvent(const SEvent& event)
 
 bool InventoryLayer::onEvent(const SEvent& event)
 {
-	if (event.EventType == EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_E &&
-		event.KeyInput.PressedDown && !game_.getPaused() && !game_.isConsoleVisible())
+	if (actions_.pressed("inventory", event) && !game_.getPaused() && !game_.isConsoleVisible())
 	{
 		sound_->play2D("sounds/button-20.wav", false);
 		if (game_.getIsInventory())
@@ -43,28 +59,26 @@ bool InventoryLayer::onEvent(const SEvent& event)
 
 bool MenuLayer::onEvent(const SEvent& event)
 {
-	if (event.EventType == EET_KEY_INPUT_EVENT)
-	{
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_ESCAPE && 
-			event.KeyInput.PressedDown == true)
-		{//handle the ESC key to display the pause menu
-			if(game_.pauseMenu || game_.console.isVisible())
-			{
-				game_.chatshown = false;
-				game_.pauseMenu = false;
-				game_.console.setVisible(false);
-				
-			}
-		
-			else if (game_.started && game_.player_->isDead())
-				game_.goToMainMenu();
-			else
-				game_.pauseMenu = true;
-				
-
-			game_.engine_->play2D("sounds/button-20.wav",false);
-		
+	bool escapeClosesConsole = game_.console.isVisible() && event.EventType == EET_KEY_INPUT_EVENT &&
+		event.KeyInput.Key == KEY_ESCAPE && event.KeyInput.PressedDown;
+	if (actions_.pressed("pause", event) || escapeClosesConsole)
+	{//handle the ESC key to display the pause menu
+		if(game_.pauseMenu || game_.console.isVisible())
+		{
+			game_.chatshown = false;
+			game_.pauseMenu = false;
+			game_.console.setVisible(false);
+			
 		}
+	
+		else if (game_.started && game_.player_->isDead())
+			game_.goToMainMenu();
+		else
+			game_.pauseMenu = true;
+			
+
+		game_.engine_->play2D("sounds/button-20.wav",false);
+	
 	}
 
 	if (event.EventType == EET_GUI_EVENT)
@@ -120,39 +134,33 @@ bool MenuLayer::onEvent(const SEvent& event)
 
 bool DebugLayer::onEvent(const SEvent& event)
 {
-	if (event.EventType == EET_KEY_INPUT_EVENT)
+	if(actions_.pressed("lamp", event) && !game_.console.isVisible() && !game_.player_->isDead())
 	{
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_F && 
-			event.KeyInput.PressedDown == true && !game_.console.isVisible() && !game_.player_->isDead())
+		if(game_.player_->getIsLamp())
+			game_.player_->setlamp(false);
+		else
+			game_.player_->setlamp(true);
+	}
+
+	if(actions_.pressed("chat", event) && !game_.console.isVisible()&& !game_.pauseMenu)
+	{//handle f3 key to display the debugging information
+		if (game_.chatshown)
 		{
-			if(game_.player_->getIsLamp())
-				game_.player_->setlamp(false);
-			else
-				game_.player_->setlamp(true);
-		}
+			//chatshown = false;
 
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_KEY_T && 
-			event.KeyInput.PressedDown == true && !game_.console.isVisible()&& !game_.pauseMenu)
-		{//handle f3 key to display the debugging information
-			if (game_.chatshown)
-			{
-				//chatshown = false;
-
-			}
-			else
-				game_.chatshown = true;
-			std::cout<<"T_Pressed!\n"<<"Value:"<<game_.chatshown<<"\n";
-			
 		}
+		else
+			game_.chatshown = true;
+		std::cout<<"T_Pressed!\n"<<"Value:"<<game_.chatshown<<"\n";
+		
+	}
 
-		if(event.EventType == irr::EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_F3 && 
-			event.KeyInput.PressedDown == true)
-		{//handle f3 key to display the debugging information
-			if(game_.debug)
-				game_.debug = false;
-			else
-				game_.debug = true;
-		}
+	if(actions_.pressed("debug", event))
+	{//handle f3 key to display the debugging information
+		if(game_.debug)
+			game_.debug = false;
+		else
+			game_.debug = true;
 	}
 	return false;
 }
@@ -160,11 +168,10 @@ bool DebugLayer::onEvent(const SEvent& event)
 bool GameplayLayer::onEvent(const SEvent& event)
 {
 	//test for our mouse events
-	if (event.EventType == EET_MOUSE_INPUT_EVENT && !game_.pauseMenu && !game_.console.isVisible() )
+	if (!game_.pauseMenu && !game_.console.isVisible())
 	{
-		switch(event.MouseInput.Event)
+		if (actions_.pressed("pickup", event))
 		{
-		case EMIE_RMOUSE_PRESSED_DOWN:
 			if (game_.player_->isClueInRange() && !game_.player_->isDead())
 			{
 				//Iterate through the list of clues until we find the one the player is looking at
@@ -179,9 +186,9 @@ bool GameplayLayer::onEvent(const SEvent& event)
 					(*obj)->eraseModelFromWorld();
 				}
 			}
-			break;
-
-		case EMIE_LMOUSE_PRESSED_DOWN:
+		}
+		else if (actions_.pressed("attack", event))
+		{
 			if (!game_.player_->isDead())
 			{
 				game_.player_->attack();
@@ -197,15 +204,11 @@ bool GameplayLayer::onEvent(const SEvent& event)
 					//findRemotePlayer(player_->getSelectedNodeName())->damage();
 				}
 			}
-			break;
-
-		case EMIE_LMOUSE_LEFT_UP:
+		}
+		else if (actions_.released("attack", event))
+		{
 			if (!game_.player_->isDead())
 				game_.player_->idle();
-			break;
-
-		default:
-			break;
 		}
 	}
 
@@ -216,18 +219,18 @@ bool GameplayLayer::onEvent(const SEvent& event)
 	if(event.EventType == EET_KEY_INPUT_EVENT && !game_.console.isVisible() && !game_.pauseMenu && !game_.player_->isDead() && !game_.chatshown)  //handle player movement keyboard controls
 	{
 		player* thePlayer = game_.player_;
-		if (input_.isKeyDown(KEY_SPACE))
+		if (actions_.held("jump", input_))
 			thePlayer->jump();
 
-		if (input_.isKeyDown(KEY_KEY_W))		{ thePlayer->setZDir(-thePlayer->getPlayerSpeed()); thePlayer->forward(); }
-		else if(input_.isKeyDown(KEY_KEY_S))	{ thePlayer->setZDir(thePlayer->getPlayerSpeed()); }
+		if (actions_.held("move_forward", input_))		{ thePlayer->setZDir(-thePlayer->getPlayerSpeed()); thePlayer->forward(); }
+		else if(actions_.held("move_back", input_))	{ thePlayer->setZDir(thePlayer->getPlayerSpeed()); }
 		else								{ thePlayer->setZDir(0.0f); /*player_->idle();*/ }
 
-		if (input_.isKeyDown(KEY_KEY_A))		{ thePlayer->setXDir(thePlayer->getPlayerSpeed()); }
-		else if(input_.isKeyDown(KEY_KEY_D))	{ thePlayer->setXDir(-thePlayer->getPlayerSpeed()); }
+		if (actions_.held("move_left", input_))		{ thePlayer->setXDir(thePlayer->getPlayerSpeed()); }
+		else if(actions_.held("move_right", input_))	{ thePlayer->setXDir(-thePlayer->getPlayerSpeed()); }
 		else								{ thePlayer->setXDir(0.0f); /*player_->idle();*/}
 
-		if(input_.isKeyUp(KEY_SPACE)&&input_.isKeyUp(KEY_KEY_W)&&input_.isKeyUp(KEY_KEY_S)&&input_.isKeyUp(KEY_KEY_A)&&input_.isKeyUp(KEY_KEY_D)){thePlayer->idle();}
+		if(!actions_.held("jump", input_)&&!actions_.held("move_forward", input_)&&!actions_.held("move_back", input_)&&!actions_.held("move_left", input_)&&!actions_.held("move_right", input_)){thePlayer->idle();}
 	}
 
 	return false;

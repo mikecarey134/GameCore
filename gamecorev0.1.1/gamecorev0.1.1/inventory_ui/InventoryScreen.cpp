@@ -111,7 +111,7 @@ void InventoryScreen::draw()
 	drawGrid();
 	drawDetails();
 	drawStatus();
-	drawText("Left click: pick up / place      Right click: cancel      E: close", layout_.hintLine(),
+	drawText("Left click: pick up / place      Right click: cancel      " + closeKeyName_ + ": close", layout_.hintLine(),
 		SColor(255, 120, 112, 104));
 	drawHeld();
 }

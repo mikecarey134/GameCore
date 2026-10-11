@@ -10,21 +10,22 @@ bool ConsoleLayer::onEvent(const SEvent& event)
 		return true;
 	}
 
+	if (actions_.pressed("console", event) && (!canToggle_ || canToggle_()))
+	{
+		if (!console_.isVisible())
+		{
+			console_.setVisible(true);
+			return true;
+		}
+		else if (event.EventType != EET_KEY_INPUT_EVENT || !event.KeyInput.Control)
+		{
+			console_.setVisible(false);
+			return true;
+		}
+	}
+
 	if (event.EventType == EET_KEY_INPUT_EVENT && event.KeyInput.PressedDown)
 	{
-		if (event.KeyInput.Key == IC_Console::IC_KEY_TILDE && (!canToggle_ || canToggle_()))
-		{
-			if (!console_.isVisible())
-			{
-				console_.setVisible(true);
-				return true;
-			}
-			else if (!event.KeyInput.Control)
-			{
-				console_.setVisible(false);
-				return true;
-			}
-		}
 		if (console_.isVisible())
 		{
 			if (event.KeyInput.Key == KEY_ESCAPE)

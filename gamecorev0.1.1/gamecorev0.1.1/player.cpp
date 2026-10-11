@@ -18,7 +18,7 @@ using namespace io;
 using namespace gui;
 
 
-player::player(IrrlichtDevice* device,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, SoundEngine* engine, 
+player::player(IrrlichtDevice* device,const ActionMap& actions,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, SoundEngine* engine, 
 			   irrBulletWorld* world, std::string player_name,int model_type):
 camera_(smgr),world_(world),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0), player_name_(player_name),
@@ -37,20 +37,13 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//set the init chat message to an empty string
 	chat_message_="\0";
 
-	//hacky key mapping for the 
-	//observer camera
-	SKeyMap keyMap[8];
-	keyMap[1].Action = EKA_MOVE_FORWARD;
-	keyMap[1].KeyCode = KEY_KEY_W;
-
-	keyMap[3].Action = EKA_MOVE_BACKWARD;
-	keyMap[3].KeyCode = KEY_KEY_S;
-
-	keyMap[5].Action = EKA_STRAFE_LEFT;
-	keyMap[5].KeyCode = KEY_KEY_A;
-
-	keyMap[7].Action = EKA_STRAFE_RIGHT;
-	keyMap[7].KeyCode = KEY_KEY_D;
+	//key mapping for the observer camera
+	const char* moves[] = { "move_forward", "move_back", "move_left", "move_right" };
+	const EKEY_ACTION cameraMoves[] = { EKA_MOVE_FORWARD, EKA_MOVE_BACKWARD, EKA_STRAFE_LEFT, EKA_STRAFE_RIGHT };
+	core::array<SKeyMap> keyMap;
+	for (int i = 0; i < 4; ++i)
+		for (size_t k = 0; k < actions.keys(moves[i]).size(); ++k)
+			keyMap.push_back(SKeyMap(cameraMoves[i], actions.keys(moves[i])[k]));
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -58,7 +51,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//////////////////////////////////////////////////////////////////////////
 	camera_.getNode()->setID(ID_IsNotPickable);
 
-	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap,8);
+	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap.pointer(),keyMap.size());
 	fpsCam_->setID(ID_IsNotPickable);
 	camera_.makeActive();
 	//set up the camera clipping planes in order to render the scene faster

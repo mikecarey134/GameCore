@@ -219,7 +219,6 @@ public:
 class IC_Console : public IC_Dispatcher, public IC_MessageSink
 {
 public:
-	static const wchar_t IC_KEY_TILDE;
 	//! constructor
 	IC_Console();
 	//! destructor

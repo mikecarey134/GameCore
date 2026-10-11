@@ -330,8 +330,6 @@ void IC_Dispatcher::printCommandDesc(const WideString cmdName, IC_MessageSink* p
 	}
 }
 //=========================================================================================
-//! the tilde (~/`) key 
-const wchar_t IC_Console::IC_KEY_TILDE = 0xc0;
 //=========================================================================================
 //! constructor
 IC_Console::IC_Console() : bVisible(false), guiFont(0),consoleRect(0,0,0,0),consoleHistoryIndex(0)

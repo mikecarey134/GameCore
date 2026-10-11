@@ -8,6 +8,7 @@
 
 
 #pragma once
+#include "ActionMap.h"
 #include<irrlicht.h>
 #include "SoundEngine.h"
 #include<irrbullet.h>
@@ -47,7 +48,7 @@ class player
 
 public:
 
-	player(irr::IrrlichtDevice* device,const char* filename,
+	player(irr::IrrlichtDevice* device,const ActionMap& actions,const char* filename,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
 		gamecore::SoundEngine* engine, irrBulletWorld* world, std::string player_name,int model_type);
 	

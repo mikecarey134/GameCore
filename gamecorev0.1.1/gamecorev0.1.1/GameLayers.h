@@ -2,9 +2,12 @@
 #define GAMELAYERS_H
 
 #include "InputRouter.h"
+#include "ActionMap.h"
 
 class GameFlow;
 namespace gamecore { class SoundEngine; }
+
+void bindDefaultActions(ActionMap& actions);
 
 class NoteLayer : public InputLayer
 {
@@ -19,42 +22,46 @@ private:
 class InventoryLayer : public InputLayer
 {
 public:
-	InventoryLayer(GameFlow& game, gamecore::SoundEngine* sound) : game_(game), sound_(sound) {}
+	InventoryLayer(GameFlow& game, const ActionMap& actions, gamecore::SoundEngine* sound) : game_(game), actions_(actions), sound_(sound) {}
 	bool onEvent(const irr::SEvent& event) override;
 
 private:
 	GameFlow& game_;
+	const ActionMap& actions_;
 	gamecore::SoundEngine* sound_;
 };
 
 class MenuLayer : public InputLayer
 {
 public:
-	explicit MenuLayer(GameFlow& game) : game_(game) {}
+	MenuLayer(GameFlow& game, const ActionMap& actions) : game_(game), actions_(actions) {}
 	bool onEvent(const irr::SEvent& event) override;
 
 private:
 	GameFlow& game_;
+	const ActionMap& actions_;
 };
 
 class DebugLayer : public InputLayer
 {
 public:
-	explicit DebugLayer(GameFlow& game) : game_(game) {}
+	DebugLayer(GameFlow& game, const ActionMap& actions) : game_(game), actions_(actions) {}
 	bool onEvent(const irr::SEvent& event) override;
 
 private:
 	GameFlow& game_;
+	const ActionMap& actions_;
 };
 
 class GameplayLayer : public InputLayer
 {
 public:
-	GameplayLayer(GameFlow& game, const InputState& input) : game_(game), input_(input) {}
+	GameplayLayer(GameFlow& game, const ActionMap& actions, const InputState& input) : game_(game), actions_(actions), input_(input) {}
 	bool onEvent(const irr::SEvent& event) override;
 
 private:
 	GameFlow& game_;
+	const ActionMap& actions_;
 	const InputState& input_;
 };
 
