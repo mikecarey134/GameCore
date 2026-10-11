@@ -24,7 +24,7 @@
 #include "SAppcontext.h"
 #include "keymap.h"
 #include "console.h"
-#include "consoleevent.h"
+#include "GameFlow.h"
 #include "player.h"
 #include "NPC.h"
 #include "ParticleSystem.h"
@@ -174,20 +174,20 @@ int main(void)
 	InternalServer Client(config_reader.get_online(),device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
-	consoleevent crecv(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);//event handeler
+	GameFlow gameFlow(device,guienv,driver,context,&theGui, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
 	InputRouter inputRouter;
-	inputRouter.push(&crecv);
-	DebugLayer debugLayer(crecv);
+	GameplayLayer gameplayLayer(gameFlow, inputRouter.state());
+	inputRouter.push(&gameplayLayer);
+	DebugLayer debugLayer(gameFlow);
 	inputRouter.push(&debugLayer);
-	MenuLayer menuLayer(crecv);
+	MenuLayer menuLayer(gameFlow);
 	inputRouter.push(&menuLayer);
-	InventoryLayer inventoryLayer(crecv, engine);
+	InventoryLayer inventoryLayer(gameFlow, engine);
 	inputRouter.push(&inventoryLayer);
-	NoteLayer noteLayer(crecv);
+	NoteLayer noteLayer(gameFlow);
 	inputRouter.push(&noteLayer);
-	ConsoleLayer consoleLayer(crecv);
+	ConsoleLayer consoleLayer(gameFlow);
 	inputRouter.push(&consoleLayer);
-	crecv.setInputState(&inputRouter.state());
 	device->setEventReceiver(&inputRouter);
 	MouseCapture mouseCapture(device->getCursorControl());
 
@@ -204,7 +204,7 @@ int main(void)
 	InventoryScreen inventoryScreen = itemsLoaded
 		? InventoryScreen(device, backpack, itemCatalog)
 		: InventoryScreen(device, itemProblem);
-	crecv.setInventoryScreen(&inventoryScreen);
+	gameFlow.setInventoryScreen(&inventoryScreen);
 
 	device->getGUIEnvironment()->getFont("bill/bigfont.png");
 
@@ -216,7 +216,7 @@ int main(void)
 	ClueObject testClue("models/clue/clue2.obj",device,smgr,world,driver,&currentMap);
 
 	//player.addClue(testClue);
-	crecv.addClueObject(&testClue);
+	gameFlow.addClueObject(&testClue);
 	currentMap.setClue(&testClue);
 	currentMap.setNpc(&npc_tester);
 
@@ -227,7 +227,7 @@ int main(void)
 
 	
 	//clear the console before the game starts
-	crecv.clear_console();
+	gameFlow.clear_console();
 	
 	//thePlayer.switch_weap(1);
 	while(device->run())//while the game is running
@@ -238,10 +238,10 @@ int main(void)
 
 		if (device->isWindowActive())//if a window is running
 		{	
-				mouseCapture.setCaptured(crecv.getStarted() && !crecv.getPaused() && !crecv.getIsInventory() && !thePlayer.isDead());
+				mouseCapture.setCaptured(gameFlow.getStarted() && !gameFlow.getPaused() && !gameFlow.getIsInventory());
 				mouseCapture.beginFrame();
 				
-				if (!crecv.getStarted())//draw the main menu
+				if (!gameFlow.getStarted())//draw the main menu
 				{
 					driver->beginScene(true,true,video::SColor(255,0,0,0));//begin scene with a black background
 					
@@ -249,20 +249,20 @@ int main(void)
 					if (!engine->isCurrentlyPlaying("sounds/discovery.mp3"))
 						engine->play2D("sounds/discovery.mp3", true);//startup the main menu track
 					
-					crecv.drawMainMenu();				
+					gameFlow.drawMainMenu();				
 				}
 				else //otherwise play the game
 				{
 					//if we have started our game
-					if(crecv.getStarted()){
+					if(gameFlow.getStarted()){
 					if (!gameMusic || gameMusic->isFinished())
 					{
 						if (gameMusic)
 							gameMusic->drop();
 						gameMusic = engine->play2D("sounds/sunshine.mp3", true, false, true);//startup the main track
 					}
-					if (gameMusic->getIsPaused() != crecv.getPaused())
-						gameMusic->setIsPaused(crecv.getPaused());
+					if (gameMusic->getIsPaused() != gameFlow.getPaused())
+						gameMusic->setIsPaused(gameFlow.getPaused());
 					}
 
 					//internal client loops for input
@@ -275,7 +275,7 @@ int main(void)
 					//driver->beginScene(true,true,video::SColor(0,0,0,0));//begin scene with a white background
 
 					
-						if (!crecv.getPaused() && !crecv.getIsInventory())//is the game paused
+						if (!gameFlow.getPaused() && !gameFlow.getIsInventory())//is the game paused
 						{
 						}
 
@@ -284,10 +284,10 @@ int main(void)
 					
 
 						world->stepSimulation(frameDeltaTime*0.001f, 120);//bullet psysics
-						crecv.update(then,now);//update our game here
+						gameFlow.update(then,now);//update our game here
 
 						//we dont want the camera to update while the player is stationary
-						if (!crecv.getPaused() && !crecv.getIsInventory()&& !crecv.getIsConsole())
+						if (!gameFlow.getPaused() && !gameFlow.getIsInventory()&& !gameFlow.getIsConsole())
 						{			
 							thePlayer.moveCameraControl(mouseCapture.delta());
 							testClue.update();
@@ -295,17 +295,17 @@ int main(void)
 							if(!npc_tester.isDead() && npc_tester.isLoaded() == DONE_LOADING)
 								npc_tester.moveNPC();//move our npc 
 	
-							crecv.playerNpcCollisionCheck();
+							gameFlow.playerNpcCollisionCheck();
 						}
 						else
 							thePlayer.haltCamera();
 					
 					
 				
-					if (!crecv.getIsInventory())
+					if (!gameFlow.getIsInventory())
 						theGui.drawHUD(&thePlayer);
 				    chat_queue.draw();
-					crecv.displayconsole(frameDeltaTime);
+					gameFlow.displayconsole(frameDeltaTime);
 					
 				}
 			

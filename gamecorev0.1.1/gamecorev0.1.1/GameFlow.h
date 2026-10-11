@@ -1,7 +1,7 @@
 /************************************************************************/
 /*
-    consoleevent.h
-	Purpose: handles all events in the game
+    GameFlow.h
+	Purpose: game state, menus and per-frame updates
 	By:Michael Carey && Dan Brown
 
 */
@@ -18,7 +18,6 @@
 #include "GUI.h"
 #include "player.h"
 #include "NPC.h"
-#include "InputRouter.h"
 #include "GameMap.h"
 #include "InteractiveObject.h"
 #include "ClueObject.h"
@@ -32,7 +31,7 @@
 class InventoryScreen;
 
 
-class consoleevent : public InputLayer, public GUI
+class GameFlow : public GUI
 {
 public:
 	friend class NPC;
@@ -40,24 +39,19 @@ public:
 
 	enum{GUI_ID_START = 0, GUI_ID_OPTIONS, GUI_ID_CREDITS, GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU};
 
-	consoleevent(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
+	GameFlow(irr::IrrlichtDevice * device, irr::gui::IGUIEnvironment* guienv,
 		irr::video::IVideoDriver* driver,SAppContext & Context,GUI* gui, 
 		/*irr::scene::ICameraSceneNode* camera,*/ gamecore::SoundEngine* engine, 
 		player* thePlayer, irrBulletWorld* world, NPC* npc, GameMap* currentMap, InternalServer* client);
 	
-	~consoleevent();
+	~GameFlow();
 
-	bool onEvent(const irr::SEvent& event) override;
-	void setInputState(const InputState* input) { input_ = input; }
 
 	bool isConsoleVisible(){return console.isVisible();}
 	IC_Console& getConsole() { return console; }
 
 	bool isPaused()		{ return (pauseMenu || inventory || chatshown); }
 
-	virtual bool IsKeyDown(irr::EKEY_CODE keyCode) const;
-
-	virtual bool IsKeyUp(irr::EKEY_CODE keyCode) const;
 
 	bool getStarted()      { return started; }
 	bool getPaused()       { return pauseMenu; }
@@ -89,17 +83,11 @@ public:
 	
 	void clear_console(){console.clearMessages();}
 	
-	struct SMouseState
-	{
-		core::position2di Position;
-		bool LeftButtonDown;
-		bool RightButtonDown;
-		SMouseState() : LeftButtonDown(false),RightButtonDown(false) { }
-	} MouseState;
 
 private:
 	friend class MenuLayer;
 	friend class DebugLayer;
+	friend class GameplayLayer;
 
 	IC_Console console;
 	irr::gui::IGUIEnvironment* guienv_;
@@ -125,7 +113,6 @@ private:
 	std::list<ClueObject*> clueObjects_; 
 
 	// We use this array to store the current state of each key
-	const InputState* input_;
 
 
 	//debugging get rid of this at some point

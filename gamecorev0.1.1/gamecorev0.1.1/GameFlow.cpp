@@ -1,14 +1,14 @@
 /************************************************************************/
 /*
-    consoleevent.cpp
-	Purpose: handles all events in the game
+    GameFlow.cpp
+	Purpose: game state, menus and per-frame updates
 	By:Michael Carey && Dan Brown
 
 */
 /************************************************************************/
 
 
-#include"consoleevent.h"
+#include "GameFlow.h"
 #include "InventoryScreen.h"
 
 using namespace irr;
@@ -22,14 +22,14 @@ using namespace gamecore;
 
 
 
-consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
+GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,GUI* gui,
 						   gamecore::SoundEngine* engine, player* thePlayer, irrBulletWorld* world, 
 						   NPC* npc, GameMap* currentMap, InternalServer* client):
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),gui_(gui),player_(thePlayer),							
 							npc_(npc), world_(world), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							creditsDisplayed(false), inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							input_(0), inventoryScreen_(nullptr)
+							inventoryScreen_(nullptr)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");
@@ -43,10 +43,10 @@ consoleevent::consoleevent(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironmen
 
 
 }
-consoleevent::~consoleevent(){ coords.close();}
+GameFlow::~GameFlow(){ coords.close();}
 
-static const s32 mainMenuButtons[] = { consoleevent::GUI_ID_START, consoleevent::GUI_ID_OPTIONS, consoleevent::GUI_ID_CREDITS, GUI::GUI_ID_QUIT_BUTTON };
-static const s32 pauseMenuButtons[] = { consoleevent::GUI_ID_RESUME, consoleevent::GUI_ID_PAUSE_OPTIONS, consoleevent::GUI_ID_GOTO_MAIN_MENU, GUI::GUI_ID_QUIT_BUTTON };
+static const s32 mainMenuButtons[] = { GameFlow::GUI_ID_START, GameFlow::GUI_ID_OPTIONS, GameFlow::GUI_ID_CREDITS, GUI::GUI_ID_QUIT_BUTTON };
+static const s32 pauseMenuButtons[] = { GameFlow::GUI_ID_RESUME, GameFlow::GUI_ID_PAUSE_OPTIONS, GameFlow::GUI_ID_GOTO_MAIN_MENU, GUI::GUI_ID_QUIT_BUTTON };
 
 static void removeButtons(IGUIEnvironment* guienv, const s32 (&ids)[4])
 {
@@ -55,127 +55,7 @@ static void removeButtons(IGUIEnvironment* guienv, const s32 (&ids)[4])
 			button->remove();
 }
 
-bool consoleevent::onEvent(const irr::SEvent& event)
-{
-	//test for our mouse events
-	if (event.EventType == irr::EET_MOUSE_INPUT_EVENT && !pauseMenu && !console.isVisible() )
-	{
-		switch(event.MouseInput.Event)
-		{
-		case EMIE_RMOUSE_PRESSED_DOWN:
-			MouseState.RightButtonDown = true;
-
-			if (player_->isClueInRange() && !player_->isDead())
-			{
-				//Iterate through the list of clues until we find the one the player is looking at
-				std::list<ClueObject*>::iterator obj = clueObjects_.begin();
-				while(obj != clueObjects_.end() &&
-					  (*obj)->getModel()->getName() != player_->getSelectedNode()->getName())
-					++obj;
-
-				if (obj != clueObjects_.end())
-				{
-					player_->addClue(*obj);
-					(*obj)->eraseModelFromWorld();
-				}
-			}
-			
-
-			//cout<<"Right Mouse CLick!\n";
-			break;
-
-		case EMIE_RMOUSE_LEFT_UP:
-			MouseState.RightButtonDown = false;
-			break;
-
-		//handle mouse events  
-		case EMIE_LMOUSE_PRESSED_DOWN:
-			MouseState.LeftButtonDown = true;
-			if (!player_->isDead())
-			{
-				player_->attack();
-				
-				if(player_->enemyNPCInRange()/* && !npc_->isDead()*/)
-				{
-					npc_->damage();
-					//nodeName = npc_->characterModel_->getName();
-				}
-				else if (player_->enemyPlayerInRange())
-				{
-					findRemotePlayer(player_->getSelectedNodeName())->damage();
-					//findRemotePlayer(player_->getSelectedNodeName())->damage();
-				}
-			}
-			
-
-			//cout<<"Left Mouse CLick!\n";
-			break;
-
-		case EMIE_LMOUSE_LEFT_UP:
-			MouseState.LeftButtonDown = false;
-			if (!player_->isDead())
-				player_->idle();
-			break;
-		case EMIE_MOUSE_MOVED:
-			MouseState.Position.X = event.MouseInput.X;
-			MouseState.Position.Y = event.MouseInput.Y;
-			break;
-
-		default:
-			// We won't use the wheel
-			break;
-		}
-	}
-
-	//if we scroll the mouse wheel we get closer or farther away from our player
-	if(event.EventType == irr::EET_MOUSE_INPUT_EVENT && event.MouseInput.Event == EMIE_MOUSE_WHEEL){
-	
-		player_->setCamDist(event.MouseInput.Wheel);
-	}
-
-	if(event.EventType == irr::EET_KEY_INPUT_EVENT )
-	{
-
-		if(!console.isVisible() && !pauseMenu && !player_->isDead()&&!chatshown)  //handle player movement keyboard controls
-		{
-			if (IsKeyDown(KEY_SPACE))
-				player_->jump();
-
-			if (IsKeyDown(KEY_KEY_W))		{ player_->setZDir(-player_->getPlayerSpeed()); player_->forward(); }
-			else if(IsKeyDown(KEY_KEY_S))	{ player_->setZDir(player_->getPlayerSpeed()); }
-			else							{ player_->setZDir(0.0f); /*player_->idle();*/ }
-
-			if (IsKeyDown(KEY_KEY_A))		{ player_->setXDir(player_->getPlayerSpeed()); }
-			else if(IsKeyDown(KEY_KEY_D))	{ player_->setXDir(-player_->getPlayerSpeed()); }
-			else							{ player_->setXDir(0.0f); /*player_->idle();*/}
-
-			if(IsKeyUp(KEY_SPACE)&&IsKeyUp(KEY_KEY_W)&&IsKeyUp(KEY_KEY_S)&&IsKeyUp(KEY_KEY_A)&&IsKeyUp(KEY_KEY_D)){player_->idle();}
-		
-		}
-		
-
-
-
-		
-
-
-	}
-	
-	return false;
-}
-
-
-bool consoleevent::IsKeyDown(irr::EKEY_CODE keyCode) const
-{
-	return input_->isKeyDown(keyCode);
-}
-
-bool consoleevent::IsKeyUp(irr::EKEY_CODE keyCode) const
-{
-	return input_->isKeyUp(keyCode);
-}
-
-void consoleevent::drawMainMenu()//draws the main menu for the game
+void GameFlow::drawMainMenu()//draws the main menu for the game
 {
 	IGUISkin* skin = guienv_->getSkin();
 	
@@ -214,7 +94,7 @@ void consoleevent::drawMainMenu()//draws the main menu for the game
 
 
 
-void consoleevent::drawPauseMenu ()// render the pause menu 
+void GameFlow::drawPauseMenu ()// render the pause menu 
 {
 	if (inventory)
 	{
@@ -255,13 +135,13 @@ void consoleevent::drawPauseMenu ()// render the pause menu
 
 }
 
-void consoleevent::drawInventory ()
+void GameFlow::drawInventory ()
 {
 	if (inventoryScreen_)
 		inventoryScreen_->draw();
 }
 
-void consoleevent::playerNpcCollisionCheck()
+void GameFlow::playerNpcCollisionCheck()
 {
 	//player_->getPSceneNode()->
 	/*
@@ -305,7 +185,7 @@ void consoleevent::playerNpcCollisionCheck()
 		*/
 }
 
-void consoleevent::addClueObject(ClueObject* object)
+void GameFlow::addClueObject(ClueObject* object)
 { 
 	if(object->getObjectType() == TYPE_CLUE)
 	{
@@ -318,7 +198,7 @@ void consoleevent::addClueObject(ClueObject* object)
 	
 }
 
-remotePlayer* consoleevent::findRemotePlayer (std::string nodeName)
+remotePlayer* GameFlow::findRemotePlayer (std::string nodeName)
 {
 	//std::map<std::string,remotePlayer> rms = client_->getNetworkData()->getRemotePlayers();
 	std::map<std::string,remotePlayer>::iterator it = client_->getNetworkData()->getRemotePlayers().begin();
@@ -340,7 +220,7 @@ remotePlayer* consoleevent::findRemotePlayer (std::string nodeName)
 	return rm;
 }
 
-void consoleevent::update(u32, u32)//update the game throught the gameloop
+void GameFlow::update(u32, u32)//update the game throught the gameloop
 {
 	gui::IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 
@@ -403,7 +283,7 @@ void consoleevent::update(u32, u32)//update the game throught the gameloop
 	
 }
 
-void consoleevent::drawMessage(const wchar_t*)
+void GameFlow::drawMessage(const wchar_t*)
 {
 	/*stringw msg;
 	msg+= message;
@@ -423,7 +303,7 @@ void consoleevent::drawMessage(const wchar_t*)
 	
 }
 
-void consoleevent::newRound()
+void GameFlow::newRound()
 {
 	std::vector<vector3df> spawns = currentMap_->getSpawnPoints();
 	player_->respawn(spawns[rand() % spawns.size()]);
@@ -432,7 +312,7 @@ void consoleevent::newRound()
 	npc_->reset();
 }
 
-void consoleevent::goToMainMenu()
+void GameFlow::goToMainMenu()
 {
 	started = false;
 	pauseMenu = false;
@@ -441,7 +321,7 @@ void consoleevent::goToMainMenu()
 	engine_->play2D("sounds/button-25.wav",false);
 }
 
-void consoleevent::startPressed()
+void GameFlow::startPressed()
 {
 	engine_->play2D("sounds/button-25.wav",false);
 	if(started)

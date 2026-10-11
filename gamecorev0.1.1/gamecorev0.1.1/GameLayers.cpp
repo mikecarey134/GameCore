@@ -1,5 +1,5 @@
 #include "GameLayers.h"
-#include "consoleevent.h"
+#include "GameFlow.h"
 #include "InventoryScreen.h"
 
 using namespace irr;
@@ -123,7 +123,7 @@ bool MenuLayer::onEvent(const SEvent& event)
 				break;
 
 			case EGET_SCROLL_BAR_CHANGED:
-				if (id == consoleevent::GUI_ID_TRANSPARENCY_SCROLL_BAR)
+				if (id == GameFlow::GUI_ID_TRANSPARENCY_SCROLL_BAR)
 				{
 					s32 pos = ((IGUIScrollBar*)event.GUIEvent.Caller)->getPos();
 					game_.setSkinTransparency(pos, env->getSkin());
@@ -133,17 +133,17 @@ bool MenuLayer::onEvent(const SEvent& event)
 			case EGET_BUTTON_CLICKED: //if one of our gui buttons is clicked handle it
 				switch(id)
 				{
-				case consoleevent::GUI_ID_QUIT_BUTTON:
+				case GameFlow::GUI_ID_QUIT_BUTTON:
 					game_.Context_.device->closeDevice();
 					game_.engine_->play2D("sounds/button-25.wav",false);
 					return true;
 
-				case consoleevent::GUI_ID_START:
+				case GameFlow::GUI_ID_START:
 
 					game_.startPressed();
 					return true;
 
-				case consoleevent::GUI_ID_CREDITS:
+				case GameFlow::GUI_ID_CREDITS:
 					{
 						if (!game_.creditsDisplayed)
 						{
@@ -152,18 +152,18 @@ bool MenuLayer::onEvent(const SEvent& event)
 					}
 					return true;
 
-				case consoleevent::GUI_ID_GOTO_MAIN_MENU:
+				case GameFlow::GUI_ID_GOTO_MAIN_MENU:
 					game_.goToMainMenu();
 					return true;
 
-				case consoleevent::GUI_ID_RESUME:
+				case GameFlow::GUI_ID_RESUME:
 					if(game_.pauseMenu)//this fixes the menu sound bug Mike
 						game_.engine_->play2D("sounds/button-25.wav",false);
 					game_.pauseMenu = false;
 					
 					return true;
 					
-				case consoleevent::GUI_ID_FILE_OPEN_BUTTON:
+				case GameFlow::GUI_ID_FILE_OPEN_BUTTON:
 					game_.Context_.listbox->addItem(L"File open");
 					// There are some options for the file open dialog
 					// We set the title, make it a modal window, and make sure
@@ -231,5 +231,81 @@ bool DebugLayer::onEvent(const SEvent& event)
 				game_.debug = true;
 		}
 	}
+	return false;
+}
+
+bool GameplayLayer::onEvent(const SEvent& event)
+{
+	//test for our mouse events
+	if (event.EventType == EET_MOUSE_INPUT_EVENT && !game_.pauseMenu && !game_.console.isVisible() )
+	{
+		switch(event.MouseInput.Event)
+		{
+		case EMIE_RMOUSE_PRESSED_DOWN:
+			if (game_.player_->isClueInRange() && !game_.player_->isDead())
+			{
+				//Iterate through the list of clues until we find the one the player is looking at
+				std::list<ClueObject*>::iterator obj = game_.clueObjects_.begin();
+				while(obj != game_.clueObjects_.end() &&
+					  (*obj)->getModel()->getName() != game_.player_->getSelectedNode()->getName())
+					++obj;
+
+				if (obj != game_.clueObjects_.end())
+				{
+					game_.player_->addClue(*obj);
+					(*obj)->eraseModelFromWorld();
+				}
+			}
+			break;
+
+		case EMIE_LMOUSE_PRESSED_DOWN:
+			if (!game_.player_->isDead())
+			{
+				game_.player_->attack();
+				
+				if(game_.player_->enemyNPCInRange()/* && !npc_->isDead()*/)
+				{
+					game_.npc_->damage();
+					//nodeName = npc_->characterModel_->getName();
+				}
+				else if (game_.player_->enemyPlayerInRange())
+				{
+					game_.findRemotePlayer(game_.player_->getSelectedNodeName())->damage();
+					//findRemotePlayer(player_->getSelectedNodeName())->damage();
+				}
+			}
+			break;
+
+		case EMIE_LMOUSE_LEFT_UP:
+			if (!game_.player_->isDead())
+				game_.player_->idle();
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	//if we scroll the mouse wheel we get closer or farther away from our player
+	if(event.EventType == EET_MOUSE_INPUT_EVENT && event.MouseInput.Event == EMIE_MOUSE_WHEEL)
+		game_.player_->setCamDist(event.MouseInput.Wheel);
+
+	if(event.EventType == EET_KEY_INPUT_EVENT && !game_.console.isVisible() && !game_.pauseMenu && !game_.player_->isDead() && !game_.chatshown)  //handle player movement keyboard controls
+	{
+		player* thePlayer = game_.player_;
+		if (input_.isKeyDown(KEY_SPACE))
+			thePlayer->jump();
+
+		if (input_.isKeyDown(KEY_KEY_W))		{ thePlayer->setZDir(-thePlayer->getPlayerSpeed()); thePlayer->forward(); }
+		else if(input_.isKeyDown(KEY_KEY_S))	{ thePlayer->setZDir(thePlayer->getPlayerSpeed()); }
+		else								{ thePlayer->setZDir(0.0f); /*player_->idle();*/ }
+
+		if (input_.isKeyDown(KEY_KEY_A))		{ thePlayer->setXDir(thePlayer->getPlayerSpeed()); }
+		else if(input_.isKeyDown(KEY_KEY_D))	{ thePlayer->setXDir(-thePlayer->getPlayerSpeed()); }
+		else								{ thePlayer->setXDir(0.0f); /*player_->idle();*/}
+
+		if(input_.isKeyUp(KEY_SPACE)&&input_.isKeyUp(KEY_KEY_W)&&input_.isKeyUp(KEY_KEY_S)&&input_.isKeyUp(KEY_KEY_A)&&input_.isKeyUp(KEY_KEY_D)){thePlayer->idle();}
+	}
+
 	return false;
 }

@@ -123,7 +123,7 @@ target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrbullet irrlicht_engine PRIVATE miniaudio)
 
 set(GAMECORE_SOURCES
-  ClueObject.cpp console.cpp consoleevent.cpp
+  ClueObject.cpp console.cpp GameFlow.cpp
   defaultCmds.cpp exampleframework.cpp GrassNode.cpp GUI.cpp InternalServer.cpp
   main.cpp GameMap.cpp GameLayers.cpp NetworkData.cpp NPC.cpp
   player.cpp remotePlayer.cpp SolarCycle.cpp utils.cpp
