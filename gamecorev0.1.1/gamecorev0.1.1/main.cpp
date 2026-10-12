@@ -135,7 +135,6 @@ int main(int argc, char** argv)
 		device->drop();
 		return 1;
 	}
-	IGUIEnvironment* guienv = device->getGUIEnvironment();
 	IVideoDriver* driver = device->getVideoDriver();
 
 	//load our scene manager and set up the shadow color with an alpha channel
@@ -181,7 +180,7 @@ int main(int argc, char** argv)
 	InternalServer Client(config_reader.get_online() && !smoke,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
-	GameFlow gameFlow(device,canvas,guienv,driver,context, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
+	GameFlow gameFlow(device,canvas,context, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
 	luaVM.setLogger([&gameFlow](const std::string& message) {
 		gameFlow.getConsole().logMessage_ANSI(ELL_ERROR, message.c_str());
 		std::cerr << message << std::endl;
@@ -219,7 +218,7 @@ int main(int argc, char** argv)
 	inventoryScreen.setCloseKeyName(actions.keyName("inventory"));
 	gameFlow.setInventoryScreen(&inventoryScreen);
 
-	device->getGUIEnvironment()->getFont("bill/bigfont.png");
+	canvas.loadFont("bill/bigfont.png");
 
 	currentMap.loadMap();
 	std::vector<vector3df> spawns = currentMap.getSpawnPoints();
@@ -251,7 +250,7 @@ int main(int argc, char** argv)
 		const u32 frameDeltaTime = now - then;	// Time in milliseconds
 		then = now;	
 
-		Client.messageLoop(thePlayer,guienv->getBuiltInFont());
+		Client.messageLoop(thePlayer);
 
 		if (smoke || device->isWindowActive())//if a window is running
 		{	

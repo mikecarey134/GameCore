@@ -38,8 +38,7 @@ public:
 
 	enum{GUI_ID_START = 0, GUI_ID_OPTIONS, GUI_ID_CREDITS, GUI_ID_RESUME, GUI_ID_PAUSE_OPTIONS, GUI_ID_GOTO_MAIN_MENU, GUI_ID_QUIT_BUTTON};
 
-	GameFlow(irr::IrrlichtDevice * device, Canvas& canvas, irr::gui::IGUIEnvironment* guienv,
-		irr::video::IVideoDriver* driver,SAppContext & Context,
+	GameFlow(irr::IrrlichtDevice * device, Canvas& canvas, SAppContext & Context,
 		/*irr::scene::ICameraSceneNode* camera,*/ gamecore::SoundEngine* engine, 
 		player* thePlayer, PhysicsWorld* physics, NPC* npc, GameMap* currentMap, InternalServer* client);
 	
@@ -84,9 +83,7 @@ private:
 	friend class GameplayLayer;
 
 	IC_Console console;
-	irr::gui::IGUIEnvironment* guienv_;
 	irr::IrrlichtDevice * device_;
-	irr::video::IVideoDriver* driver_;
 	SAppContext & Context_;
 	player* player_;
 	//std::list<remotePlayer*> remotePlayers_;

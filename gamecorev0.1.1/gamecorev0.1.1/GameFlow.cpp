@@ -23,11 +23,10 @@ using namespace gamecore;
 
 
 
-GameFlow::GameFlow(irr::IrrlichtDevice *device, Canvas& canvas, irr::gui::IGUIEnvironment* guienv,
-						   irr::video::IVideoDriver* driver, SAppContext & Context,
+GameFlow::GameFlow(irr::IrrlichtDevice *device, Canvas& canvas, SAppContext & Context,
 						   gamecore::SoundEngine* engine, player* thePlayer, PhysicsWorld* physics, 
 						   NPC* npc, GameMap* currentMap, InternalServer* client):
-							guienv_(guienv),device_(device),driver_(driver),Context_(Context),player_(thePlayer),							
+							device_(device),Context_(Context),player_(thePlayer),							
 							npc_(npc), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
 							inventoryScreen_(nullptr), hud_(canvas), debugOverlay_(device, canvas, physics), mainMenu_(device, canvas), pause_(device, canvas), death_(canvas), note_(canvas)

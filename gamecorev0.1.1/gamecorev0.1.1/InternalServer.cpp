@@ -82,7 +82,7 @@ NetClient::Events InternalServer::events()
 	return events;
 }
 
-void InternalServer::messageLoop(player& thePlayer, irr::gui::IGUIFont*)
+void InternalServer::messageLoop(player& thePlayer)
 {
 	if (client_.isOnline())
 	{
