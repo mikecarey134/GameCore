@@ -60,7 +60,7 @@ public:
 	std::list<ClueObject*>& getClueObjects() { return clueObjects_; }
 	bool getIsConsole()    {return console.isVisible();}
 
-	void displayconsole(const u32 dm){console.renderConsole(guienv_,driver_,dm);}
+	void displayconsole(const u32 dm){console.renderConsole(dm);}
 	void newRound      ();
 	void goToMainMenu  ();
 	void startPressed  ();

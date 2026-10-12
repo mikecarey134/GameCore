@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "Canvas.h"
 #include "includes.h"
 #include<exception>
 #include "utils.h"
@@ -227,7 +228,7 @@ public:
 	//! get the console config reference
 	IC_ConsoleConfig& getConfig();
 	//! (re)initialize the console with current config
-	void initializeConsole(irr::gui::IGUIEnvironment* guienv, const irr::core::dimension2d<s32>& screenSize);
+	void initializeConsole(Canvas& canvas, const irr::core::dimension2d<s32>& screenSize);
 	
 	
 
@@ -253,7 +254,7 @@ public:
 	//
 
 	//! render the console (it internally checks if the console is visible)
-	void renderConsole(irr::gui::IGUIEnvironment* guienv, irr::video::IVideoDriver *videoDriver, const u32 deltaMillis);
+	void renderConsole(const u32 deltaMillis);
 
 	//
 	//	console message handling
@@ -285,7 +286,8 @@ private:
 	bool bVisible;
 	
 	//! the font of the console
-	irr::gui::IGUIFont* guiFont;
+	Canvas* canvas;
+	FontHandle guiFont;
 
 	//! the console rectangle
 	irr::core::rect<s32> consoleRect;

@@ -332,7 +332,7 @@ void IC_Dispatcher::printCommandDesc(const WideString cmdName, IC_MessageSink* p
 //=========================================================================================
 //=========================================================================================
 //! constructor
-IC_Console::IC_Console() : bVisible(false), guiFont(0),consoleRect(0,0,0,0),consoleHistoryIndex(0)
+IC_Console::IC_Console() : bVisible(false), canvas(0), guiFont(0),consoleRect(0,0,0,0),consoleHistoryIndex(0)
 {
 }
 //=========================================================================================
@@ -349,13 +349,14 @@ IC_ConsoleConfig& IC_Console::getConfig()
 //=========================================================================================
 
 //! (re)initialize the console with current config
-void IC_Console::initializeConsole(irr::gui::IGUIEnvironment* guienv, const irr::core::dimension2d<s32>& screenSize)
+void IC_Console::initializeConsole(Canvas& target, const irr::core::dimension2d<s32>& screenSize)
 {
 	//load the font
-	guiFont = guienv->getFont(consoleConfig.fontName.c_str());
+	canvas = &target;
+	guiFont = canvas->loadFont(consoleConfig.fontName.c_str());
 	if(guiFont == 0)
 	{
-		guiFont = guienv->getBuiltInFont();
+		guiFont = canvas->builtInFont();
 	}
 	cout<<"font loaded!!"<<endl;
 
@@ -456,7 +457,7 @@ void IC_Console::clearMessages()
 }
 //=========================================================================================
 //! render the console (it internally checks if the console is visible)
-void IC_Console::renderConsole(irr::gui::IGUIEnvironment*, irr::video::IVideoDriver *videoDriver, const u32)
+void IC_Console::renderConsole(const u32)
 {
 	// render only if the console is visible
 	if(isVisible())
@@ -465,7 +466,7 @@ void IC_Console::renderConsole(irr::gui::IGUIEnvironment*, irr::video::IVideoDri
 		if(consoleConfig.bShowBG)
 		{
 			//draw the bg as per configured color
-			videoDriver->draw2DRectangle(consoleConfig.bgColor,consoleRect);
+			canvas->drawRect(consoleRect, consoleConfig.bgColor);
 		}
 		//we calculate where the message log shall be printed and where the prompt shall be printed
 		rect<s32> textRect,shellRect;
@@ -484,7 +485,7 @@ void IC_Console::renderConsole(irr::gui::IGUIEnvironment*, irr::video::IVideoDri
 		for(u32 i = 0; i < consoleMessages.size(); i++)
 		{
 			//we draw each line with the configured font and color vertically centered in the rectangle
-			guiFont->draw(consoleMessages[i].c_str(), lineRect, consoleConfig.fontColor, false, true);
+			canvas->drawText(guiFont, consoleMessages[i].c_str(), lineRect, consoleConfig.fontColor, false, true);
 
 			//update line rectangle
 			lineRect.UpperLeftCorner.Y += lineHeight;
@@ -510,7 +511,7 @@ void IC_Console::renderConsole(irr::gui::IGUIEnvironment*, irr::video::IVideoDri
 		}
 		
 		//draw the prompt string
-		guiFont->draw(shellText.c_str(),shellRect,consoleConfig.fontColor,false,true);
+		canvas->drawText(guiFont, shellText.c_str(), shellRect, consoleConfig.fontColor, false, true);
 		
 	}
 }
@@ -727,7 +728,7 @@ bool IC_Console::calculateLimits(u32& maxLines, u32& lineHeight,s32& fontHeight)
 	u32 consoleHeight = consoleRect.getHeight();
 	if(guiFont != 0 && consoleHeight > 0)
 	{
-		fontHeight = guiFont->getDimension(L"X").Height;
+		fontHeight = canvas->textSize(guiFont, L"X").Height;
 		lineHeight = fontHeight + consoleConfig.lineSpacing;
 		maxLines = consoleHeight / lineHeight;
 		if(maxLines > 2)
