@@ -14,17 +14,6 @@ namespace
 {
 	const float FRAME = 1.0f / 60.0f;
 	const float PI_F = 3.14159265f;
-#ifdef GAMECORE_PHYSICS_JOLT
-	const bool ON_GROUND_AFTER_WARP = false;
-	const float FALL_SPEED = 188.75f;
-	const float HIGHEST_CLIMBED_LEDGE = 0.35f;
-	const bool RAYCASTS = true;
-#else
-	const bool ON_GROUND_AFTER_WARP = true;
-	const float FALL_SPEED = 55.0f;
-	const float HIGHEST_CLIMBED_LEDGE = 1.5f;
-	const bool RAYCASTS = false;
-#endif
 
 	CharacterSettings playerSettings()
 	{
@@ -101,7 +90,7 @@ TEST_CASE("physics: a character falls under gravity and lands on a static mesh")
 	TestWorld world;
 	world.floor();
 	CharacterController& character = world.character(playerSettings(), vector3df(0.0f, 40.0f, 0.0f));
-	CHECK(character.onGround() == ON_GROUND_AFTER_WARP);
+	CHECK_FALSE(character.onGround());
 	world.run(0.25f);
 	CHECK_FALSE(character.onGround());
 	world.run(3.0f);
@@ -120,7 +109,7 @@ TEST_CASE("physics: falling speed")
 	world.run(0.5f);
 	float b = character.position().Y;
 	baseline("fall_speed_after_1s", (a - b) / 0.5f);
-	CHECK((a - b) / 0.5f == doctest::Approx(FALL_SPEED).epsilon(0.05));
+	CHECK((a - b) / 0.5f == doctest::Approx(188.75f).epsilon(0.05));
 }
 
 TEST_CASE("physics: walking speed matches setWalk")
@@ -218,7 +207,7 @@ TEST_CASE("physics: ledges at and above the step height")
 		baseline(name, character.position().Y - rest);
 		std::snprintf(name, sizeof(name), "ledge_%.2f_x", height);
 		baseline(name, character.position().X);
-		if (height <= HIGHEST_CLIMBED_LEDGE)
+		if (height <= 0.35f)
 			CHECK(character.position().Y - rest == doctest::Approx(height).epsilon(0.05));
 		else
 		{
@@ -325,15 +314,12 @@ TEST_CASE("physics: a ray hits the floor below it and misses empty space")
 	TestWorld world;
 	BodyId ground = world.floor(3.0f);
 	RayHit hit;
-	CHECK(world.physics->raycast(vector3df(5.0f, 50.0f, -5.0f), vector3df(5.0f, -50.0f, -5.0f), hit) == RAYCASTS);
-	if (RAYCASTS)
-	{
-		CHECK(hit.body == ground);
-		CHECK(hit.point.X == doctest::Approx(5.0f));
-		CHECK(hit.point.Y == doctest::Approx(3.0f));
-		CHECK(hit.point.Z == doctest::Approx(-5.0f));
-		CHECK(hit.normal.Y == doctest::Approx(1.0f));
-	}
+	CHECK(world.physics->raycast(vector3df(5.0f, 50.0f, -5.0f), vector3df(5.0f, -50.0f, -5.0f), hit));
+	CHECK(hit.body == ground);
+	CHECK(hit.point.X == doctest::Approx(5.0f));
+	CHECK(hit.point.Y == doctest::Approx(3.0f));
+	CHECK(hit.point.Z == doctest::Approx(-5.0f));
+	CHECK(hit.normal.Y == doctest::Approx(1.0f));
 	CHECK_FALSE(world.physics->raycast(vector3df(5.0f, 50.0f, -5.0f), vector3df(5.0f, 10.0f, -5.0f), hit));
 }
 

@@ -45,16 +45,6 @@ else()
   endif()
 endif()
 
-set(BULLET_ROOT "${THIRD_PARTY}/bullet-2.77")
-file(GLOB_RECURSE BULLET_SOURCES
-  "${BULLET_ROOT}/Bullet/LinearMath/*.cpp"
-  "${BULLET_ROOT}/Bullet/BulletCollision/*.cpp"
-  "${BULLET_ROOT}/Bullet/BulletDynamics/*.cpp"
-  "${BULLET_ROOT}/Bullet/BulletSoftBody/*.cpp")
-add_library(bullet STATIC ${BULLET_SOURCES})
-target_include_directories(bullet SYSTEM PUBLIC "${BULLET_ROOT}" "${BULLET_ROOT}/Bullet")
-target_compile_options(bullet PRIVATE ${QUIET_THIRD_PARTY})
-
 set(JOLT_ROOT "${THIRD_PARTY}/jolt-5.6.0")
 file(GLOB_RECURSE JOLT_SOURCES "${JOLT_ROOT}/Jolt/*.cpp")
 list(FILTER JOLT_SOURCES EXCLUDE REGEX "/Jolt/(Compute/(CPU|DX12|VK|MTL)|Shaders)/")
@@ -74,21 +64,6 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$" AND NOT CMAKE_OSX_ARC
     target_compile_options(jolt PUBLIC -msse4.2 -mpopcnt)
   endif()
 endif()
-
-set(IRRBULLET_COPY "${CMAKE_CURRENT_BINARY_DIR}/irrbullet")
-file(COPY "${THIRD_PARTY}/irrbullet-0.1.8/" DESTINATION "${IRRBULLET_COPY}"
-     FILES_MATCHING PATTERN "*.h" PATTERN "*.cpp")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/engine/kinematiccharactercontroller.h"
-               "${IRRBULLET_COPY}/kinematiccharactercontroller.h" COPYONLY)
-if(NOT EXISTS "${IRRBULLET_COPY}/irrBullet.h")
-  file(WRITE "${IRRBULLET_COPY}/irrBullet.h" "#include \"irrbullet.h\"\n")
-endif()
-file(GLOB IRRBULLET_SOURCES "${IRRBULLET_COPY}/*.cpp")
-list(REMOVE_ITEM IRRBULLET_SOURCES "${IRRBULLET_COPY}/kinematiccharactercontroller.cpp")
-add_library(irrbullet STATIC ${IRRBULLET_SOURCES})
-target_include_directories(irrbullet SYSTEM PUBLIC "${IRRBULLET_COPY}")
-target_link_libraries(irrbullet PUBLIC bullet irrlicht_engine)
-target_compile_options(irrbullet PRIVATE ${QUIET_THIRD_PARTY})
 
 find_package(Threads REQUIRED)
 
@@ -182,28 +157,12 @@ add_library(gamecore_engine STATIC
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio lua51)
 
-add_library(gamecore_physics_bullet STATIC
-  ${ENGINE_DIR}/physics/PhysicsWorld.h ${ENGINE_DIR}/physics/CharacterController.h
-  ${ENGINE_DIR}/physics/BulletBackend.cpp
-  ${ENGINE_DIR}/kinematiccharactercontroller.cpp ${ENGINE_DIR}/kinematiccharactercontroller.h)
-target_include_directories(gamecore_physics_bullet PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_physics_bullet PUBLIC irrlicht_engine PRIVATE irrbullet)
-
-add_library(gamecore_physics_jolt STATIC
+add_library(gamecore_physics STATIC
   ${ENGINE_DIR}/physics/PhysicsWorld.h ${ENGINE_DIR}/physics/CharacterController.h
   ${ENGINE_DIR}/physics/JoltBackend.cpp)
-set_target_properties(gamecore_physics_jolt PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
-target_include_directories(gamecore_physics_jolt PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_physics_jolt PUBLIC irrlicht_engine PRIVATE jolt)
-
-set(GAMECORE_PHYSICS_BACKEND Jolt CACHE STRING "Physics backend used by the game: Bullet or Jolt")
-set_property(CACHE GAMECORE_PHYSICS_BACKEND PROPERTY STRINGS Bullet Jolt)
-string(TOLOWER "${GAMECORE_PHYSICS_BACKEND}" GAMECORE_PHYSICS_BACKEND_LOWER)
-if(NOT TARGET gamecore_physics_${GAMECORE_PHYSICS_BACKEND_LOWER})
-  message(FATAL_ERROR "GAMECORE_PHYSICS_BACKEND must be Bullet or Jolt")
-endif()
-add_library(gamecore_physics INTERFACE)
-target_link_libraries(gamecore_physics INTERFACE gamecore_physics_${GAMECORE_PHYSICS_BACKEND_LOWER})
+set_target_properties(gamecore_physics PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+target_include_directories(gamecore_physics PUBLIC "${ENGINE_DIR}")
+target_link_libraries(gamecore_physics PUBLIC irrlicht_engine PRIVATE jolt)
 
 add_library(gamecore_net STATIC
   ${ENGINE_DIR}/net/ByteStream.cpp ${ENGINE_DIR}/net/ByteStream.h
@@ -237,13 +196,10 @@ target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT
 target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 gamecore_net)
 add_test(NAME engine_tests COMMAND engine_tests)
 
-foreach(backend bullet jolt)
-  add_executable(physics_tests_${backend} engine/tests/main.cpp engine/tests/physics_contract_test.cpp)
-  target_include_directories(physics_tests_${backend} PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-  target_link_libraries(physics_tests_${backend} PRIVATE gamecore_physics_${backend})
-  add_test(NAME physics_tests_${backend} COMMAND physics_tests_${backend})
-endforeach()
-target_compile_definitions(physics_tests_jolt PRIVATE GAMECORE_PHYSICS_JOLT)
+add_executable(physics_tests engine/tests/main.cpp engine/tests/physics_contract_test.cpp)
+target_include_directories(physics_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+target_link_libraries(physics_tests PRIVATE gamecore_physics)
+add_test(NAME physics_tests COMMAND physics_tests)
 
 add_library(game_protocol STATIC protocol/GameMessages.cpp protocol/GameMessages.h)
 target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -265,7 +221,7 @@ target_include_directories(net_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/invent
 target_link_libraries(net_tests PRIVATE gamecore_server_core game_client_net Threads::Threads)
 add_test(NAME net_tests COMMAND net_tests)
 
-foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physics_bullet gamecore_physics_jolt physics_tests_bullet physics_tests_jolt game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
+foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physics physics_tests game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
