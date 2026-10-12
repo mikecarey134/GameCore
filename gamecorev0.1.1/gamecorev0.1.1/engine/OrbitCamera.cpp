@@ -5,7 +5,7 @@
 #include <cmath>
 
 OrbitCamera::OrbitCamera(irr::scene::ISceneManager* smgr)
-	: yaw_(0.0f), pitch_(0.0f), distance_(10.0f), sensitivity_(50.0f), smgr_(smgr), node_(0)
+	: yaw_(0.0f), pitch_(0.0f), distance_(10.0f), sensitivity_(0.0625f), smgr_(smgr), node_(0)
 {
 	if (smgr_)
 	{

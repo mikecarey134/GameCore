@@ -19,6 +19,9 @@ private:
 	irr::gui::ICursorControl* cursor_;
 	bool captured_;
 	irr::core::position2df delta_;
+	irr::core::position2di centre_;
+
+	void recentre();
 };
 
 #endif

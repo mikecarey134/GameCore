@@ -15,7 +15,7 @@ public:
 	void setTarget(const irr::core::vector3df& target) { target_ = target; }
 	void zoom(float delta);
 	void reset() { yaw_ = 0.0f; pitch_ = 0.0f; }
-	void setSensitivity(float degreesPerWindow) { sensitivity_ = degreesPerWindow; }
+	void setSensitivity(float degreesPerPixel) { sensitivity_ = degreesPerPixel; }
 
 	float getYaw() const { return yaw_; }
 	float getPitch() const { return pitch_; }

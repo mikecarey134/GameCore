@@ -282,7 +282,7 @@ add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test
   engine/tests/ui_anchor_test.cpp engine/tests/window_size_test.cpp
   engine/tests/byte_stream_test.cpp engine/tests/message_frame_test.cpp
   engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp
-  engine/tests/enet_transport_test.cpp engine/tests/interpolator_test.cpp engine/tests/canvas_test.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
+  engine/tests/enet_transport_test.cpp engine/tests/interpolator_test.cpp engine/tests/canvas_test.cpp engine/tests/mouse_capture_test.cpp ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
   ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
   ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/RecordingCanvas.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
