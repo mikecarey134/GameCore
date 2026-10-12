@@ -68,7 +68,7 @@ jobs:
         run: cmake -S gamecorev0.1.1/gamecorev0.1.1 -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.configure }}
 
       - name: Build
-        run: cmake --build build --config Release --parallel ${{ matrix.keep_going }}
+        run: cmake --build build --config Release --parallel 4 ${{ matrix.keep_going }}
 
       - name: Run unit tests
         run: ctest --test-dir build --build-config Release --output-on-failure --verbose
