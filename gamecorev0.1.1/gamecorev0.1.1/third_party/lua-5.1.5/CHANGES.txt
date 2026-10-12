@@ -1,4 +1,0 @@
-Lua 5.1.5, from lua-5.1.5.tar.gz (www.lua.org/ftp).
-
-Only src/ is included, without its Makefile, plus etc/lua.hpp copied
-into src/. No source file is altered.
