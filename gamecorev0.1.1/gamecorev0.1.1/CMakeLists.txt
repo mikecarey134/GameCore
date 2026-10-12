@@ -196,7 +196,7 @@ set_target_properties(gamecore_physics_jolt PROPERTIES CXX_STANDARD 17 CXX_EXTEN
 target_include_directories(gamecore_physics_jolt PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_physics_jolt PUBLIC irrlicht_engine PRIVATE jolt)
 
-set(GAMECORE_PHYSICS_BACKEND Bullet CACHE STRING "Physics backend used by the game: Bullet or Jolt")
+set(GAMECORE_PHYSICS_BACKEND Jolt CACHE STRING "Physics backend used by the game: Bullet or Jolt")
 set_property(CACHE GAMECORE_PHYSICS_BACKEND PROPERTY STRINGS Bullet Jolt)
 string(TOLOWER "${GAMECORE_PHYSICS_BACKEND}" GAMECORE_PHYSICS_BACKEND_LOWER)
 if(NOT TARGET gamecore_physics_${GAMECORE_PHYSICS_BACKEND_LOWER})
