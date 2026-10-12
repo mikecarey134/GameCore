@@ -79,12 +79,12 @@ void RecordingCanvas::drawText(FontHandle font, const wchar_t* text, const core:
 
 core::dimension2d<u32> RecordingCanvas::textSize(FontHandle, const wchar_t*)
 {
-	return text;
+	return textDimension;
 }
 
 core::dimension2d<u32> RecordingCanvas::screenSize()
 {
-	return screen;
+	return screenDimension;
 }
 
 TextureHandle RecordingCanvas::loadTexture(const char* path)

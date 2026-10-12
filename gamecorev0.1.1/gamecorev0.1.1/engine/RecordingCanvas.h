@@ -30,8 +30,8 @@ public:
 	};
 
 	std::vector<Call> calls;
-	irr::core::dimension2d<irr::u32> screen = irr::core::dimension2d<irr::u32>(800, 600);
-	irr::core::dimension2d<irr::u32> text = irr::core::dimension2d<irr::u32>(6, 10);
+	irr::core::dimension2d<irr::u32> screenDimension = irr::core::dimension2d<irr::u32>(800, 600);
+	irr::core::dimension2d<irr::u32> textDimension = irr::core::dimension2d<irr::u32>(6, 10);
 
 	void drawRect(const irr::core::rect<irr::s32>& area, irr::video::SColor colour) override;
 	void drawGradientRect(const irr::core::rect<irr::s32>& area, irr::video::SColor top, irr::video::SColor bottom) override;

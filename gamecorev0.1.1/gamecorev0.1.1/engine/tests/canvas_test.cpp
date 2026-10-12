@@ -84,8 +84,8 @@ TEST_CASE("canvas: screen and text sizes come from the recording canvas settings
 {
 	RecordingCanvas recording;
 	Canvas& canvas = recording;
-	recording.screen = dimension2d<u32>(1280, 720);
-	recording.text = dimension2d<u32>(42, 13);
+	recording.screenDimension = dimension2d<u32>(1280, 720);
+	recording.textDimension = dimension2d<u32>(42, 13);
 	CHECK(canvas.screenSize() == dimension2d<u32>(1280, 720));
 	CHECK(canvas.textSize(canvas.builtInFont(), L"X") == dimension2d<u32>(42, 13));
 }
