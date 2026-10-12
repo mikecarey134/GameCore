@@ -361,8 +361,9 @@ namespace
 		float groundVertical = character_->GetGroundVelocity().GetY();
 		if (character_->GetGroundState() == JPH::CharacterVirtual::EGroundState::OnGround && vertical - groundVertical < 0.1f)
 			vertical = groundVertical + (jump_ ? jumpSpeed_ : 0.0f);
+		else
+			vertical -= gravity_ * seconds;
 		jump_ = false;
-		vertical -= gravity_ * seconds;
 		character_->SetLinearVelocity(JPH::Vec3(walk_.GetX(), 0.0f, walk_.GetZ()) + vertical * up);
 		character_->ExtendedUpdate(seconds, -gravity_ * up, updateSettings_,
 			JPH::DefaultBroadPhaseLayerFilter(world_->objectVsBroadPhase(), MOVING_LAYER),

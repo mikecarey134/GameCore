@@ -190,6 +190,19 @@ TEST_CASE("physics: slopes either side of the maximum")
 	}
 }
 
+TEST_CASE("physics: a character standing on a walkable slope stays put")
+{
+	TestWorld world;
+	world.physics->addStaticMesh(world.plane(vector3df(), vector3df(0.0f, 0.0f, 30.0f)));
+	CharacterController& character = world.character(playerSettings(), vector3df(0.0f, 10.0f, 0.0f));
+	world.run(2.0f);
+	vector3df start = character.position();
+	world.run(2.0f);
+	baseline("slope_30_creep", (character.position() - start).getLength());
+	CHECK(character.onGround());
+	CHECK((character.position() - start).getLength() < 0.05f);
+}
+
 TEST_CASE("physics: ledges at and above the step height")
 {
 	for (float height : { 0.35f, 0.5f, 1.0f, 1.5f, 2.0f, 3.0f })
