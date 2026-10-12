@@ -34,8 +34,7 @@ namespace
 
 void Hud::draw(const player& thePlayer)
 {
-	IVideoDriver* driver = device_->getVideoDriver();
-	dimension2d<u32> screen = driver->getScreenSize();
+	dimension2d<u32> screen = canvas_.screenSize();
 
 	SColor healthColor;
 	//draw health color based on how much health they have
@@ -44,22 +43,22 @@ void Hud::draw(const player& thePlayer)
 	else if(thePlayer.getHealth() >=1 && thePlayer.getHealth() < 30){healthColor = red;}
 	else healthColor = blue;
 
-	driver->draw2DRectangle(SColor(150,0,0,0), anchored(rect<s32>(290,530, 560,570), 0.5f, 1.0f, screen));
-	driver->draw2DRectangle(healthColor, anchored(rect<s32>(300,540, 300+core::clamp(thePlayer.getHealth(),0,100)*5/2,560), 0.5f, 1.0f, screen));
+	canvas_.drawRect(anchored(rect<s32>(290,530, 560,570), 0.5f, 1.0f, screen), SColor(150,0,0,0));
+	canvas_.drawRect(anchored(rect<s32>(300,540, 300+core::clamp(thePlayer.getHealth(),0,100)*5/2,560), 0.5f, 1.0f, screen), healthColor);
 
 	//draw the health bar
-	driver->draw2DRectangle(SColor(150,0,0,0), anchored(rect<s32>(660,458, 760,570), 1.0f, 1.0f, screen));
+	canvas_.drawRect(anchored(rect<s32>(660,458, 760,570), 1.0f, 1.0f, screen), SColor(150,0,0,0));
 
 	//draw the current weapon
-	ITexture* currentWeapon = driver->getTexture("bill/icons/hand-small.jpg");
-	driver->draw2DImage(currentWeapon, anchored(rect<s32>(670,470,750,560), 1.0f, 1.0f, screen).UpperLeftCorner,rect<s32>(0,0,80,90));
+	TextureHandle currentWeapon = canvas_.loadTexture("bill/icons/hand-small.jpg");
+	position2d<s32> weaponCorner = anchored(rect<s32>(670,470,750,560), 1.0f, 1.0f, screen).UpperLeftCorner;
+	canvas_.drawImage(currentWeapon, rect<s32>(weaponCorner, dimension2d<s32>(80,90)), rect<s32>(0,0,80,90));
 
-	IGUIFont* font2 = device_->getGUIEnvironment()->getFont("bill/console.bmp");
+	FontHandle font2 = canvas_.loadFont("bill/console.bmp");
 	core::stringw fpsstr;//draw the current hunger and water levels
 	fpsstr += "Water:";
 	
-	font2->draw(fpsstr,//draw current fps for debugging
-		anchored(rect<s32>(370,480, 470 ,560), 0.5f, 1.0f, screen),white);//set up the color
+	canvas_.drawText(font2, fpsstr.c_str(), anchored(rect<s32>(370,480, 470 ,560), 0.5f, 1.0f, screen), white);
 
 	SColor color;
 	//draw health color based on how much health they have
@@ -68,8 +67,7 @@ void Hud::draw(const player& thePlayer)
 	else if(thePlayer.getWater() >=1 && thePlayer.getWater() < 30){color = red;}
 	fpsstr="";
 	fpsstr += thePlayer.getWater();
-	font2->draw(fpsstr,//draw current fps for debugging
-		anchored(rect<s32>(410,480, 510 ,560), 0.5f, 1.0f, screen),color);//set up the color
+	canvas_.drawText(font2, fpsstr.c_str(), anchored(rect<s32>(410,480, 510 ,560), 0.5f, 1.0f, screen), color);
 }
 
 void MainMenuScreen::draw()//draws the main menu for the game

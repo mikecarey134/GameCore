@@ -2,6 +2,7 @@
 #define SCREENS_H
 
 #include <irrlicht.h>
+#include "Canvas.h"
 
 class player;
 class ClueObject;
@@ -9,11 +10,11 @@ class ClueObject;
 class Hud
 {
 public:
-	explicit Hud(irr::IrrlichtDevice* device) : device_(device) {}
+	explicit Hud(Canvas& canvas) : canvas_(canvas) {}
 	void draw(const player& thePlayer);
 
 private:
-	irr::IrrlichtDevice* device_;
+	Canvas& canvas_;
 };
 
 class MainMenuScreen
