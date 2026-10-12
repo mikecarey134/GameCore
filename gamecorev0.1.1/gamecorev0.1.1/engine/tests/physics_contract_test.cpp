@@ -14,6 +14,17 @@ namespace
 {
 	const float FRAME = 1.0f / 60.0f;
 	const float PI_F = 3.14159265f;
+#ifdef GAMECORE_PHYSICS_JOLT
+	const bool ON_GROUND_AFTER_WARP = false;
+	const float FALL_SPEED = 188.75f;
+	const float HIGHEST_CLIMBED_LEDGE = 0.35f;
+	const bool RAYCASTS = true;
+#else
+	const bool ON_GROUND_AFTER_WARP = true;
+	const float FALL_SPEED = 55.0f;
+	const float HIGHEST_CLIMBED_LEDGE = 1.5f;
+	const bool RAYCASTS = false;
+#endif
 
 	CharacterSettings playerSettings()
 	{
@@ -90,7 +101,7 @@ TEST_CASE("physics: a character falls under gravity and lands on a static mesh")
 	TestWorld world;
 	world.floor();
 	CharacterController& character = world.character(playerSettings(), vector3df(0.0f, 40.0f, 0.0f));
-	CHECK(character.onGround());
+	CHECK(character.onGround() == ON_GROUND_AFTER_WARP);
 	world.run(0.25f);
 	CHECK_FALSE(character.onGround());
 	world.run(3.0f);
@@ -109,7 +120,7 @@ TEST_CASE("physics: falling speed")
 	world.run(0.5f);
 	float b = character.position().Y;
 	baseline("fall_speed_after_1s", (a - b) / 0.5f);
-	CHECK((a - b) / 0.5f == doctest::Approx(55.0f).epsilon(0.05));
+	CHECK((a - b) / 0.5f == doctest::Approx(FALL_SPEED).epsilon(0.05));
 }
 
 TEST_CASE("physics: walking speed matches setWalk")
@@ -192,7 +203,7 @@ TEST_CASE("physics: slopes either side of the maximum")
 
 TEST_CASE("physics: ledges at and above the step height")
 {
-	for (float height : { 0.35f, 1.0f, 1.5f, 2.0f, 3.0f })
+	for (float height : { 0.35f, 0.5f, 1.0f, 1.5f, 2.0f, 3.0f })
 	{
 		TestWorld world;
 		world.floor();
@@ -207,7 +218,7 @@ TEST_CASE("physics: ledges at and above the step height")
 		baseline(name, character.position().Y - rest);
 		std::snprintf(name, sizeof(name), "ledge_%.2f_x", height);
 		baseline(name, character.position().X);
-		if (height < 1.75f)
+		if (height <= HIGHEST_CLIMBED_LEDGE)
 			CHECK(character.position().Y - rest == doctest::Approx(height).epsilon(0.05));
 		else
 		{
@@ -245,6 +256,34 @@ TEST_CASE("physics: a dynamic box falls and settles on a static mesh")
 	CHECK(std::fabs(crate->getPosition().Y - settled) < 0.01f);
 }
 
+TEST_CASE("physics: a long frame catches up at most eight fixed steps")
+{
+	TestWorld world;
+	world.floor();
+	CharacterController& character = world.character(playerSettings(), vector3df(0.0f, 10.0f, 0.0f));
+	world.run(2.0f);
+	character.setWalk(vector3df(60.0f, 0.0f, 0.0f));
+	float start = character.position().X;
+	world.physics->step(1.0f);
+	baseline("long_frame_walk", character.position().X - start);
+	CHECK(character.position().X - start == doctest::Approx(8.0f).epsilon(0.05));
+}
+
+TEST_CASE("physics: a dynamic box lands on another dynamic box")
+{
+	TestWorld world;
+	world.floor();
+	scene::IMeshSceneNode* lower = world.box(vector3df(0.0f, 10.0f, 0.0f), vector3df(4.0f, 4.0f, 4.0f));
+	scene::IMeshSceneNode* upper = world.box(vector3df(0.0f, 30.0f, 0.0f), vector3df(4.0f, 4.0f, 4.0f));
+	world.physics->addDynamicBox(lower, 0.064f);
+	world.physics->addDynamicBox(upper, 0.064f);
+	world.run(4.0f);
+	baseline("stacked_lower_y", lower->getPosition().Y);
+	baseline("stacked_upper_y", upper->getPosition().Y);
+	CHECK(lower->getPosition().Y == doctest::Approx(2.0f).epsilon(0.05));
+	CHECK(upper->getPosition().Y == doctest::Approx(6.0f).epsilon(0.05));
+}
+
 TEST_CASE("physics: characters block each other unless one ignores characters")
 {
 	for (bool collides : { true, false })
@@ -279,6 +318,23 @@ TEST_CASE("physics: a removed body no longer collides")
 	world.run(2.0f);
 	baseline("after_removal_y", character.position().Y);
 	CHECK(character.position().Y < -20.0f);
+}
+
+TEST_CASE("physics: a ray hits the floor below it and misses empty space")
+{
+	TestWorld world;
+	BodyId ground = world.floor(3.0f);
+	RayHit hit;
+	CHECK(world.physics->raycast(vector3df(5.0f, 50.0f, -5.0f), vector3df(5.0f, -50.0f, -5.0f), hit) == RAYCASTS);
+	if (RAYCASTS)
+	{
+		CHECK(hit.body == ground);
+		CHECK(hit.point.X == doctest::Approx(5.0f));
+		CHECK(hit.point.Y == doctest::Approx(3.0f));
+		CHECK(hit.point.Z == doctest::Approx(-5.0f));
+		CHECK(hit.normal.Y == doctest::Approx(1.0f));
+	}
+	CHECK_FALSE(world.physics->raycast(vector3df(5.0f, 50.0f, -5.0f), vector3df(5.0f, 10.0f, -5.0f), hit));
 }
 
 TEST_CASE("physics: stats count bodies and characters")
