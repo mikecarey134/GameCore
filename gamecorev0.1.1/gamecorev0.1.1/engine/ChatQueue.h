@@ -10,21 +10,21 @@
 
 #define ChatQueue_STRINGLENGTH 240
 
-#include <irrlicht.h>
+#include <irrString.h>
 #include <list>
+#include "Canvas.h"
+
+namespace irr { class IrrlichtDevice; }
 
 using namespace irr;
 using namespace core;
-using namespace scene;
 using namespace video;
-using namespace io;
-using namespace gui;
 
 
 class ChatQueue {
 public:
 	//Constructor
-	ChatQueue(IrrlichtDevice * device,const core::rect<s32> drawArea,
+	ChatQueue(IrrlichtDevice * device, Canvas& canvas, const core::rect<s32> drawArea,
 		float textLife = 5000, bool setFade = false, float fadeTime = 1000.00, bool setShadows = true
 		, bool debug = true, bool isDrawn = true  );
 	~ChatQueue();
@@ -43,7 +43,7 @@ public:
 	void setFade(bool setFade = true);
 	void setRect(const core::rect<s32> drawArea);
 	void setFadeTime(float fadeTime = 1000.00);
-	void setFont(irr::gui::IGUIFont* font);
+	void setFont(FontHandle font);
 	void setMaxLines(unsigned short maxLines);
 	void setShadows(bool setShadows = true);
 	void setVisible(bool setVisible = true);
@@ -54,7 +54,7 @@ public:
 protected: 
 	//Helper functions
 	void ChatQueue_calculateRect(const core::rect<s32> drawArea);
-	void ChatQueue_calculateFontHeight(irr::gui::IGUIFont* font);
+	void ChatQueue_calculateFontHeight();
 	void ChatQueue_calculateMaxLines();
 
 	struct ChatQueueMessage{
@@ -77,6 +77,7 @@ protected:
 	unsigned short m_fontHeight;
 
 	IrrlichtDevice* ChatQueue_device;
+	Canvas& ChatQueue_canvas;
 	bool ChatQueue_fade;
 	bool ChatQueue_shadows;
 	bool ChatQueue_visible;
@@ -85,7 +86,7 @@ protected:
 	float ChatQueue_life;
 	unsigned short ChatQueue_maxLines;
 	std::list<ChatQueueMessage> ChatQueue_list;
-	IGUIFont* ChatQueue_font;
+	FontHandle ChatQueue_font;
 };
 
 #endif //ChatQueue.h

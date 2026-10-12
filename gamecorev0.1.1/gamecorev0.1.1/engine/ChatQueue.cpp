@@ -7,17 +7,18 @@
 
 
 #include "ChatQueue.h"
+#include <irrlicht.h>
 
-ChatQueue::ChatQueue(IrrlichtDevice * device,
+ChatQueue::ChatQueue(IrrlichtDevice * device, Canvas& canvas,
 					 const core::rect<s32> drawArea,float textLife,
 					 bool setFade, float fadeTime, bool, bool debug, bool isDrawn):
-					ChatQueue_device(device),ChatQueue_fade(setFade)
+					ChatQueue_device(device),ChatQueue_canvas(canvas),ChatQueue_fade(setFade)
 					,ChatQueue_visible(isDrawn),ChatQueue_debug(debug),ChatQueue_fadeTime(fadeTime),ChatQueue_life(textLife)
 {
 	//init the chat queue
 	m_fontHeight = 0;
 	ChatQueue_calculateRect(drawArea);
-	ChatQueue_font = device->getGUIEnvironment()->getBuiltInFont();
+	ChatQueue_font = canvas.builtInFont();
 	setFont(ChatQueue_font);
 }
 
@@ -57,8 +58,7 @@ void ChatQueue::draw()
 {
 	//Debug
 	if(ChatQueue_debug && ChatQueue_visible)
-		ChatQueue_device->getVideoDriver()->draw2DRectangle(video::SColor(100,0,0,0),
-		core::rect<s32>(m_x, m_y - m_yHeight,m_x + m_xWidth,m_y));    
+		ChatQueue_canvas.drawRect(core::rect<s32>(m_x, m_y - m_yHeight,m_x + m_xWidth,m_y), video::SColor(100,0,0,0));    
 	//Main Update/Draw
 	std::list<ChatQueueMessage>::iterator iter;
 	unsigned short count = 0;
@@ -101,11 +101,11 @@ void ChatQueue::draw()
 				if (ChatQueue_font)
 				{
 					if (ChatQueue_shadows)
-						ChatQueue_font->draw(iter->message,
+						ChatQueue_canvas.drawText(ChatQueue_font, iter->message,
 						core::rect<s32>(m_x + 1,m_y_tmp - m_fontHeight+ 1,m_x+m_xWidth + 1,m_y_tmp + 1),
 						iter->chatColorShadow);        
 
-					ChatQueue_font->draw(iter->message,
+					ChatQueue_canvas.drawText(ChatQueue_font, iter->message,
 						core::rect<s32>(m_x,m_y_tmp - m_fontHeight,m_x+m_xWidth,m_y_tmp),
 						iter->chatColor);    
 					m_y_tmp -= m_fontHeight;
@@ -129,9 +129,9 @@ void ChatQueue::ChatQueue_calculateRect(const core::rect<s32> drawArea)
 	m_x = l_positionTmp.X;  
 }
 
-void ChatQueue::ChatQueue_calculateFontHeight(irr::gui::IGUIFont*)
+void ChatQueue::ChatQueue_calculateFontHeight()
 {
-	dimension2d<u32> l_fontHeight = ChatQueue_font->getDimension(L"|");
+	dimension2d<u32> l_fontHeight = ChatQueue_canvas.textSize(ChatQueue_font, L"|");
 	m_fontHeight = (unsigned short)l_fontHeight.Height;   
 }
 
@@ -157,10 +157,10 @@ void ChatQueue::setFadeTime(float fadeTime)
 	ChatQueue_fadeTime = fadeTime;
 }
 
-void ChatQueue::setFont(irr::gui::IGUIFont* font)
+void ChatQueue::setFont(FontHandle font)
 {    
 	ChatQueue_font = font;
-	ChatQueue_calculateFontHeight(font);
+	ChatQueue_calculateFontHeight();
 	ChatQueue_calculateMaxLines();
 }
 

@@ -13,6 +13,7 @@
 //comment out if you don't want to see the Debug console
 
 #include "ChatQueue.h"
+#include "IrrlichtCanvas.h"
 #include "physics/PhysicsWorld.h"
 #include <irrlicht.h>
 #include "SoundEngine.h"
@@ -121,6 +122,8 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	IrrlichtCanvas canvas(device);
+
 	drawIntro(device);//draw our intro 
 
 
@@ -147,9 +150,9 @@ int main(int argc, char** argv)
 	context.counter = 0;
 
 	//init the chat buffer display that shows all player chat
-	ChatQueue chat_queue(device,anchored(rect<s32>(0,420,580,500), 0.0f, 1.0f, driver->getScreenSize()),5000,true,500,true,false);
+	ChatQueue chat_queue(device,canvas,anchored(rect<s32>(0,420,580,500), 0.0f, 1.0f, canvas.screenSize()),5000,true,500,true,false);
 	//set up the chat buffers font
-	chat_queue.setFont(device->getGUIEnvironment()->getFont("bill/console.bmp"));
+	chat_queue.setFont(canvas.loadFont("bill/console.bmp"));
 
 	drawLoading(device);//load gui and display loading while the computer is working
 	
