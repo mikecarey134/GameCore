@@ -176,6 +176,7 @@ namespace
 
 		BodyId addStaticMesh(scene::IMeshSceneNode* node) override
 		{
+			node->updateAbsolutePosition();
 			JPH::TriangleList triangles;
 			scene::IMesh* mesh = node->getMesh();
 			const core::matrix4& transform = node->getAbsoluteTransformation();
@@ -207,6 +208,7 @@ namespace
 
 		BodyId addDynamicBox(scene::ISceneNode* node, float mass) override
 		{
+			node->updateAbsolutePosition();
 			core::vector3df half = node->getBoundingBox().getExtent() * node->getScale() * 0.5f;
 			float smallest = std::min(half.X, std::min(half.Y, half.Z));
 			JPH::Ref<JPH::Shape> shape = new JPH::BoxShape(toJolt(half), std::min(JPH::cDefaultConvexRadius, smallest * 0.5f));

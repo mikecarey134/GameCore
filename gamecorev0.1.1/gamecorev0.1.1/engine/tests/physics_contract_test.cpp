@@ -271,6 +271,22 @@ TEST_CASE("physics: a long frame catches up at most eight fixed steps")
 	CHECK(character.position().X - start == doctest::Approx(8.0f).epsilon(0.05));
 }
 
+TEST_CASE("physics: a box starts where its node was just moved and scaled")
+{
+	TestWorld world;
+	world.floor();
+	scene::IMeshSceneNode* crate = world.box(vector3df(), vector3df(2.0f, 2.0f, 2.0f));
+	crate->setPosition(vector3df(15.0f, 30.0f, -5.0f));
+	crate->setScale(vector3df(2.0f, 2.0f, 2.0f));
+	world.physics->addDynamicBox(crate, 0.064f);
+	world.physics->step(FRAME);
+	CHECK(crate->getPosition().X == doctest::Approx(15.0f));
+	CHECK(crate->getPosition().Y == doctest::Approx(30.0f).epsilon(0.01));
+	CHECK(crate->getPosition().Z == doctest::Approx(-5.0f));
+	world.run(4.0f);
+	CHECK(crate->getPosition().Y == doctest::Approx(2.0f).epsilon(0.05));
+}
+
 TEST_CASE("physics: a dynamic box lands on another dynamic box")
 {
 	TestWorld world;
@@ -334,6 +350,11 @@ TEST_CASE("physics: a ray hits the floor below it and misses empty space")
 	CHECK(hit.point.Z == doctest::Approx(-5.0f));
 	CHECK(hit.normal.Y == doctest::Approx(1.0f));
 	CHECK_FALSE(world.physics->raycast(vector3df(5.0f, 50.0f, -5.0f), vector3df(5.0f, 10.0f, -5.0f), hit));
+	scene::IMeshSceneNode* moved = world.plane(vector3df());
+	moved->setPosition(vector3df(1000.0f, 7.0f, 1000.0f));
+	world.physics->addStaticMesh(moved);
+	CHECK(world.physics->raycast(vector3df(1000.0f, 50.0f, 1000.0f), vector3df(1000.0f, -50.0f, 1000.0f), hit));
+	CHECK(hit.point.Y == doctest::Approx(7.0f));
 }
 
 TEST_CASE("physics: stats count bodies and characters")
