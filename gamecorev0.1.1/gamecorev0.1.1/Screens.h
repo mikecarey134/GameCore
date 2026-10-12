@@ -20,23 +20,25 @@ private:
 class MainMenuScreen
 {
 public:
-	explicit MainMenuScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	MainMenuScreen(irr::IrrlichtDevice* device, Canvas& canvas) : device_(device), canvas_(canvas) {}
 	void draw();
 	void hide();
 
 private:
 	irr::IrrlichtDevice* device_;
+	Canvas& canvas_;
 };
 
 class PauseScreen
 {
 public:
-	explicit PauseScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	PauseScreen(irr::IrrlichtDevice* device, Canvas& canvas) : device_(device), canvas_(canvas) {}
 	void draw();
 	void hide();
 
 private:
 	irr::IrrlichtDevice* device_;
+	Canvas& canvas_;
 };
 
 class DeathScreen

@@ -30,7 +30,7 @@ GameFlow::GameFlow(irr::IrrlichtDevice *device, Canvas& canvas, irr::gui::IGUIEn
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),player_(thePlayer),							
 							npc_(npc), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr), hud_(canvas), debugOverlay_(device, canvas, physics), mainMenu_(device), pause_(device), death_(device), note_(device)
+							inventoryScreen_(nullptr), hud_(canvas), debugOverlay_(device, canvas, physics), mainMenu_(device, canvas), pause_(device, canvas), death_(device), note_(device)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");

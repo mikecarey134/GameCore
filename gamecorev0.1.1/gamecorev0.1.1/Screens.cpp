@@ -73,17 +73,10 @@ void Hud::draw(const player& thePlayer)
 void MainMenuScreen::draw()//draws the main menu for the game
 {
 	IGUIEnvironment* guienv = device_->getGUIEnvironment();
-	IVideoDriver* driver = device_->getVideoDriver();
 	IGUISkin* skin = guienv->getSkin();
-	dimension2d<u32> screen = driver->getScreenSize();
-	
-	//add a button to our gui here
-	
-	ITexture* backgroundImage = driver->getTexture("bill/theuninvitedlogo.jpg");
-	//ITexture* titleImage = driver->getTexture("bill/logo.png");
+	dimension2d<u32> screen = canvas_.screenSize();
 
-	driver->draw2DImage(backgroundImage,letterboxed(screen),rect<s32>(0,0,800,600));
-	//driver->draw2DImage(titleImage,position2d<s32>(0,0),rect<s32>(0,0,424,127),NULL,SColor(255,255,255,255), true);
+	canvas_.drawImage(canvas_.loadTexture("bill/theuninvitedlogo.jpg"), letterboxed(screen), rect<s32>(0,0,800,600));
 
 	if (!guienv->getRootGUIElement()->getElementFromId(GameFlow::GUI_ID_CREDITS, true))
 	{
@@ -98,12 +91,10 @@ void MainMenuScreen::draw()//draws the main menu for the game
 	}
 
 
-	//2 types of gui fonts
-	gui::IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/console.bmp");
-	if(font)
-		skin->setFont(font);
-	
-	font->draw("v0.1.1 (alpha)",anchored(rect<s32>(20,570,20,590), 0.0f, 1.0f, screen),SColor(255,255,255,255));
+	if (IGUIFont* skinFont = guienv->getFont("bill/console.bmp"))
+		skin->setFont(skinFont);
+
+	canvas_.drawText(canvas_.loadFont("bill/console.bmp"), L"v0.1.1 (alpha)", anchored(rect<s32>(20,570,20,590), 0.0f, 1.0f, screen), SColor(255,255,255,255));
 
 	guienv->drawAll();
 	
@@ -117,18 +108,12 @@ void MainMenuScreen::hide()
 void PauseScreen::draw()// render the pause menu 
 {
 	IGUIEnvironment* guienv = device_->getGUIEnvironment();
-	IVideoDriver* driver = device_->getVideoDriver();
-	//guienv->drawAll();
-
 	IGUISkin* skin = guienv->getSkin();
-	dimension2d<u32> screen = driver->getScreenSize();
-	//guienv = device_->getGUIEnvironment();
-	//guienv->drawAll();
-	//add a button to our gui here	
-	driver->draw2DRectangle(SColor(150,0,0,0),anchored(rect<s32>(320,150,500,450), 0.5f, 0.5f, screen));
+	dimension2d<u32> screen = canvas_.screenSize();
+	canvas_.drawRect(anchored(rect<s32>(320,150,500,450), 0.5f, 0.5f, screen), SColor(150,0,0,0));
 
-	ITexture* titleImage = driver->getTexture("bill/pauselogo.png");
-	driver->draw2DImage(titleImage,anchored(rect<s32>(290,150,530,188), 0.5f, 0.5f, screen).UpperLeftCorner,rect<s32>(0,0,240,38),NULL,SColor(255,255,255,255), true);
+	position2d<s32> titleCorner = anchored(rect<s32>(290,150,530,188), 0.5f, 0.5f, screen).UpperLeftCorner;
+	canvas_.drawImage(canvas_.loadTexture("bill/pauselogo.png"), rect<s32>(titleCorner, dimension2d<s32>(240,38)), rect<s32>(0,0,240,38));
 
 	if (!guienv->getRootGUIElement()->getElementFromId(GameFlow::GUI_ID_GOTO_MAIN_MENU, true))
 	{
