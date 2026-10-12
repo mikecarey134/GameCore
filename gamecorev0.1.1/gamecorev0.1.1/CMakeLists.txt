@@ -195,6 +195,9 @@ add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
 target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 gamecore_net)
 add_test(NAME engine_tests COMMAND engine_tests)
+add_test(NAME irrlicht_boundary COMMAND ${CMAKE_COMMAND}
+  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -DIRRLICHT_INCLUDE_DIR=${IRRLICHT_INCLUDE_DIR}
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/engine/tests/irrlicht_boundary.cmake)
 
 add_executable(physics_tests engine/tests/main.cpp engine/tests/physics_contract_test.cpp)
 target_include_directories(physics_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")

@@ -4,7 +4,8 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include <irrlicht.h>
+#include <rect.h>
+#include <dimension2d.h>
 
 const irr::u32 DESIGN_WIDTH = 800;
 const irr::u32 DESIGN_HEIGHT = 600;

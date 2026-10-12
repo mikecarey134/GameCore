@@ -1,4 +1,5 @@
 #include "ConsoleLayer.h"
+#include "console.h"
 
 using namespace irr;
 

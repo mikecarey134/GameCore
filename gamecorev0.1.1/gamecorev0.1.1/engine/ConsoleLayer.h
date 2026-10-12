@@ -3,8 +3,9 @@
 
 #include <functional>
 #include "InputRouter.h"
-#include "console.h"
 #include "ActionMap.h"
+
+class IC_Console;
 
 class ConsoleLayer : public InputLayer
 {
