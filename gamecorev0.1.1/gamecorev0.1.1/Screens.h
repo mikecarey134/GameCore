@@ -44,24 +44,24 @@ private:
 class DeathScreen
 {
 public:
-	explicit DeathScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	explicit DeathScreen(Canvas& canvas) : canvas_(canvas) {}
 	void draw();
 
 private:
-	irr::IrrlichtDevice* device_;
+	Canvas& canvas_;
 };
 
 class NoteScreen
 {
 public:
-	explicit NoteScreen(irr::IrrlichtDevice* device) : device_(device) {}
+	explicit NoteScreen(Canvas& canvas) : canvas_(canvas) {}
 	void draw(const ClueObject& clue);
 
 private:
-	irr::IrrlichtDevice* device_;
+	Canvas& canvas_;
 };
 
-void drawIntro(irr::IrrlichtDevice* device);
-void drawLoading(irr::IrrlichtDevice* device);
+void drawIntro(irr::IrrlichtDevice* device, Canvas& canvas);
+void drawLoading(irr::IrrlichtDevice* device, Canvas& canvas);
 
 #endif

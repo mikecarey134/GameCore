@@ -144,22 +144,21 @@ void PauseScreen::hide()
 
 void DeathScreen::draw()
 {
-	gui::IGUIFont* deathFont = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
-	dimension2d<u32> screen = device_->getVideoDriver()->getScreenSize();
+	FontHandle deathFont = canvas_.loadFont("bill/bigfont.png");
+	dimension2d<u32> screen = canvas_.screenSize();
 	if (deathFont)
 	{
-		deathFont->draw(L"You died", rect<s32>(0, screen.Height/2 - 60, screen.Width, screen.Height/2), SColor(255,200,0,0), true, true);
-		deathFont->draw(L"Press Esc for Main Menu", rect<s32>(0, screen.Height/2, screen.Width, screen.Height/2 + 40), SColor(255,255,255,255), true, true);
+		canvas_.drawText(deathFont, L"You died", rect<s32>(0, screen.Height/2 - 60, screen.Width, screen.Height/2), SColor(255,200,0,0), true, true);
+		canvas_.drawText(deathFont, L"Press Esc for Main Menu", rect<s32>(0, screen.Height/2, screen.Width, screen.Height/2 + 40), SColor(255,255,255,255), true, true);
 	}
 }
 
 void NoteScreen::draw(const ClueObject& clue)
 {
-	IVideoDriver* driver = device_->getVideoDriver();
 	const string<char>& message = clue.getMessage();
 	int width = 250;
 	int height = 400;
-	position2d<s32> corner = anchored(rect<s32>(500,100,500+width,100+height), 1.0f, 0.5f, driver->getScreenSize()).UpperLeftCorner;
+	position2d<s32> corner = anchored(rect<s32>(500,100,500+width,100+height), 1.0f, 0.5f, canvas_.screenSize()).UpperLeftCorner;
 	int posX = corner.X;
 	int posY = corner.Y;
 
@@ -167,12 +166,9 @@ void NoteScreen::draw(const ClueObject& clue)
 	int charWidth = 15;
 	int textOffset = 40;
 
-	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/console.bmp");//device_->getGUIEnvironment()->getBuiltInFont();
+	FontHandle font = canvas_.loadFont("bill/console.bmp");
 
-	//clueProperties_.showClue_ = true;
-	ITexture* note = driver->getTexture("textures/bloodyNote.png");
-	
-	driver->draw2DImage(note,position2d<s32>(posX,posY),rect<s32>(0,0,width,height),NULL,SColor(255,255,255,255), true);
+	canvas_.drawImage(canvas_.loadTexture("textures/bloodyNote.png"), rect<s32>(posX, posY, posX + width, posY + height), rect<s32>(0,0,width,height));
 
 	int lineStart = 0;
 	int lineLength = 20;
@@ -193,7 +189,7 @@ void NoteScreen::draw(const ClueObject& clue)
 		i += lineLength;
 		posY += textOffset;
 		
-		font->draw(line, 
+		canvas_.drawText(font, stringw(line).c_str(),
 				   rect<s32>(posX+textOffset, posY+textOffset, 
 							 posX+(line.size()*charWidth), posY+textOffset+textHeigt),
 				   SColor(255,0,0,0));
@@ -202,46 +198,35 @@ void NoteScreen::draw(const ClueObject& clue)
 	//Might want to find a better way to do this
 	line = message.subString(lineStart+1, message.size()-lineStart);
 	posY += textOffset;
-	font->draw(line, 
+	canvas_.drawText(font, stringw(line).c_str(),
 		rect<s32>(posX+textOffset, posY+textOffset, 
 		posX+(line.size()*charWidth), posY+textOffset+textHeigt),
 		SColor(255,0,0,0));
 }
 
-void drawIntro(IrrlichtDevice* device)
+void drawIntro(IrrlichtDevice* device, Canvas& canvas)
 {
 	device->getVideoDriver()->beginScene(true, false, irr::video::SColor(255,0,0,0));
 
-	ITexture* backgroundImage = device->getVideoDriver()->getTexture("bill/intro.jpg");
-
-	device->getVideoDriver()->draw2DImage(backgroundImage,letterboxed(device->getVideoDriver()->getScreenSize()),rect<s32>(0,0,800,600));
+	canvas.drawImage(canvas.loadTexture("bill/intro.jpg"), letterboxed(canvas.screenSize()), rect<s32>(0,0,800,600));
 	device->getGUIEnvironment()->drawAll();
 	device->getVideoDriver()->endScene();
 
 
 }
 
-void drawLoading(IrrlichtDevice* device)
+void drawLoading(IrrlichtDevice* device, Canvas& canvas)
 {
-	IVideoDriver* driver = device->getVideoDriver();
-	IGUIEnvironment* guienv = device->getGUIEnvironment();
-	driver->beginScene(true, false, irr::video::SColor(255,0,0,0));
+	device->getVideoDriver()->beginScene(true, false, irr::video::SColor(255,0,0,0));
 
-	driver->getTexture("bill/creepyman.jpg");
-	driver->getTexture("bill/loading.png");
+	canvas.loadTexture("bill/creepyman.jpg");
+	canvas.loadTexture("bill/loading.png");
 
-	//driver->draw2DImage(backgroundImage,position2d<s32>(0,0),rect<s32>(0,0,800,600));
-	//driver->draw2DImage(titleImage,position2d<s32>(100,100),rect<s32>(40,40,600,300),NULL,SColor(255,255,255,255), false);
+	device->getGUIEnvironment()->drawAll();
 
-	guienv->drawAll();
+	canvas.drawText(canvas.loadFont("bill/bigfont.png"), L"LOADING...", anchored(rect<s32>(325,275,475,325), 0.5f, 0.5f, canvas.screenSize()), SColor(255,255,255,255));
 
-
-
-	irr::gui::IGUIFont* font = guienv->getFont("bill/bigfont.png");
-
-	font->draw(L"LOADING...", anchored(irr::core::rect<irr::s32>(325,275,475,325), 0.5f, 0.5f, driver->getScreenSize()), irr::video::SColor(255,255,255,255));
-
-	driver->endScene();
+	device->getVideoDriver()->endScene();
 
 
 }

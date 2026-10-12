@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 
 	IrrlichtCanvas canvas(device);
 
-	drawIntro(device);//draw our intro 
+	drawIntro(device, canvas);//draw our intro 
 
 
 	
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
 	//set up the chat buffers font
 	chat_queue.setFont(canvas.loadFont("bill/console.bmp"));
 
-	drawLoading(device);//load gui and display loading while the computer is working
+	drawLoading(device, canvas);//load gui and display loading while the computer is working
 	
 
 	//Loading map now handled in its own class
