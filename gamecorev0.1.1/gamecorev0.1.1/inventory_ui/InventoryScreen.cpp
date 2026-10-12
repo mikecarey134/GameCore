@@ -55,22 +55,18 @@ namespace
 		return positions;
 	}
 
-	irr::core::dimension2d<irr::u32> screenSize(irr::IrrlichtDevice* device)
-	{
-		return device->getVideoDriver()->getScreenSize();
-	}
 }
 
-InventoryScreen::InventoryScreen(irr::IrrlichtDevice* device, Inventory& inventory, const Catalog& catalog)
-	: device_(device), inventory_(&inventory), catalog_(&catalog),
-	layout_((int)screenSize(device).Width, (int)screenSize(device).Height, dollPositions(catalog), 8, 5),
+InventoryScreen::InventoryScreen(Canvas& canvas, Inventory& inventory, const Catalog& catalog)
+	: canvas_(canvas), inventory_(&inventory), catalog_(&catalog),
+	layout_((int)canvas.screenSize().Width, (int)canvas.screenSize().Height, dollPositions(catalog), 8, 5),
 	controller_(new InventoryController(inventory, catalog)), mouseX_(0), mouseY_(0)
 {
 }
 
-InventoryScreen::InventoryScreen(irr::IrrlichtDevice* device, const std::string& loadError)
-	: device_(device), inventory_(nullptr), catalog_(nullptr),
-	layout_((int)screenSize(device).Width, (int)screenSize(device).Height, std::vector<Cell>(), 8, 5),
+InventoryScreen::InventoryScreen(Canvas& canvas, const std::string& loadError)
+	: canvas_(canvas), inventory_(nullptr), catalog_(nullptr),
+	layout_((int)canvas.screenSize().Width, (int)canvas.screenSize().Height, std::vector<Cell>(), 8, 5),
 	loadError_(loadError), mouseX_(0), mouseY_(0)
 {
 }
@@ -118,34 +114,29 @@ void InventoryScreen::draw()
 
 void InventoryScreen::drawFrame()
 {
-	irr::video::IVideoDriver* driver = device_->getVideoDriver();
-	irr::core::dimension2d<irr::u32> screen = driver->getScreenSize();
-	driver->draw2DRectangle(SColor(170, 0, 0, 0), irr::core::rect<irr::s32>(0, 0, (irr::s32)screen.Width, (irr::s32)screen.Height));
+	irr::core::dimension2d<irr::u32> screen = canvas_.screenSize();
+	canvas_.drawRect(irr::core::rect<irr::s32>(0, 0, (irr::s32)screen.Width, (irr::s32)screen.Height), SColor(170, 0, 0, 0));
 
 	Rect panel = layout_.panel();
-	driver->draw2DRectangle(toIrr(panel), SColor(250, 34, 29, 32), SColor(250, 34, 29, 32),
-		SColor(250, 11, 9, 11), SColor(250, 11, 9, 11));
-	driver->draw2DRectangleOutline(toIrr(panel), SColor(255, 104, 86, 66));
-	driver->draw2DRectangleOutline(toIrr(Rect{ panel.x + 4, panel.y + 4, panel.width - 8, panel.height - 8 }),
+	canvas_.drawGradientRect(toIrr(panel), SColor(250, 34, 29, 32), SColor(250, 11, 9, 11));
+	canvas_.drawRectOutline(toIrr(panel), SColor(255, 104, 86, 66));
+	canvas_.drawRectOutline(toIrr(Rect{ panel.x + 4, panel.y + 4, panel.width - 8, panel.height - 8 }),
 		SColor(255, 52, 42, 36));
 
-	irr::video::ITexture* title = driver->getTexture("bill/inv.png");
-	if (title)
-		driver->draw2DImage(title, toIrr(layout_.title()), irr::core::rect<irr::s32>(0, 0, 303, 72), 0, 0, true);
+	canvas_.drawImage(canvas_.loadTexture("bill/inv.png"), toIrr(layout_.title()), irr::core::rect<irr::s32>(0, 0, 303, 72));
 }
 
 void InventoryScreen::drawInset(const Rect& area, SColor top, SColor bottom)
 {
-	irr::video::IVideoDriver* driver = device_->getVideoDriver();
-	driver->draw2DRectangle(toIrr(area), top, top, bottom, bottom);
+	canvas_.drawGradientRect(toIrr(area), top, bottom);
 	SColor dark(255, 6, 5, 6);
 	SColor light(255, 78, 68, 60);
 	int right = area.x + area.width - 1;
 	int bottomEdge = area.y + area.height - 1;
-	driver->draw2DLine(irr::core::position2d<irr::s32>(area.x, area.y), irr::core::position2d<irr::s32>(right, area.y), dark);
-	driver->draw2DLine(irr::core::position2d<irr::s32>(area.x, area.y), irr::core::position2d<irr::s32>(area.x, bottomEdge), dark);
-	driver->draw2DLine(irr::core::position2d<irr::s32>(area.x, bottomEdge), irr::core::position2d<irr::s32>(right, bottomEdge), light);
-	driver->draw2DLine(irr::core::position2d<irr::s32>(right, area.y), irr::core::position2d<irr::s32>(right, bottomEdge), light);
+	canvas_.drawLine(irr::core::position2d<irr::s32>(area.x, area.y), irr::core::position2d<irr::s32>(right, area.y), dark);
+	canvas_.drawLine(irr::core::position2d<irr::s32>(area.x, area.y), irr::core::position2d<irr::s32>(area.x, bottomEdge), dark);
+	canvas_.drawLine(irr::core::position2d<irr::s32>(area.x, bottomEdge), irr::core::position2d<irr::s32>(right, bottomEdge), light);
+	canvas_.drawLine(irr::core::position2d<irr::s32>(right, area.y), irr::core::position2d<irr::s32>(right, bottomEdge), light);
 }
 
 void InventoryScreen::drawDoll()
@@ -158,7 +149,6 @@ void InventoryScreen::drawDoll()
 
 void InventoryScreen::drawSlot(int index)
 {
-	irr::video::IVideoDriver* driver = device_->getVideoDriver();
 	Rect area = layout_.slot(index);
 	if (area.width == 0)
 		return;
@@ -177,7 +167,7 @@ void InventoryScreen::drawSlot(int index)
 	if (item)
 	{
 		const ItemType* type = catalog_->itemType(item->type);
-		driver->draw2DRectangleOutline(toIrr(Rect{ area.x + 2, area.y + 2, area.width - 4, area.height - 4 }),
+		canvas_.drawRectOutline(toIrr(Rect{ area.x + 2, area.y + 2, area.width - 4, area.height - 4 }),
 			shade(categoryColour(type->category), 0.8f, 255));
 		drawIcon(type->icon, iconArea, categoryColour(type->category));
 	}
@@ -187,14 +177,14 @@ void InventoryScreen::drawSlot(int index)
 	if (blocked)
 	{
 		SColor red(255, 200, 48, 40);
-		driver->draw2DLine(irr::core::position2d<irr::s32>(area.x + 8, area.y + 8),
+		canvas_.drawLine(irr::core::position2d<irr::s32>(area.x + 8, area.y + 8),
 			irr::core::position2d<irr::s32>(area.x + area.width - 8, area.y + area.height - 8), red);
-		driver->draw2DLine(irr::core::position2d<irr::s32>(area.x + area.width - 8, area.y + 8),
+		canvas_.drawLine(irr::core::position2d<irr::s32>(area.x + area.width - 8, area.y + 8),
 			irr::core::position2d<irr::s32>(area.x + 8, area.y + area.height - 8), red);
-		driver->draw2DRectangleOutline(toIrr(area), red);
+		canvas_.drawRectOutline(toIrr(area), red);
 	}
 	if (hovered)
-		driver->draw2DRectangleOutline(toIrr(Rect{ area.x - 1, area.y - 1, area.width + 2, area.height + 2 }),
+		canvas_.drawRectOutline(toIrr(Rect{ area.x - 1, area.y - 1, area.width + 2, area.height + 2 }),
 			SColor(255, 226, 186, 96));
 
 	drawText(blocked ? slot.name + " - Blocked" : slot.name, Rect{ area.x - 8, area.y + area.height + 3, area.width + 16, 12 },
@@ -224,16 +214,14 @@ void InventoryScreen::drawGrid()
 
 void InventoryScreen::drawTile(const Placed& placed, bool dimmed, bool hovered)
 {
-	irr::video::IVideoDriver* driver = device_->getVideoDriver();
 	const ItemType* type = catalog_->itemType(placed.item.type);
 	Rect area = layout_.footprint(placed.anchor, type->width, type->height);
 	Rect tile{ area.x + 3, area.y + 3, area.width - 6, area.height - 6 };
 	SColor colour = categoryColour(type->category);
 	int alpha = dimmed ? 70 : 255;
 
-	driver->draw2DRectangle(toIrr(tile), shade(colour, 0.52f, alpha), shade(colour, 0.52f, alpha),
-		shade(colour, 0.26f, alpha), shade(colour, 0.26f, alpha));
-	driver->draw2DRectangleOutline(toIrr(tile), hovered ? SColor(255, 236, 196, 104) : shade(colour, 0.9f, alpha));
+	canvas_.drawGradientRect(toIrr(tile), shade(colour, 0.52f, alpha), shade(colour, 0.26f, alpha));
+	canvas_.drawRectOutline(toIrr(tile), hovered ? SColor(255, 236, 196, 104) : shade(colour, 0.9f, alpha));
 
 	int side = (tile.width < tile.height ? tile.width : tile.height) - 6;
 	Rect icon{ tile.x + (tile.width - side) / 2, tile.y + (tile.height - side) / 2, side, side };
@@ -242,7 +230,7 @@ void InventoryScreen::drawTile(const Placed& placed, bool dimmed, bool hovered)
 	if (placed.item.count > 1)
 	{
 		Rect badge{ tile.x + tile.width - 22, tile.y + tile.height - 15, 20, 13 };
-		driver->draw2DRectangle(SColor(alpha * 4 / 5, 0, 0, 0), toIrr(badge));
+		canvas_.drawRect(toIrr(badge), SColor(alpha * 4 / 5, 0, 0, 0));
 		drawText(std::to_string(placed.item.count), Rect{ badge.x + 6, badge.y + 1, badge.width - 6, badge.height },
 			SColor(alpha, 255, 240, 200));
 	}
@@ -262,14 +250,14 @@ void InventoryScreen::drawHeld()
 	if (target.kind == Hit::Kind::Cell)
 	{
 		Cell anchor{ target.cell.column - grab.column, target.cell.row - grab.row };
-		device_->getVideoDriver()->draw2DRectangleOutline(
+		canvas_.drawRectOutline(
 			toIrr(layout_.footprint(anchor, type->width, type->height)), SColor(255, 236, 226, 200));
 	}
 
 	Rect ghost{ mouseX_ - grab.column * cellSize - cellSize / 2, mouseY_ - grab.row * cellSize - cellSize / 2,
 		type->width * cellSize, type->height * cellSize };
 	SColor colour = categoryColour(type->category);
-	device_->getVideoDriver()->draw2DRectangle(shade(colour, 0.5f, 150), toIrr(ghost));
+	canvas_.drawRect(toIrr(ghost), shade(colour, 0.5f, 150));
 	int side = (ghost.width < ghost.height ? ghost.width : ghost.height) - 12;
 	drawIcon(type->icon, Rect{ ghost.x + (ghost.width - side) / 2, ghost.y + (ghost.height - side) / 2, side, side },
 		SColor(230, 250, 246, 236));
@@ -339,13 +327,11 @@ void InventoryScreen::drawDetails()
 
 void InventoryScreen::drawStatus()
 {
-	irr::video::IVideoDriver* driver = device_->getVideoDriver();
 	Rect line = layout_.statusLine();
 	int used = controller_->cellsUsed();
 	Rect bar{ line.x, line.y + 5, 120, 10 };
 	drawInset(bar, SColor(255, 14, 12, 14), SColor(255, 8, 7, 8));
-	driver->draw2DRectangle(SColor(255, 150, 122, 70),
-		toIrr(Rect{ bar.x + 1, bar.y + 1, (bar.width - 2) * used / 40, bar.height - 2 }));
+	canvas_.drawRect(toIrr(Rect{ bar.x + 1, bar.y + 1, (bar.width - 2) * used / 40, bar.height - 2 }), SColor(255, 150, 122, 70));
 	drawText(std::to_string(used) + " / 40 cells", Rect{ bar.x + bar.width + 8, line.y + 4, 90, 14 },
 		SColor(255, 176, 166, 152));
 	if (!controller_->message().empty())
@@ -356,22 +342,13 @@ void InventoryScreen::drawIcon(const std::string& icon, const Rect& area, SColor
 {
 	if (icon.empty())
 		return;
-	irr::video::IVideoDriver* driver = device_->getVideoDriver();
-	irr::video::ITexture* texture = driver->getTexture((std::string(iconFolder) + icon).c_str());
-	if (!texture)
-		return;
-	irr::core::dimension2d<irr::u32> size = texture->getOriginalSize();
-	SColor tints[4] = { tint, tint, tint, tint };
-	driver->draw2DImage(texture, toIrr(area),
-		irr::core::rect<irr::s32>(0, 0, (irr::s32)size.Width, (irr::s32)size.Height), 0, tints, true);
+	canvas_.drawImage(canvas_.loadTexture((std::string(iconFolder) + icon).c_str()), toIrr(area), tint);
 }
 
 void InventoryScreen::drawText(const std::string& text, const Rect& area, SColor colour, bool big)
 {
-	irr::gui::IGUIEnvironment* gui = device_->getGUIEnvironment();
-	irr::gui::IGUIFont* font = big ? gui->getFont("bill/bigfont.png") : nullptr;
+	FontHandle font = big ? canvas_.loadFont("bill/bigfont.png") : nullptr;
 	if (!font)
-		font = gui->getBuiltInFont();
-	irr::core::rect<irr::s32> clip = toIrr(area);
-	font->draw(irr::core::stringw(text.c_str()), clip, colour, false, false, &clip);
+		font = canvas_.builtInFont();
+	canvas_.drawText(font, irr::core::stringw(text.c_str()).c_str(), toIrr(area), colour, false, false, true);
 }

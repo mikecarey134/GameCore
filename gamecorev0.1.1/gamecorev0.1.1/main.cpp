@@ -214,8 +214,8 @@ int main(int argc, char** argv)
 	else
 		std::cerr << "Inventory data did not load: " << itemProblem << std::endl;
 	InventoryScreen inventoryScreen = itemsLoaded
-		? InventoryScreen(device, backpack, itemCatalog)
-		: InventoryScreen(device, itemProblem);
+		? InventoryScreen(canvas, backpack, itemCatalog)
+		: InventoryScreen(canvas, itemProblem);
 	inventoryScreen.setCloseKeyName(actions.keyName("inventory"));
 	gameFlow.setInventoryScreen(&inventoryScreen);
 

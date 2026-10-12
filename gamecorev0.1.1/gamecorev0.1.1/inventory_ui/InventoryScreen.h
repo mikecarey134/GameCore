@@ -1,5 +1,6 @@
 #pragma once
-#include <irrlicht.h>
+#include <IEventReceiver.h>
+#include "Canvas.h"
 #include <memory>
 #include <string>
 #include "Catalog.h"
@@ -10,8 +11,8 @@
 class InventoryScreen
 {
 public:
-	InventoryScreen(irr::IrrlichtDevice* device, inventory::Inventory& inventory, const inventory::Catalog& catalog);
-	InventoryScreen(irr::IrrlichtDevice* device, const std::string& loadError);
+	InventoryScreen(Canvas& canvas, inventory::Inventory& inventory, const inventory::Catalog& catalog);
+	InventoryScreen(Canvas& canvas, const std::string& loadError);
 
 	bool onEvent(const irr::SEvent& event);
 	void draw();
@@ -33,7 +34,7 @@ private:
 	const inventory::ItemType* hoveredType(int& count) const;
 	std::string slotNames(const std::vector<std::string>& slotIds) const;
 
-	irr::IrrlichtDevice* device_;
+	Canvas& canvas_;
 	inventory::Inventory* inventory_;
 	const inventory::Catalog* catalog_;
 	inventory::InventoryLayout layout_;
