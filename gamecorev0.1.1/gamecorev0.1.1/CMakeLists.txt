@@ -67,14 +67,105 @@ endif()
 
 find_package(Threads REQUIRED)
 
-file(GLOB LUA_SOURCES "${THIRD_PARTY}/lua-5.1.5/src/*.c")
-list(REMOVE_ITEM LUA_SOURCES
-  "${THIRD_PARTY}/lua-5.1.5/src/lua.c"
-  "${THIRD_PARTY}/lua-5.1.5/src/luac.c"
-  "${THIRD_PARTY}/lua-5.1.5/src/print.c")
-add_library(lua51 STATIC ${LUA_SOURCES})
-target_include_directories(lua51 SYSTEM PUBLIC "${THIRD_PARTY}/lua-5.1.5/src")
-target_compile_options(lua51 PRIVATE ${QUIET_THIRD_PARTY})
+set(LUAJIT_ROOT "${THIRD_PARTY}/luajit")
+set(LUAJIT_SRC "${LUAJIT_ROOT}/src")
+set(LUAJIT_GEN "${CMAKE_CURRENT_BINARY_DIR}/luajit")
+file(MAKE_DIRECTORY "${LUAJIT_GEN}")
+set(LUAJIT_LIBS lib_base.c lib_math.c lib_bit.c lib_string.c lib_table.c lib_io.c lib_os.c
+  lib_package.c lib_debug.c lib_jit.c lib_ffi.c lib_buffer.c)
+
+if(MSVC)
+  set(LUAJIT_DASM_FLAGS -D WIN -D JIT -D FFI -D ENDIAN_LE -D FPU -D P64)
+  set(LUAJIT_DASC vm_x64.dasc)
+  set(LUAJIT_VM_MODE peobj)
+  set(LUAJIT_VM "${LUAJIT_GEN}/lj_vm.obj")
+else()
+  enable_language(ASM)
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -E -dM -x c "${LUAJIT_SRC}/lj_arch.h"
+    OUTPUT_VARIABLE LUAJIT_ARCH RESULT_VARIABLE LUAJIT_ARCH_RESULT)
+  if(NOT LUAJIT_ARCH_RESULT EQUAL 0)
+    message(FATAL_ERROR "Could not preprocess LuaJIT's lj_arch.h")
+  endif()
+  set(LUAJIT_DASM_FLAGS "")
+  foreach(pair "LJ_LE 1:ENDIAN_LE" "LJ_BE 1:ENDIAN_BE" "LJ_ARCH_BITS 64:P64" "LJ_HASJIT 1:JIT"
+      "LJ_HASFFI 1:FFI" "LJ_DUALNUM 1:DUALNUM" "LJ_ARCH_HASFPU 1:FPU" "LJ_ABI_SOFTFP 0:HFABI"
+      "LJ_NO_UNWIND 1:NO_UNWIND" "LJ_ABI_PAUTH 1:PAUTH" "LJ_ABI_BRANCH_TRACK 1:BRANCH_TRACK"
+      "LJ_ABI_SHADOW_STACK 1:SHADOW_STACK")
+    string(REPLACE ":" ";" parts "${pair}")
+    list(GET parts 0 define)
+    list(GET parts 1 flag)
+    if(LUAJIT_ARCH MATCHES "#define ${define}\n")
+      list(APPEND LUAJIT_DASM_FLAGS -D ${flag})
+    endif()
+  endforeach()
+  if(LUAJIT_ARCH MATCHES "#define LJ_ARCH_VERSION ([0-9]+)")
+    list(APPEND LUAJIT_DASM_FLAGS -D VER=${CMAKE_MATCH_1})
+  else()
+    list(APPEND LUAJIT_DASM_FLAGS -D VER=)
+  endif()
+  if(LUAJIT_ARCH MATCHES "#define LJ_TARGET_X64 1")
+    set(LUAJIT_DASC vm_x64.dasc)
+  elseif(LUAJIT_ARCH MATCHES "#define LJ_TARGET_ARM64 1")
+    set(LUAJIT_DASC vm_arm64.dasc)
+  else()
+    message(FATAL_ERROR "LuaJIT is only set up here for x64 and arm64")
+  endif()
+  if(APPLE)
+    set(LUAJIT_VM_MODE machasm)
+  else()
+    set(LUAJIT_VM_MODE elfasm)
+  endif()
+  set(LUAJIT_VM "${LUAJIT_GEN}/lj_vm.S")
+endif()
+
+add_executable(luajit_minilua "${LUAJIT_SRC}/host/minilua.c")
+target_compile_options(luajit_minilua PRIVATE ${QUIET_THIRD_PARTY})
+if(NOT WIN32)
+  target_link_libraries(luajit_minilua PRIVATE m)
+endif()
+
+add_custom_command(OUTPUT "${LUAJIT_GEN}/buildvm_arch.h"
+  COMMAND luajit_minilua "${LUAJIT_ROOT}/dynasm/dynasm.lua" ${LUAJIT_DASM_FLAGS}
+    -o "${LUAJIT_GEN}/buildvm_arch.h" "${LUAJIT_SRC}/${LUAJIT_DASC}"
+  DEPENDS luajit_minilua "${LUAJIT_SRC}/${LUAJIT_DASC}")
+add_custom_command(OUTPUT "${LUAJIT_GEN}/luajit.h"
+  COMMAND luajit_minilua "${LUAJIT_SRC}/host/genversion.lua" "${LUAJIT_SRC}/luajit_rolling.h"
+    "${LUAJIT_ROOT}/.relver" "${LUAJIT_GEN}/luajit.h"
+  DEPENDS luajit_minilua "${LUAJIT_SRC}/luajit_rolling.h" "${LUAJIT_ROOT}/.relver")
+
+file(GLOB LUAJIT_BUILDVM_SOURCES "${LUAJIT_SRC}/host/buildvm*.c")
+add_executable(luajit_buildvm ${LUAJIT_BUILDVM_SOURCES} "${LUAJIT_GEN}/buildvm_arch.h" "${LUAJIT_GEN}/luajit.h")
+target_include_directories(luajit_buildvm PRIVATE "${LUAJIT_GEN}" "${LUAJIT_SRC}" "${LUAJIT_ROOT}/dynasm")
+target_compile_options(luajit_buildvm PRIVATE ${QUIET_THIRD_PARTY})
+
+set(LUAJIT_GENERATED "${LUAJIT_VM}")
+add_custom_command(OUTPUT "${LUAJIT_VM}"
+  COMMAND luajit_buildvm -m ${LUAJIT_VM_MODE} -o "${LUAJIT_VM}"
+  DEPENDS luajit_buildvm)
+foreach(mode bcdef ffdef libdef recdef)
+  add_custom_command(OUTPUT "${LUAJIT_GEN}/lj_${mode}.h"
+    COMMAND luajit_buildvm -m ${mode} -o "${LUAJIT_GEN}/lj_${mode}.h" ${LUAJIT_LIBS}
+    WORKING_DIRECTORY "${LUAJIT_SRC}"
+    DEPENDS luajit_buildvm)
+  list(APPEND LUAJIT_GENERATED "${LUAJIT_GEN}/lj_${mode}.h")
+endforeach()
+add_custom_command(OUTPUT "${LUAJIT_GEN}/lj_folddef.h"
+  COMMAND luajit_buildvm -m folddef -o "${LUAJIT_GEN}/lj_folddef.h" lj_opt_fold.c
+  WORKING_DIRECTORY "${LUAJIT_SRC}"
+  DEPENDS luajit_buildvm "${LUAJIT_SRC}/lj_opt_fold.c")
+list(APPEND LUAJIT_GENERATED "${LUAJIT_GEN}/lj_folddef.h" "${LUAJIT_GEN}/luajit.h")
+
+add_library(luajit STATIC "${LUAJIT_SRC}/ljamalg.c" ${LUAJIT_GENERATED})
+if(MSVC)
+  set_source_files_properties("${LUAJIT_VM}" PROPERTIES EXTERNAL_OBJECT TRUE GENERATED TRUE)
+  target_compile_definitions(luajit PRIVATE _CRT_SECURE_NO_DEPRECATE)
+else()
+  target_compile_definitions(luajit PRIVATE _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE LUAJIT_UNWIND_EXTERNAL)
+  target_compile_options(luajit PRIVATE -U_FORTIFY_SOURCE)
+  target_link_libraries(luajit PUBLIC m ${CMAKE_DL_LIBS})
+endif()
+target_include_directories(luajit SYSTEM PUBLIC "${LUAJIT_SRC}" "${LUAJIT_GEN}")
+target_compile_options(luajit PRIVATE ${QUIET_THIRD_PARTY})
 
 set(ENET_ROOT "${THIRD_PARTY}/enet-1.3.18")
 file(GLOB ENET_SOURCES "${ENET_ROOT}/*.c")
@@ -156,7 +247,7 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h
   ${ENGINE_DIR}/Canvas.h ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/IrrlichtCanvas.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio lua51)
+target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio luajit)
 
 add_library(gamecore_physics STATIC
   ${ENGINE_DIR}/physics/PhysicsWorld.h ${ENGINE_DIR}/physics/CharacterController.h
@@ -195,7 +286,7 @@ add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test
   ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
   ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/RecordingCanvas.cpp)
 target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(engine_tests PRIVATE irrlicht_engine lua51 gamecore_net)
+target_link_libraries(engine_tests PRIVATE irrlicht_engine luajit gamecore_net)
 target_compile_definitions(engine_tests PRIVATE GAMECORE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 add_test(NAME engine_tests COMMAND engine_tests)
 add_test(NAME irrlicht_boundary COMMAND ${CMAKE_COMMAND}

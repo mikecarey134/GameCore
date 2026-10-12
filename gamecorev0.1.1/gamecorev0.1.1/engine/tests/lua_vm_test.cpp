@@ -162,3 +162,13 @@ TEST_CASE("the standard libraries are available to scripts")
 	CHECK(results[0].asInt() == 2);
 	CHECK(results[1].asString() == "CLUE");
 }
+
+TEST_CASE("scripts run on LuaJIT")
+{
+	LoggedVM lua;
+	REQUIRE(lua.vm.doString("function runtime() return jit and jit.version or _VERSION end"));
+	std::vector<LuaValue> results;
+	CHECK(lua.vm.call("runtime", {}, results, 1));
+	REQUIRE(results.size() == 1);
+	CHECK(results[0].asString().find("LuaJIT 2.1.") == 0);
+}
