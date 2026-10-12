@@ -181,7 +181,7 @@ int main(int argc, char** argv)
 	InternalServer Client(config_reader.get_online() && !smoke,device,"characters/stick_mike.ms3d",smgr,driver,engine,world,config_reader.get_ip()
 		,config_reader.get_rem_port(), config_reader.get_port(),&chat_queue, &thePlayer);
 
-	GameFlow gameFlow(device,guienv,driver,context, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
+	GameFlow gameFlow(device,canvas,guienv,driver,context, engine, &thePlayer, world, &npc_tester, &currentMap, &Client);
 	luaVM.setLogger([&gameFlow](const std::string& message) {
 		gameFlow.getConsole().logMessage_ANSI(ELL_ERROR, message.c_str());
 		std::cerr << message << std::endl;

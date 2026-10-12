@@ -23,14 +23,14 @@ using namespace gamecore;
 
 
 
-GameFlow::GameFlow(irr::IrrlichtDevice *device, irr::gui::IGUIEnvironment* guienv,
+GameFlow::GameFlow(irr::IrrlichtDevice *device, Canvas& canvas, irr::gui::IGUIEnvironment* guienv,
 						   irr::video::IVideoDriver* driver, SAppContext & Context,
 						   gamecore::SoundEngine* engine, player* thePlayer, PhysicsWorld* physics, 
 						   NPC* npc, GameMap* currentMap, InternalServer* client):
 							guienv_(guienv),device_(device),driver_(driver),Context_(Context),player_(thePlayer),							
 							npc_(npc), debug(false),pauseMenu(false), started(false), chatshown(false), 
 							inventory(false), engine_(engine), currentMap_(currentMap), client_(client),
-							inventoryScreen_(nullptr), hud_(device), debugOverlay_(device, physics), mainMenu_(device), pause_(device), death_(device), note_(device)
+							inventoryScreen_(nullptr), hud_(device), debugOverlay_(device, canvas, physics), mainMenu_(device), pause_(device), death_(device), note_(device)
 {
 	//open up the file to get set up the coords
 	//coords.open("coords.txt");

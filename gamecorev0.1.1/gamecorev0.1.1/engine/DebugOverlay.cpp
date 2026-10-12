@@ -1,4 +1,5 @@
 #include "DebugOverlay.h"
+#include <irrlicht.h>
 #include "UiAnchor.h"
 #include "physics/PhysicsWorld.h"
 #ifdef _WIN32
@@ -17,12 +18,10 @@
 using namespace irr;
 using namespace core;
 using namespace video;
-using namespace gui;
 
 void DebugOverlay::draw(const vector3df& nodePosition)
 {
 	IVideoDriver* driver = device_->getVideoDriver();
-	IGUIFont* font = device_->getGUIEnvironment()->getBuiltInFont();
 
 	//add all the info to the screen
 	int GUIFps = driver->getFPS();
@@ -80,10 +79,10 @@ void DebugOverlay::draw(const vector3df& nodePosition)
 	
 	fpsstr+="\n-------------------------";
 
-	driver->draw2DRectangle(SColor(100,0,0,0), anchored(rect<s32>(670,10,790,180), 1.0f, 0.0f, driver->getScreenSize()));
+	canvas_.drawRect(anchored(rect<s32>(670,10,790,180), 1.0f, 0.0f, canvas_.screenSize()), SColor(100,0,0,0));
 
-	font->draw(fpsstr,//draw current fps for debugging
-		anchored(rect<s32>(680,20,680,0), 1.0f, 0.0f, driver->getScreenSize()),SColor(255,255,255,255));//set up the color
+	canvas_.drawText(canvas_.builtInFont(), fpsstr.c_str(),
+		anchored(rect<s32>(680,20,680,0), 1.0f, 0.0f, canvas_.screenSize()), SColor(255,255,255,255));
 
 	physics_->drawDebug(driver);
 }
