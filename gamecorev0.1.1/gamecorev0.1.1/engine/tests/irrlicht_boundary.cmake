@@ -8,6 +8,7 @@ file(GLOB IRRLICHT_HEADERS RELATIVE "${IRRLICHT_INCLUDE_DIR}" "${IRRLICHT_INCLUD
 file(GLOB_RECURSE CLEAN RELATIVE "${SOURCE_DIR}"
   "${SOURCE_DIR}/engine/net/*.cpp" "${SOURCE_DIR}/engine/net/*.h"
   "${SOURCE_DIR}/engine/LuaVM*" "${SOURCE_DIR}/engine/SoundEngine*"
+  "${SOURCE_DIR}/engine/KeyValueFile*" "${SOURCE_DIR}/engine/SafeFileName*" "${SOURCE_DIR}/engine/ScreenStack*"
   "${SOURCE_DIR}/protocol/*.cpp" "${SOURCE_DIR}/protocol/*.h"
   "${SOURCE_DIR}/server/*.cpp" "${SOURCE_DIR}/server/*.h"
   "${SOURCE_DIR}/client/*.cpp" "${SOURCE_DIR}/client/*.h"
