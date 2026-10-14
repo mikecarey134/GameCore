@@ -272,6 +272,11 @@ add_library(gamecore_net STATIC
 target_include_directories(gamecore_net PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_net PRIVATE enet)
 
+add_library(gamecore_models STATIC ${ENGINE_DIR}/AssimpMeshLoader.cpp ${ENGINE_DIR}/AssimpMeshLoader.h)
+set_target_properties(gamecore_models PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+target_include_directories(gamecore_models PUBLIC "${ENGINE_DIR}")
+target_link_libraries(gamecore_models PUBLIC irrlicht_engine PRIVATE assimp)
+
 add_library(game_protocol STATIC protocol/GameMessages.cpp protocol/GameMessages.h)
 target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(game_protocol PUBLIC gamecore_net)
@@ -286,7 +291,7 @@ target_link_libraries(game_client_net PUBLIC game_protocol)
 add_library(game_net_session STATIC client/NetSession.cpp client/NetSession.h)
 target_link_libraries(game_net_session PUBLIC gamecore_server_core game_client_net)
 
-set(GAMECORE_LIBRARIES gamecore_engine gamecore_net gamecore_physics game_protocol gamecore_server_core game_client_net game_net_session)
+set(GAMECORE_LIBRARIES gamecore_engine gamecore_net gamecore_physics gamecore_models game_protocol gamecore_server_core game_client_net game_net_session)
 set(GAMECORE_STRICT_TARGETS ${GAMECORE_LIBRARIES})
 
 if(GAMECORE_TOP_LEVEL)
@@ -330,6 +335,13 @@ if(GAMECORE_TOP_LEVEL)
   target_link_libraries(physics_tests PRIVATE gamecore_physics)
   add_test(NAME physics_tests COMMAND physics_tests)
 
+  add_executable(model_tests engine/tests/main.cpp engine/tests/model_loader_test.cpp)
+  set_target_properties(model_tests PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+  target_include_directories(model_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+  target_compile_definitions(model_tests PRIVATE MODEL_DATA_DIR="${ENGINE_DIR}/tests/data")
+  target_link_libraries(model_tests PRIVATE gamecore_models)
+  add_test(NAME model_tests COMMAND model_tests)
+
   add_executable(gamecore_server server/main.cpp)
   target_link_libraries(gamecore_server PRIVATE gamecore_server_core Threads::Threads)
 
@@ -349,7 +361,7 @@ if(GAMECORE_TOP_LEVEL)
     set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
   endforeach()
 
-  list(APPEND GAMECORE_STRICT_TARGETS gamecore engine_tests physics_tests gamecore_server net_tests)
+  list(APPEND GAMECORE_STRICT_TARGETS gamecore engine_tests physics_tests model_tests gamecore_server net_tests)
   target_link_libraries(gamecore PRIVATE gamecore_inventory_ui game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
 
   if(MSVC)

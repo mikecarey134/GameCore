@@ -1,0 +1,95 @@
+; FBX 7.4.0 project file
+FBXHeaderExtension:  {
+	FBXHeaderVersion: 1003
+	FBXVersion: 7400
+	Creator: "GameCore make_rig_fbx.py"
+}
+GlobalSettings:  {
+	Version: 1000
+	Properties70:  {
+		P: "UpAxis", "int", "Integer", "",1
+		P: "UpAxisSign", "int", "Integer", "",1
+		P: "FrontAxis", "int", "Integer", "",2
+		P: "FrontAxisSign", "int", "Integer", "",1
+		P: "CoordAxis", "int", "Integer", "",0
+		P: "CoordAxisSign", "int", "Integer", "",1
+		P: "UnitScaleFactor", "double", "Number", "",1
+	}
+}
+Objects:  {
+	Model: 300, "Model::Bone1", "LimbNode" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Model: 301, "Model::Bone2", "LimbNode" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,1,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Model: 302, "Model::Bone3", "LimbNode" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,1,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	AnimationStack: 520, "AnimStack::nod", "" {
+		Properties70:  {
+			P: "LocalStop", "KTime", "Time", "",23093079000
+			P: "ReferenceStop", "KTime", "Time", "",23093079000
+		}
+	}
+	AnimationLayer: 521, "AnimLayer::BaseLayer", "" {
+	}
+	AnimationCurveNode: 522, "AnimCurveNode::R", "" {
+		Properties70:  {
+			P: "d|X", "Number", "", "A",0
+			P: "d|Y", "Number", "", "A",0
+			P: "d|Z", "Number", "", "A",0
+		}
+	}
+	AnimationCurve: 523, "AnimCurve::", "" {
+		Default: 0
+		KeyVer: 4009
+		KeyTime: *2 {
+			a: 0,23093079000
+		}
+		KeyValueFloat: *2 {
+			a: 0,30
+		}
+	}
+	AnimationCurveNode: 524, "AnimCurveNode::S", "" {
+		Properties70:  {
+			P: "d|X", "Number", "", "A",0
+			P: "d|Y", "Number", "", "A",0
+			P: "d|Z", "Number", "", "A",0
+		}
+	}
+	AnimationCurve: 525, "AnimCurve::", "" {
+		Default: 0
+		KeyVer: 4009
+		KeyTime: *2 {
+			a: 0,23093079000
+		}
+		KeyValueFloat: *2 {
+			a: 2,2
+		}
+	}
+}
+Connections:  {
+	C: "OO",300,0
+	C: "OO",301,300
+	C: "OO",302,301
+	C: "OO",521,520
+	C: "OO",522,521
+	C: "OP",522,302, "Lcl Rotation"
+	C: "OP",523,522, "d|X"
+	C: "OO",524,521
+	C: "OP",524,302, "Lcl Scaling"
+	C: "OP",525,524, "d|Y"
+}

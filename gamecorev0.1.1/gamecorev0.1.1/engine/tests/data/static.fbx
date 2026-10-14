@@ -1,0 +1,40 @@
+; FBX 7.4.0 project file
+FBXHeaderExtension:  {
+	FBXHeaderVersion: 1003
+	FBXVersion: 7400
+	Creator: "GameCore make_rig_fbx.py"
+}
+GlobalSettings:  {
+	Version: 1000
+	Properties70:  {
+		P: "UpAxis", "int", "Integer", "",1
+		P: "UpAxisSign", "int", "Integer", "",1
+		P: "FrontAxis", "int", "Integer", "",2
+		P: "FrontAxisSign", "int", "Integer", "",1
+		P: "CoordAxis", "int", "Integer", "",0
+		P: "CoordAxisSign", "int", "Integer", "",1
+		P: "UnitScaleFactor", "double", "Number", "",1
+	}
+}
+Objects:  {
+	Model: 210, "Model::Base", "Mesh" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-0.5,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Geometry: 110, "Geometry::Base", "Mesh" {
+		Vertices: *12 {
+			a: -1,0,-1,1,0,-1,1,0,1,-1,0,1
+		}
+		PolygonVertexIndex: *4 {
+			a: 0,3,2,-2
+		}
+		GeometryVersion: 124
+	}
+}
+Connections:  {
+	C: "OO",210,0
+	C: "OO",110,210
+}
