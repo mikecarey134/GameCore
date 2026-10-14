@@ -144,7 +144,7 @@ TEST_CASE("gui panel: text reads typed text and turns anything outside ASCII int
 	GuiPanel panel(gui.env, dimension2d<u32>(800, 600));
 	IGUIEditBox* name = panel.textBox(rect<s32>(10, 10, 200, 40), 2, "Dana", 24, false);
 	CHECK(panel.text(2) == "Dana");
-	name->setText(L"Zoë Ł");
+	name->setText(L"Zo\u00EB \u0141");
 	CHECK(panel.text(2) == "Zo? ?");
 }
 
