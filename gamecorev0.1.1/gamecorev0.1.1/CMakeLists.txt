@@ -8,6 +8,11 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set(THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(GAMECORE_TOP_LEVEL ON)
+else()
+  set(GAMECORE_TOP_LEVEL OFF)
+endif()
 
 if(MSVC)
   set(QUIET_THIRD_PARTY /w)
@@ -212,21 +217,6 @@ add_library(gamecore_inventory_ui STATIC inventory_ui/InventoryLayout.cpp invent
 target_include_directories(gamecore_inventory_ui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/inventory_ui")
 target_link_libraries(gamecore_inventory_ui PUBLIC gamecore_inventory)
 
-enable_testing()
-add_executable(inventory_ui_tests inventory_ui/tests/main.cpp inventory_ui/tests/layout_test.cpp inventory_ui/tests/controller_test.cpp)
-target_include_directories(inventory_ui_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(inventory_ui_tests PRIVATE gamecore_inventory_ui)
-add_test(NAME inventory_ui_tests COMMAND inventory_ui_tests)
-
-foreach(target gamecore_inventory gamecore_inventory_ui inventory_ui_tests)
-  if(MSVC)
-    target_compile_options(${target} PRIVATE /W4)
-  else()
-    target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic)
-  endif()
-  set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
-endforeach()
-
 set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/engine")
 add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/ChatQueue.cpp ${ENGINE_DIR}/ChatQueue.h
@@ -266,38 +256,6 @@ add_library(gamecore_net STATIC
 target_include_directories(gamecore_net PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_net PRIVATE enet)
 
-set(GAMECORE_SOURCES
-  ClueObject.cpp GameFlow.cpp
-  defaultCmds.cpp GrassNode.cpp InternalServer.cpp
-  main.cpp GameMap.cpp GameLayers.cpp Screens.cpp NetworkData.cpp NPC.cpp
-  player.cpp remotePlayer.cpp SolarCycle.cpp
-  WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
-
-add_executable(gamecore ${GAMECORE_SOURCES})
-target_include_directories(gamecore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(gamecore PRIVATE gamecore_engine)
-
-add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test.cpp engine/tests/input_router_test.cpp
-  engine/tests/lua_vm_test.cpp engine/tests/action_map_test.cpp
-  engine/tests/ui_anchor_test.cpp engine/tests/window_size_test.cpp
-  engine/tests/byte_stream_test.cpp engine/tests/message_frame_test.cpp
-  engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp
-  engine/tests/enet_transport_test.cpp engine/tests/interpolator_test.cpp engine/tests/canvas_test.cpp engine/tests/mouse_capture_test.cpp ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
-  ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
-  ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/RecordingCanvas.cpp)
-target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(engine_tests PRIVATE irrlicht_engine luajit gamecore_net)
-target_compile_definitions(engine_tests PRIVATE GAMECORE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
-add_test(NAME engine_tests COMMAND engine_tests)
-add_test(NAME irrlicht_boundary COMMAND ${CMAKE_COMMAND}
-  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -DIRRLICHT_INCLUDE_DIR=${IRRLICHT_INCLUDE_DIR}
-  -P ${CMAKE_CURRENT_SOURCE_DIR}/engine/tests/irrlicht_boundary.cmake)
-
-add_executable(physics_tests engine/tests/main.cpp engine/tests/physics_contract_test.cpp)
-target_include_directories(physics_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(physics_tests PRIVATE gamecore_physics)
-add_test(NAME physics_tests COMMAND physics_tests)
-
 add_library(game_protocol STATIC protocol/GameMessages.cpp protocol/GameMessages.h)
 target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(game_protocol PUBLIC gamecore_net)
@@ -306,19 +264,82 @@ add_library(gamecore_server_core STATIC server/GameServer.cpp server/GameServer.
   server/ServerConsole.cpp server/ServerConsole.h)
 target_link_libraries(gamecore_server_core PUBLIC game_protocol)
 
-add_executable(gamecore_server server/main.cpp)
-target_link_libraries(gamecore_server PRIVATE gamecore_server_core Threads::Threads)
-
 add_library(game_client_net STATIC client/NetClient.cpp client/NetClient.h)
 target_link_libraries(game_client_net PUBLIC game_protocol)
 
-add_executable(net_tests server/tests/main.cpp server/tests/protocol_test.cpp server/tests/game_server_test.cpp
-  server/tests/server_console_test.cpp server/tests/integration_test.cpp client/tests/net_client_test.cpp)
-target_include_directories(net_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
-target_link_libraries(net_tests PRIVATE gamecore_server_core game_client_net Threads::Threads)
-add_test(NAME net_tests COMMAND net_tests)
+set(GAMECORE_LIBRARIES gamecore_engine gamecore_net gamecore_physics game_protocol gamecore_server_core game_client_net)
+set(GAMECORE_STRICT_TARGETS ${GAMECORE_LIBRARIES})
 
-foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physics physics_tests game_protocol gamecore_server_core gamecore_server game_client_net net_tests)
+if(GAMECORE_TOP_LEVEL)
+  enable_testing()
+  add_executable(inventory_ui_tests inventory_ui/tests/main.cpp inventory_ui/tests/layout_test.cpp inventory_ui/tests/controller_test.cpp)
+  target_include_directories(inventory_ui_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+  target_link_libraries(inventory_ui_tests PRIVATE gamecore_inventory_ui)
+  add_test(NAME inventory_ui_tests COMMAND inventory_ui_tests)
+
+  set(GAMECORE_SOURCES
+    ClueObject.cpp GameFlow.cpp
+    defaultCmds.cpp GrassNode.cpp InternalServer.cpp
+    main.cpp GameMap.cpp GameLayers.cpp Screens.cpp NetworkData.cpp NPC.cpp
+    player.cpp remotePlayer.cpp SolarCycle.cpp
+    WeaponObject.cpp inventory_ui/InventoryScreen.cpp)
+
+  add_executable(gamecore ${GAMECORE_SOURCES})
+  target_include_directories(gamecore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+  target_link_libraries(gamecore PRIVATE gamecore_engine)
+
+  add_executable(engine_tests engine/tests/main.cpp engine/tests/orbit_camera_test.cpp engine/tests/input_router_test.cpp
+    engine/tests/lua_vm_test.cpp engine/tests/action_map_test.cpp
+    engine/tests/ui_anchor_test.cpp engine/tests/window_size_test.cpp
+    engine/tests/byte_stream_test.cpp engine/tests/message_frame_test.cpp
+    engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp
+    engine/tests/enet_transport_test.cpp engine/tests/interpolator_test.cpp engine/tests/canvas_test.cpp engine/tests/mouse_capture_test.cpp ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
+    ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
+    ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/RecordingCanvas.cpp)
+  target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+  target_link_libraries(engine_tests PRIVATE irrlicht_engine luajit gamecore_net)
+  target_compile_definitions(engine_tests PRIVATE GAMECORE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+  add_test(NAME engine_tests COMMAND engine_tests)
+  add_test(NAME irrlicht_boundary COMMAND ${CMAKE_COMMAND}
+    -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -DIRRLICHT_INCLUDE_DIR=${IRRLICHT_INCLUDE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/engine/tests/irrlicht_boundary.cmake)
+
+  add_executable(physics_tests engine/tests/main.cpp engine/tests/physics_contract_test.cpp)
+  target_include_directories(physics_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+  target_link_libraries(physics_tests PRIVATE gamecore_physics)
+  add_test(NAME physics_tests COMMAND physics_tests)
+
+  add_executable(gamecore_server server/main.cpp)
+  target_link_libraries(gamecore_server PRIVATE gamecore_server_core Threads::Threads)
+
+  add_executable(net_tests server/tests/main.cpp server/tests/protocol_test.cpp server/tests/game_server_test.cpp
+    server/tests/server_console_test.cpp server/tests/integration_test.cpp client/tests/net_client_test.cpp)
+  target_include_directories(net_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
+  target_link_libraries(net_tests PRIVATE gamecore_server_core game_client_net Threads::Threads)
+  add_test(NAME net_tests COMMAND net_tests)
+
+  foreach(target gamecore_inventory gamecore_inventory_ui inventory_ui_tests)
+    if(MSVC)
+      target_compile_options(${target} PRIVATE /W4)
+    else()
+      target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic)
+    endif()
+    set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+  endforeach()
+
+  list(APPEND GAMECORE_STRICT_TARGETS gamecore engine_tests physics_tests gamecore_server net_tests)
+  target_link_libraries(gamecore PRIVATE gamecore_inventory_ui game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
+
+  if(MSVC)
+    target_link_options(gamecore PRIVATE
+      /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
+  endif()
+
+  set_target_properties(gamecore PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+endif()
+
+foreach(target ${GAMECORE_STRICT_TARGETS})
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4)
     target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
@@ -330,12 +351,3 @@ foreach(target gamecore_engine gamecore engine_tests gamecore_net gamecore_physi
   endif()
   set_target_properties(${target} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 endforeach()
-target_link_libraries(gamecore PRIVATE gamecore_inventory_ui game_client_net irrlicht_engine ${CMAKE_DL_LIBS})
-
-if(MSVC)
-  target_link_options(gamecore PRIVATE
-    /NODEFAULTLIB:Irrlicht.lib /NODEFAULTLIB:IrrConsole-DEBUG.lib)
-endif()
-
-set_target_properties(gamecore PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
