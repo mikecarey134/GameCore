@@ -237,6 +237,7 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/UiAnchor.cpp ${ENGINE_DIR}/UiAnchor.h
   ${ENGINE_DIR}/KeyValueFile.cpp ${ENGINE_DIR}/KeyValueFile.h
   ${ENGINE_DIR}/SafeFileName.cpp ${ENGINE_DIR}/SafeFileName.h ${ENGINE_DIR}/ScreenStack.h
+  ${ENGINE_DIR}/GuiInputLayer.cpp ${ENGINE_DIR}/GuiInputLayer.h ${ENGINE_DIR}/GuiPanel.cpp ${ENGINE_DIR}/GuiPanel.h
   ${ENGINE_DIR}/Canvas.h ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/IrrlichtCanvas.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
 target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio luajit)
@@ -296,8 +297,8 @@ if(GAMECORE_TOP_LEVEL)
     engine/tests/byte_stream_test.cpp engine/tests/message_frame_test.cpp
     engine/tests/message_router_test.cpp engine/tests/loopback_transport_test.cpp
     engine/tests/enet_transport_test.cpp engine/tests/interpolator_test.cpp engine/tests/canvas_test.cpp engine/tests/mouse_capture_test.cpp
-    engine/tests/key_value_file_test.cpp engine/tests/safe_file_name_test.cpp engine/tests/screen_stack_test.cpp
-    ${ENGINE_DIR}/KeyValueFile.cpp ${ENGINE_DIR}/SafeFileName.cpp ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
+    engine/tests/key_value_file_test.cpp engine/tests/safe_file_name_test.cpp engine/tests/screen_stack_test.cpp engine/tests/gui_test.cpp
+    ${ENGINE_DIR}/KeyValueFile.cpp ${ENGINE_DIR}/SafeFileName.cpp ${ENGINE_DIR}/GuiInputLayer.cpp ${ENGINE_DIR}/GuiPanel.cpp ${ENGINE_DIR}/MouseCapture.cpp ${ENGINE_DIR}/OrbitCamera.cpp ${ENGINE_DIR}/InputRouter.cpp
     ${ENGINE_DIR}/LuaVM.cpp ${ENGINE_DIR}/ActionMap.cpp ${ENGINE_DIR}/UiAnchor.cpp
     ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/RecordingCanvas.cpp)
   target_include_directories(engine_tests PRIVATE "${ENGINE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
