@@ -210,6 +210,19 @@ if(UNIX AND NOT APPLE)
   target_link_libraries(miniaudio PUBLIC m)
 endif()
 
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+foreach(option ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT ASSIMP_BUILD_TESTS ASSIMP_BUILD_ASSIMP_TOOLS ASSIMP_INSTALL
+    ASSIMP_WARNINGS_AS_ERRORS ASSIMP_INJECT_DEBUG_POSTFIX ASSIMP_BUILD_DRACO)
+  set(${option} OFF CACHE BOOL "" FORCE)
+endforeach()
+foreach(option ASSIMP_BUILD_FBX_IMPORTER ASSIMP_BUILD_OBJ_IMPORTER ASSIMP_NO_EXPORT ASSIMP_BUILD_ZLIB)
+  set(${option} ON CACHE BOOL "" FORCE)
+endforeach()
+add_subdirectory("${THIRD_PARTY}/assimp-5.4.3" "${CMAKE_CURRENT_BINARY_DIR}/assimp" EXCLUDE_FROM_ALL)
+target_compile_options(assimp PRIVATE ${QUIET_THIRD_PARTY})
+target_compile_options(zlibstatic PRIVATE ${QUIET_THIRD_PARTY})
+set_target_properties(assimp PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:assimp,INTERFACE_INCLUDE_DIRECTORIES>)
+
 add_library(gamecore_inventory STATIC inventory/Catalog.cpp inventory/Inventory.cpp)
 target_include_directories(gamecore_inventory PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/inventory")
 
