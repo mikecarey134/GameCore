@@ -110,6 +110,8 @@ void LoopbackTransport::shutdown()
 	if (listening_)
 		network_.listeners_.erase(port_);
 	listening_ = false;
+	events_.clear();
+	held_.clear();
 }
 
 PeerId LoopbackTransport::addLink(LoopbackTransport* other, PeerId remoteId)

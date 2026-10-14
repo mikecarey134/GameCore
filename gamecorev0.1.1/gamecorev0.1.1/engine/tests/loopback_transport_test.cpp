@@ -217,6 +217,25 @@ TEST_CASE("shutting down disconnects every peer and frees the port")
 	CHECK(replacement.listen(7000, 4));
 }
 
+TEST_CASE("a transport that shuts down keeps no old events, so it can be reused like a fresh one")
+{
+	LoopbackNetwork network;
+	LoopbackTransport server(network), client(network);
+	server.listen(7000, 4);
+	client.connect("localhost", 7000);
+	drain(server);
+
+	client.shutdown();
+	server.shutdown();
+	CHECK(drain(client).empty());
+	CHECK(drain(server).empty());
+
+	REQUIRE(server.listen(7000, 4));
+	REQUIRE(client.connect("localhost", 7000));
+	connectedPeer(client);
+	connectedPeer(server);
+}
+
 TEST_CASE("a transport that goes away disconnects its peers")
 {
 	LoopbackNetwork network;
