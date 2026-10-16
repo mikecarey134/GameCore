@@ -4,13 +4,31 @@ namespace protocol
 {
 	namespace
 	{
+		bool writeProfile(ByteWriter& out, const std::vector<uint8_t>& profile)
+		{
+			if (profile.size() > MAX_PROFILE)
+				return false;
+			out.writeU8((uint8_t)profile.size());
+			for (uint8_t byte : profile)
+				out.writeU8(byte);
+			return true;
+		}
+
+		std::vector<uint8_t> readProfile(ByteReader& in)
+		{
+			std::vector<uint8_t> profile(in.readU8());
+			for (uint8_t& byte : profile)
+				byte = in.readU8();
+			return profile;
+		}
+
 		bool writePlayer(ByteWriter& out, const PlayerInfo& player)
 		{
 			out.writeU16(player.id);
 			if (!out.writeString(player.name, MAX_NAME))
 				return false;
 			out.writeU8(player.model);
-			return true;
+			return writeProfile(out, player.profile);
 		}
 
 		void readPlayer(ByteReader& in, PlayerInfo& player)
@@ -18,6 +36,7 @@ namespace protocol
 			player.id = in.readU16();
 			player.name = in.readString(MAX_NAME);
 			player.model = in.readU8();
+			player.profile = readProfile(in);
 		}
 
 		void writeState(ByteWriter& out, const State& state)
@@ -52,7 +71,7 @@ namespace protocol
 		if (!out.writeString(message.name, MAX_NAME))
 			return false;
 		out.writeU8(message.model);
-		return true;
+		return writeProfile(out, message.profile);
 	}
 
 	bool write(ByteWriter& out, const Welcome& message)
@@ -98,6 +117,7 @@ namespace protocol
 		message.protocol = in.readU16();
 		message.name = in.readString(MAX_NAME);
 		message.model = in.readU8();
+		message.profile = readProfile(in);
 		return !in.bad();
 	}
 

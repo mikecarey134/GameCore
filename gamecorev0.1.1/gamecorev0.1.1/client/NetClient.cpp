@@ -44,7 +44,7 @@ void NetClient::update(const State& local)
 		{
 			server_ = event.peer;
 			connected_ = true;
-			transport_.send(server_, encode(HELLO, Hello{ protocolVersion_, name_, model_ }), Reliable);
+			transport_.send(server_, encode(HELLO, Hello{ protocolVersion_, name_, model_, profile_ }), Reliable);
 		}
 		else if (event.kind == NetEvent::Disconnected)
 		{
@@ -119,6 +119,7 @@ void NetClient::addRemote(const PlayerInfo& info)
 	remote.id = info.id;
 	remote.name = info.name;
 	remote.model = info.model;
+	remote.profile = info.profile;
 	remote.alive = true;
 	players_[info.id] = remote;
 	if (events_.joined)

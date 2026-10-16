@@ -23,7 +23,7 @@ namespace
 			while (client.poll(event))
 				if (event.kind == NetEvent::Connected)
 					serverPeer = event.peer;
-			client.send(serverPeer, encode(HELLO, Hello{ PROTOCOL_VERSION, name, 0 }), Reliable);
+			client.send(serverPeer, encode(HELLO, Hello{ PROTOCOL_VERSION, name, 0, {} }), Reliable);
 			server.tick();
 		}
 

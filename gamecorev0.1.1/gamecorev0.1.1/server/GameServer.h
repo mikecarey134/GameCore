@@ -38,6 +38,7 @@ private:
 		uint16_t id;
 		std::string name;
 		uint8_t model;
+		std::vector<uint8_t> profile;
 		bool hello;
 		bool alive;
 		bool hasPosition;

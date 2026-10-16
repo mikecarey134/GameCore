@@ -83,7 +83,7 @@ namespace
 	{
 		REQUIRE(client.transport.connect("127.0.0.1", port));
 		REQUIRE(waitFor({ &client }, [&] { return client.connected; }));
-		client.transport.send(client.server, encode(HELLO, Hello{ PROTOCOL_VERSION, name, 1 }), Reliable);
+		client.transport.send(client.server, encode(HELLO, Hello{ PROTOCOL_VERSION, name, 1, {} }), Reliable);
 		REQUIRE(waitFor({ &client }, [&] { return client.has(WELCOME); }));
 	}
 }

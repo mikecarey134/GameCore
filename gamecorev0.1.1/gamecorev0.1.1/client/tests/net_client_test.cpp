@@ -78,6 +78,7 @@ namespace
 		TestClient& joined(const std::string& name)
 		{
 			TestClient& client = add();
+			client.client.setProfile(std::vector<uint8_t>(name.rbegin(), name.rend()));
 			REQUIRE(client.client.connect("localhost", GameServer::DEFAULT_PORT, name, 1));
 			settle();
 			REQUIRE(client.client.isJoined());
@@ -121,6 +122,9 @@ TEST_CASE_FIXTURE(ClientFixture, "players already in the game and players who jo
 	REQUIRE(a.client.players().count(2) == 1);
 	CHECK(a.client.players().at(2).name == "dan");
 	CHECK(a.client.players().at(2).model == 1);
+	CHECK(a.client.players().at(2).profile == std::vector<uint8_t>{ 'n', 'a', 'd' });
+	REQUIRE(b.client.players().count(1) == 1);
+	CHECK(b.client.players().at(1).profile == std::vector<uint8_t>{ 'y', 'e', 'k', 'i', 'm' });
 	CHECK(a.seen.hasLine("dan Joined"));
 }
 
@@ -359,7 +363,7 @@ TEST_CASE("a kick takes the client offline even if the server does not hang up")
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0 } } }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} } } }), Reliable);
 	fakeServer.send(client, encode(KICK, Kick{ "server full" }), Reliable);
 	a.client.update(a.local);
 	CHECK_FALSE(a.client.isOnline());
@@ -394,7 +398,7 @@ TEST_CASE("a state older than the last one seen from that player is dropped")
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0 }, { 3, "zed", 0 } } }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} }, { 3, "zed", 0, {} } } }), Reliable);
 	const uint16_t order[] = { 5, 4, 5, 6 };
 	for (uint16_t seq : order)
 		fakeServer.send(client, relayedState(2, seq, seq), Unreliable);
@@ -415,7 +419,7 @@ TEST_CASE("state sequence numbers wrap from 65535 to 0")
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0 } } }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} } } }), Reliable);
 	fakeServer.send(client, relayedState(2, 65534, 1.0f), Unreliable);
 	fakeServer.send(client, relayedState(2, 65535, 2.0f), Unreliable);
 	fakeServer.send(client, relayedState(2, 0, 3.0f), Unreliable);

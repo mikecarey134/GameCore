@@ -159,16 +159,17 @@ void GameServer::onHello(PeerId peer, ByteReader& in)
 	Welcome welcome;
 	for (std::map<PeerId, Player>::iterator other = players_.begin(); other != players_.end(); ++other)
 		if (other->second.hello)
-			welcome.players.push_back(PlayerInfo{ other->second.id, other->second.name, other->second.model });
+			welcome.players.push_back(PlayerInfo{ other->second.id, other->second.name, other->second.model, other->second.profile });
 
 	Player& player = found->second;
 	player.name = uniqueName(hello.name);
 	player.model = hello.model;
+	player.profile = hello.profile;
 	player.id = nextPlayerId_++;
 	player.hello = true;
 	welcome.yourId = player.id;
 	transport_.send(peer, encode(WELCOME, welcome), Reliable);
-	sendToPlayers(encode(PLAYER_JOINED, PlayerJoined{ PlayerInfo{ player.id, player.name, player.model } }), Reliable, peer);
+	sendToPlayers(encode(PLAYER_JOINED, PlayerJoined{ PlayerInfo{ player.id, player.name, player.model, player.profile } }), Reliable, peer);
 	log_(player.name + " joined as player " + std::to_string(player.id));
 }
 

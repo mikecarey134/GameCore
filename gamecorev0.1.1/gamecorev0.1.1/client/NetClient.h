@@ -20,6 +20,7 @@ public:
 		uint16_t id;
 		std::string name;
 		uint8_t model;
+		std::vector<uint8_t> profile;
 		bool alive;
 		bool hasState;
 		protocol::State state;
@@ -43,6 +44,7 @@ public:
 	bool connect(const std::string& host, uint16_t port, const std::string& name, uint8_t model,
 		uint16_t protocolVersion = protocol::PROTOCOL_VERSION);
 	void update(const protocol::State& local);
+	void setProfile(const std::vector<uint8_t>& profile) { profile_ = profile; }
 	void sendChat(const std::string& text);
 	void sendHit(uint16_t targetId);
 	void sendDied();
@@ -81,6 +83,7 @@ private:
 	uint16_t localId_;
 	std::string name_;
 	uint8_t model_;
+	std::vector<uint8_t> profile_;
 	uint16_t protocolVersion_;
 	bool sentState_;
 	uint32_t lastStateTime_;

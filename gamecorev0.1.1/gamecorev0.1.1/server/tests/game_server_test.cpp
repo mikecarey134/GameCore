@@ -89,7 +89,7 @@ namespace
 		uint16_t join(Client& client, const std::string& name, std::initializer_list<Client*> others = {})
 		{
 			client.connect();
-			client.send(HELLO, Hello{ PROTOCOL_VERSION, name, 1 });
+			client.send(HELLO, Hello{ PROTOCOL_VERSION, name, 1, std::vector<uint8_t>(name.begin(), name.end()) });
 			server.tick();
 			client.drain();
 			for (Client* other : others)
@@ -131,6 +131,7 @@ TEST_CASE_FIXTURE(ServerFixture, "the welcome lists the players already in the g
 	CHECK(welcome.players[0].id == 1);
 	CHECK(welcome.players[0].name == "mikey");
 	CHECK(welcome.players[0].model == 1);
+	CHECK(welcome.players[0].profile == std::vector<uint8_t>{ 'm', 'i', 'k', 'e', 'y' });
 	REQUIRE(a.last(WELCOME, welcome));
 	CHECK(welcome.players.empty());
 }
@@ -144,6 +145,7 @@ TEST_CASE_FIXTURE(ServerFixture, "a new player is announced to everyone already 
 	REQUIRE(a.last(PLAYER_JOINED, joined));
 	CHECK(joined.player.id == 2);
 	CHECK(joined.player.name == "dan");
+	CHECK(joined.player.profile == std::vector<uint8_t>{ 'd', 'a', 'n' });
 	CHECK(b.count(PLAYER_JOINED) == 0);
 }
 
@@ -151,7 +153,7 @@ TEST_CASE_FIXTURE(ServerFixture, "a client on another protocol version is kicked
 {
 	Client a(network);
 	a.connect();
-	a.send(HELLO, Hello{ (uint16_t)(PROTOCOL_VERSION + 1), "old", 0 });
+	a.send(HELLO, Hello{ (uint16_t)(PROTOCOL_VERSION + 1), "old", 0, {} });
 	settle({ &a });
 	Kick kick;
 	REQUIRE(a.last(KICK, kick));
@@ -210,7 +212,7 @@ TEST_CASE_FIXTURE(ServerFixture, "a second hello from the same client is ignored
 	Client a(network), b(network);
 	join(a, "mikey");
 	join(b, "dan", { &a });
-	b.send(HELLO, Hello{ PROTOCOL_VERSION, "again", 1 });
+	b.send(HELLO, Hello{ PROTOCOL_VERSION, "again", 1, {} });
 	settle({ &a, &b });
 	CHECK(a.count(PLAYER_JOINED) == 1);
 	CHECK(b.count(WELCOME) == 1);

@@ -37,25 +37,26 @@ TEST_CASE("message type numbers are fixed")
 	CHECK(DIED == 22);
 	CHECK(PLAYER_DIED == 23);
 	CHECK(SERVER_TEXT == 24);
-	CHECK(PROTOCOL_VERSION == 1);
+	CHECK(PROTOCOL_VERSION == 2);
 }
 
-TEST_CASE("hello is written as version, name and model")
+TEST_CASE("hello is written as version, name, model and the game's profile bytes")
 {
 	ByteWriter out;
-	CHECK(write(out, Hello{ 1, "mikey", 2 }));
-	CHECK(out.data() == std::vector<uint8_t>{ 1, 0, 5, 0, 'm', 'i', 'k', 'e', 'y', 2 });
+	CHECK(write(out, Hello{ 1, "mikey", 2, {} }));
+	CHECK(out.data() == std::vector<uint8_t>{ 1, 0, 5, 0, 'm', 'i', 'k', 'e', 'y', 2, 0 });
 
 	Hello hello;
-	REQUIRE(decode(encode(HELLO, Hello{ 7, "dan", 3 }), HELLO, hello));
+	REQUIRE(decode(encode(HELLO, Hello{ 7, "dan", 3, { 9, 0, 255 } }), HELLO, hello));
 	CHECK(hello.protocol == 7);
 	CHECK(hello.name == "dan");
 	CHECK(hello.model == 3);
+	CHECK(hello.profile == std::vector<uint8_t>{ 9, 0, 255 });
 }
 
 TEST_CASE("welcome carries the new id and every existing player")
 {
-	Welcome sent{ 4, { { 1, "mikey", 1 }, { 3, "dan", 0 } } };
+	Welcome sent{ 4, { { 1, "mikey", 1, { 4, 5 } }, { 3, "dan", 0, {} } } };
 	ByteWriter out;
 	REQUIRE(write(out, sent));
 	CHECK(out.data()[2] == 2);
@@ -68,7 +69,9 @@ TEST_CASE("welcome carries the new id and every existing player")
 	CHECK(welcome.players[0].name == "mikey");
 	CHECK(welcome.players[0].model == 1);
 	CHECK(welcome.players[1].id == 3);
+	CHECK(welcome.players[0].profile == std::vector<uint8_t>{ 4, 5 });
 	CHECK(welcome.players[1].name == "dan");
+	CHECK(welcome.players[1].profile.empty());
 
 	Welcome alone;
 	REQUIRE(decode(encode(WELCOME, Welcome{ 1, {} }), WELCOME, alone));
@@ -104,10 +107,11 @@ TEST_CASE("the small messages round-trip")
 	CHECK(kick.reason == "bye");
 
 	PlayerJoined joined;
-	REQUIRE(decode(encode(PLAYER_JOINED, PlayerJoined{ { 6, "zed", 2 } }), PLAYER_JOINED, joined));
+	REQUIRE(decode(encode(PLAYER_JOINED, PlayerJoined{ { 6, "zed", 2, { 7 } } }), PLAYER_JOINED, joined));
 	CHECK(joined.player.id == 6);
 	CHECK(joined.player.name == "zed");
 	CHECK(joined.player.model == 2);
+	CHECK(joined.player.profile == std::vector<uint8_t>{ 7 });
 
 	PlayerLeft left;
 	REQUIRE(decode(encode(PLAYER_LEFT, PlayerLeft{ 6 }), PLAYER_LEFT, left));
@@ -146,10 +150,13 @@ TEST_CASE("the small messages round-trip")
 TEST_CASE("names and texts over their limits are refused when written and when read")
 {
 	std::string longName(MAX_NAME + 1, 'x');
-	CHECK(encode(HELLO, Hello{ 1, longName, 0 }).empty());
-	CHECK(encode(PLAYER_JOINED, PlayerJoined{ { 1, longName, 0 } }).empty());
-	CHECK(encode(WELCOME, Welcome{ 1, { { 2, longName, 0 } } }).empty());
-	CHECK_FALSE(encode(HELLO, Hello{ 1, std::string(MAX_NAME, 'x'), 0 }).empty());
+	CHECK(encode(HELLO, Hello{ 1, longName, 0, {} }).empty());
+	CHECK(encode(PLAYER_JOINED, PlayerJoined{ { 1, longName, 0, {} } }).empty());
+	CHECK(encode(WELCOME, Welcome{ 1, { { 2, longName, 0, {} } } }).empty());
+	CHECK_FALSE(encode(HELLO, Hello{ 1, std::string(MAX_NAME, 'x'), 0, {} }).empty());
+	CHECK(encode(HELLO, Hello{ 1, "x", 0, std::vector<uint8_t>(MAX_PROFILE + 1, 1) }).empty());
+	CHECK(encode(PLAYER_JOINED, PlayerJoined{ { 1, "x", 0, std::vector<uint8_t>(MAX_PROFILE + 1, 1) } }).empty());
+	CHECK_FALSE(encode(HELLO, Hello{ 1, "x", 0, std::vector<uint8_t>(MAX_PROFILE, 1) }).empty());
 	CHECK(encode(CHAT, Chat{ std::string(MAX_TEXT + 1, 'y') }).empty());
 	CHECK_FALSE(encode(CHAT, Chat{ std::string(MAX_TEXT, 'y') }).empty());
 
@@ -157,8 +164,27 @@ TEST_CASE("names and texts over their limits are refused when written and when r
 	forged.writeU16(1);
 	forged.writeString(longName, 1000);
 	forged.writeU8(0);
+	forged.writeU8(0);
 	Hello hello;
 	CHECK_FALSE(readBytes(forged.data(), hello));
+
+	ByteWriter fair;
+	fair.writeU16(1);
+	fair.writeString("x", MAX_NAME);
+	fair.writeU8(0);
+	fair.writeU8(2);
+	fair.writeU8(8);
+	fair.writeU8(9);
+	CHECK(readBytes(fair.data(), hello));
+	CHECK(hello.profile == std::vector<uint8_t>{ 8, 9 });
+
+	ByteWriter shortProfile;
+	shortProfile.writeU16(1);
+	shortProfile.writeString("x", MAX_NAME);
+	shortProfile.writeU8(0);
+	shortProfile.writeU8(3);
+	shortProfile.writeU8(8);
+	CHECK_FALSE(readBytes(shortProfile.data(), hello));
 
 	ByteWriter forgedChat;
 	forgedChat.writeString(std::string(MAX_TEXT + 1, 'y'), 1000);

@@ -8,9 +8,10 @@
 
 namespace protocol
 {
-	const uint16_t PROTOCOL_VERSION = 1;
+	const uint16_t PROTOCOL_VERSION = 2;
 	const size_t MAX_NAME = 32;
 	const size_t MAX_TEXT = 200;
+	const size_t MAX_PROFILE = 255;
 	const uint8_t STATE_DEAD = 5;
 
 	enum MessageType
@@ -29,8 +30,8 @@ namespace protocol
 		SERVER_TEXT = 24
 	};
 
-	struct PlayerInfo { uint16_t id; std::string name; uint8_t model; };
-	struct Hello { uint16_t protocol; std::string name; uint8_t model; };
+	struct PlayerInfo { uint16_t id; std::string name; uint8_t model; std::vector<uint8_t> profile; };
+	struct Hello { uint16_t protocol; std::string name; uint8_t model; std::vector<uint8_t> profile; };
 	struct Welcome { uint16_t yourId; std::vector<PlayerInfo> players; };
 	struct Kick { std::string reason; };
 	struct PlayerJoined { PlayerInfo player; };
