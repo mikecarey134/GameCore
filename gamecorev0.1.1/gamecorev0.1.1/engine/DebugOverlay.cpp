@@ -84,5 +84,6 @@ void DebugOverlay::draw(const vector3df& nodePosition)
 	canvas_.drawText(canvas_.builtInFont(), fpsstr.c_str(),
 		anchored(rect<s32>(680,20,680,0), 1.0f, 0.0f, canvas_.screenSize()), SColor(255,255,255,255));
 
-	physics_->drawDebug(driver);
+	if (physics_)
+		physics_->drawDebug(driver);
 }
