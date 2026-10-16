@@ -37,7 +37,7 @@ TEST_CASE("message type numbers are fixed")
 	CHECK(DIED == 22);
 	CHECK(PLAYER_DIED == 23);
 	CHECK(SERVER_TEXT == 24);
-	CHECK(PROTOCOL_VERSION == 2);
+	CHECK(PROTOCOL_VERSION == 3);
 }
 
 TEST_CASE("hello is written as version, name, model and the game's profile bytes")
@@ -56,7 +56,7 @@ TEST_CASE("hello is written as version, name, model and the game's profile bytes
 
 TEST_CASE("welcome carries the new id and every existing player")
 {
-	Welcome sent{ 4, { { 1, "mikey", 1, { 4, 5 } }, { 3, "dan", 0, {} } } };
+	Welcome sent{ 4, { { 1, "mikey", 1, { 4, 5 } }, { 3, "dan", 0, {} } }, 17.25f, 72.0f };
 	ByteWriter out;
 	REQUIRE(write(out, sent));
 	CHECK(out.data()[2] == 2);
@@ -72,9 +72,11 @@ TEST_CASE("welcome carries the new id and every existing player")
 	CHECK(welcome.players[0].profile == std::vector<uint8_t>{ 4, 5 });
 	CHECK(welcome.players[1].name == "dan");
 	CHECK(welcome.players[1].profile.empty());
+	CHECK(welcome.timeOfDay == 17.25f);
+	CHECK(welcome.timeScale == 72.0f);
 
 	Welcome alone;
-	REQUIRE(decode(encode(WELCOME, Welcome{ 1, {} }), WELCOME, alone));
+	REQUIRE(decode(encode(WELCOME, Welcome{ 1, {}, 0.0f, 1.0f }), WELCOME, alone));
 	CHECK(alone.yourId == 1);
 	CHECK(alone.players.empty());
 }
@@ -152,7 +154,7 @@ TEST_CASE("names and texts over their limits are refused when written and when r
 	std::string longName(MAX_NAME + 1, 'x');
 	CHECK(encode(HELLO, Hello{ 1, longName, 0, {} }).empty());
 	CHECK(encode(PLAYER_JOINED, PlayerJoined{ { 1, longName, 0, {} } }).empty());
-	CHECK(encode(WELCOME, Welcome{ 1, { { 2, longName, 0, {} } } }).empty());
+	CHECK(encode(WELCOME, Welcome{ 1, { { 2, longName, 0, {} } }, 0.0f, 1.0f }).empty());
 	CHECK_FALSE(encode(HELLO, Hello{ 1, std::string(MAX_NAME, 'x'), 0, {} }).empty());
 	CHECK(encode(HELLO, Hello{ 1, "x", 0, std::vector<uint8_t>(MAX_PROFILE + 1, 1) }).empty());
 	CHECK(encode(PLAYER_JOINED, PlayerJoined{ { 1, "x", 0, std::vector<uint8_t>(MAX_PROFILE + 1, 1) } }).empty());

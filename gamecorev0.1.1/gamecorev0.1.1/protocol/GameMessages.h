@@ -8,7 +8,7 @@
 
 namespace protocol
 {
-	const uint16_t PROTOCOL_VERSION = 2;
+	const uint16_t PROTOCOL_VERSION = 3;
 	const size_t MAX_NAME = 32;
 	const size_t MAX_TEXT = 200;
 	const size_t MAX_PROFILE = 255;
@@ -32,7 +32,7 @@ namespace protocol
 
 	struct PlayerInfo { uint16_t id; std::string name; uint8_t model; std::vector<uint8_t> profile; };
 	struct Hello { uint16_t protocol; std::string name; uint8_t model; std::vector<uint8_t> profile; };
-	struct Welcome { uint16_t yourId; std::vector<PlayerInfo> players; };
+	struct Welcome { uint16_t yourId; std::vector<PlayerInfo> players; float timeOfDay; float timeScale; };
 	struct Kick { std::string reason; };
 	struct PlayerJoined { PlayerInfo player; };
 	struct PlayerLeft { uint16_t id; };

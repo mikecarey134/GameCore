@@ -5,10 +5,10 @@ NetSession::NetSession(Transport& serverTransport, NetClient& client, GameServer
 {
 }
 
-bool NetSession::host(uint16_t port, const std::string& name, uint8_t model)
+bool NetSession::host(uint16_t port, const std::string& name, uint8_t model, int maxPlayers)
 {
 	leave();
-	if (!server_.start(port))
+	if (!server_.start(port, maxPlayers))
 		return false;
 	hosting_ = true;
 	if (client_.connect("127.0.0.1", port, name, model))

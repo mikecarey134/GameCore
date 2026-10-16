@@ -1,5 +1,6 @@
 #include "GameServer.h"
 #include <algorithm>
+#include <cmath>
 
 using namespace protocol;
 
@@ -17,7 +18,7 @@ namespace
 }
 
 GameServer::GameServer(Transport& transport, Clock clock, Logger log)
-	: transport_(transport), clock_(clock), log_(log), router_(log), nextPlayerId_(1)
+	: transport_(transport), clock_(clock), log_(log), router_(log), nextPlayerId_(1), clockStartHours_(8.0f), timeScale_(1.0f), clockStartTime_(clock())
 {
 	router_.on(HELLO, [this](PeerId peer, ByteReader& in) { onHello(peer, in); });
 	router_.on(STATE, [this](PeerId peer, ByteReader& in) { onState(peer, in); });
@@ -84,6 +85,19 @@ std::vector<std::string> GameServer::playerList() const
 		if (player->second.hello)
 			list.push_back(std::to_string(player->second.id) + " " + player->second.name);
 	return list;
+}
+
+void GameServer::setClock(float timeOfDay, float timeScale)
+{
+	clockStartHours_ = timeOfDay;
+	timeScale_ = timeScale;
+	clockStartTime_ = clock_();
+}
+
+float GameServer::timeOfDay() const
+{
+	double hours = clockStartHours_ + (double)(clock_() - clockStartTime_) / 1000.0 * timeScale_ / 3600.0;
+	return (float)std::fmod(hours, 24.0);
 }
 
 bool GameServer::ban(const std::string& pattern)
@@ -225,7 +239,7 @@ void GameServer::onHello(PeerId peer, ByteReader& in)
 		return;
 	}
 
-	Welcome welcome;
+	Welcome welcome = Welcome{ 0, {}, timeOfDay(), timeScale_ };
 	for (std::map<PeerId, Player>::iterator other = players_.begin(); other != players_.end(); ++other)
 		if (other->second.hello)
 			welcome.players.push_back(PlayerInfo{ other->second.id, other->second.name, other->second.model, other->second.profile });

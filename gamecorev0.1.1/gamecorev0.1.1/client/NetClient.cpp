@@ -140,6 +140,8 @@ void NetClient::onWelcome(ByteReader& in)
 	joined_ = true;
 	localId_ = welcome.yourId;
 	say("[info] Connected To Server", InfoLine);
+	if (events_.clock)
+		events_.clock(welcome.timeOfDay, welcome.timeScale);
 	for (size_t i = 0; i < welcome.players.size(); ++i)
 		addRemote(welcome.players[i]);
 }

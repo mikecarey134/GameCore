@@ -35,6 +35,7 @@ public:
 		std::function<void(uint16_t)> died;
 		std::function<void(const Remote&)> respawned;
 		std::function<void(uint16_t)> damaged;
+		std::function<void(float timeOfDay, float timeScale)> clock;
 	};
 
 	static const uint32_t STATE_INTERVAL_MS = 50;

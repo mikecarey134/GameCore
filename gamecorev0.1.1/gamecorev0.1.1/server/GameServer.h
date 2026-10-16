@@ -36,6 +36,9 @@ public:
 	const std::vector<std::string>& banList() const { return bans_; }
 	std::vector<std::string> pingList() const;
 	std::vector<std::string> statsList() const;
+	void setClock(float timeOfDay, float timeScale);
+	float timeOfDay() const;
+	float timeScale() const { return timeScale_; }
 
 private:
 	struct Player
@@ -78,6 +81,9 @@ private:
 	std::map<PeerId, Player> players_;
 	uint16_t nextPlayerId_;
 	std::vector<std::string> bans_;
+	float clockStartHours_;
+	float timeScale_;
+	uint32_t clockStartTime_;
 };
 
 bool addressMatches(const std::string& pattern, const std::string& address);

@@ -499,3 +499,24 @@ TEST_CASE_FIXTURE(ServerFixture, "stopping the server disconnects everyone")
 	a.drain();
 	CHECK(a.disconnected);
 }
+
+TEST_CASE_FIXTURE(ServerFixture, "the server's clock starts at eight in the morning at real time, and wraps past midnight")
+{
+	CHECK(server.timeOfDay() == doctest::Approx(8.0f));
+	CHECK(server.timeScale() == 1.0f);
+	now += 3600 * 1000;
+	CHECK(server.timeOfDay() == doctest::Approx(9.0f).epsilon(0.0001));
+	server.setClock(23.5f, 2.0f);
+	CHECK(server.timeOfDay() == doctest::Approx(23.5f));
+	CHECK(server.timeScale() == 2.0f);
+	now += 30 * 60 * 1000;
+	CHECK(server.timeOfDay() == doctest::Approx(0.5f).epsilon(0.0001));
+	now += 24 * 3600 * 1000;
+	CHECK(server.timeOfDay() == doctest::Approx(0.5f).epsilon(0.0001));
+	Client a(network);
+	join(a, "mikey");
+	Welcome welcome;
+	REQUIRE(a.last(WELCOME, welcome));
+	CHECK(welcome.timeOfDay == doctest::Approx(0.5f).epsilon(0.0001));
+	CHECK(welcome.timeScale == 2.0f);
+}

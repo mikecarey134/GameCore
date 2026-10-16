@@ -14,6 +14,7 @@ namespace
 		std::vector<std::pair<std::string, NetClient::LineKind> > lines;
 		std::vector<uint16_t> joined, left, died, respawned, damagedBy;
 		std::vector<NetClient::Remote> moved;
+		std::vector<std::pair<float, float> > clocks;
 
 		bool hasLine(const std::string& text) const
 		{
@@ -41,6 +42,7 @@ namespace
 			e.died = [this](uint16_t id) { seen.died.push_back(id); };
 			e.respawned = [this](const NetClient::Remote& remote) { seen.respawned.push_back(remote.id); };
 			e.damaged = [this](uint16_t byId) { seen.damagedBy.push_back(byId); };
+			e.clock = [this](float timeOfDay, float timeScale) { seen.clocks.push_back(std::make_pair(timeOfDay, timeScale)); };
 			return e;
 		}
 
@@ -345,7 +347,7 @@ TEST_CASE("a client says nothing but hello until it is welcomed")
 	}
 	CHECK(typesReceived(fakeServer, client) == std::vector<uint8_t>{ HELLO });
 
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, {} }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, {}, 0.0f, 1.0f }), Reliable);
 	now += NetClient::STATE_INTERVAL_MS;
 	a.client.update(a.local);
 	a.client.sendHit(2);
@@ -363,7 +365,7 @@ TEST_CASE("a kick takes the client offline even if the server does not hang up")
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} } } }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} } }, 0.0f, 1.0f }), Reliable);
 	fakeServer.send(client, encode(KICK, Kick{ "server full" }), Reliable);
 	a.client.update(a.local);
 	CHECK_FALSE(a.client.isOnline());
@@ -398,7 +400,7 @@ TEST_CASE("a state older than the last one seen from that player is dropped")
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} }, { 3, "zed", 0, {} } } }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} }, { 3, "zed", 0, {} } }, 0.0f, 1.0f }), Reliable);
 	const uint16_t order[] = { 5, 4, 5, 6 };
 	for (uint16_t seq : order)
 		fakeServer.send(client, relayedState(2, seq, seq), Unreliable);
@@ -419,7 +421,7 @@ TEST_CASE("state sequence numbers wrap from 65535 to 0")
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} } } }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, { { 2, "dan", 0, {} } }, 0.0f, 1.0f }), Reliable);
 	fakeServer.send(client, relayedState(2, 65534, 1.0f), Unreliable);
 	fakeServer.send(client, relayedState(2, 65535, 2.0f), Unreliable);
 	fakeServer.send(client, relayedState(2, 0, 3.0f), Unreliable);
@@ -460,7 +462,7 @@ TEST_CASE("after a long stall the client does not burst out the states it missed
 	a.client.update(a.local);
 	PeerId client = NO_PEER;
 	typesReceived(fakeServer, client);
-	fakeServer.send(client, encode(WELCOME, Welcome{ 1, {} }), Reliable);
+	fakeServer.send(client, encode(WELCOME, Welcome{ 1, {}, 0.0f, 1.0f }), Reliable);
 	a.client.update(a.local);
 	now += NetClient::STATE_INTERVAL_MS;
 	a.client.update(a.local);
@@ -474,4 +476,19 @@ TEST_CASE("after a long stall the client does not burst out the states it missed
 	}
 	std::vector<uint8_t> sent = typesReceived(fakeServer, client);
 	CHECK(sent.size() == 2);
+}
+
+TEST_CASE_FIXTURE(ClientFixture, "the welcome sets the joiner's clock to the server's time of day, which runs at the server's time scale")
+{
+	server.setClock(6.0f, 72.0f);
+	TestClient& a = joined("mikey");
+	REQUIRE(a.seen.clocks.size() == 1);
+	CHECK(a.seen.clocks[0].first == doctest::Approx(6.0f).epsilon(0.001));
+	CHECK(a.seen.clocks[0].second == 72.0f);
+	advance(50000);
+	TestClient& b = joined("dan");
+	REQUIRE(b.seen.clocks.size() == 1);
+	CHECK(b.seen.clocks[0].first == doctest::Approx(7.0f).epsilon(0.001));
+	CHECK(b.seen.clocks[0].second == 72.0f);
+	CHECK(a.seen.clocks.size() == 1);
 }

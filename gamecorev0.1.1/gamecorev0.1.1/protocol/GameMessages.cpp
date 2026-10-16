@@ -83,6 +83,8 @@ namespace protocol
 		for (size_t i = 0; i < message.players.size(); ++i)
 			if (!writePlayer(out, message.players[i]))
 				return false;
+		out.writeF32(message.timeOfDay);
+		out.writeF32(message.timeScale);
 		return true;
 	}
 
@@ -128,6 +130,8 @@ namespace protocol
 		message.players.resize(count);
 		for (uint8_t i = 0; i < count; ++i)
 			readPlayer(in, message.players[i]);
+		message.timeOfDay = in.readF32();
+		message.timeScale = in.readF32();
 		return !in.bad();
 	}
 

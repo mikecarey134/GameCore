@@ -151,3 +151,28 @@ TEST_CASE("net session: hosting over real ENet joins through 127.0.0.1")
 	CHECK(setup.joinedWithin(400, true));
 	setup.session.leave();
 }
+
+TEST_CASE("net session: hosting takes a player limit and a clock for the server")
+{
+	LoopbackNetwork network;
+	LoopbackTransport serverTransport(network), clientTransport(network);
+	uint32_t now = 1000;
+	float hours = -1.0f, scale = -1.0f;
+	NetClient::Events events;
+	events.clock = [&](float timeOfDay, float timeScale) { hours = timeOfDay; scale = timeScale; };
+	NetClient client(clientTransport, [&now] { return now; }, events);
+	NetSession session(serverTransport, client, [&now] { return now; }, [](const std::string&) {});
+	session.setClock(18.0f, 72.0f);
+	REQUIRE(session.host(4102, "Dana", 1, 1));
+	for (int i = 0; i < 20 && !client.isJoined(); ++i)
+	{
+		now += 10;
+		session.tick();
+		client.update(still);
+	}
+	REQUIRE(client.isJoined());
+	CHECK(hours == doctest::Approx(18.0f).epsilon(0.01));
+	CHECK(scale == 72.0f);
+	LoopbackTransport extra(network);
+	CHECK_FALSE(extra.connect("localhost", 4102));
+}
