@@ -31,6 +31,11 @@ public:
 	void say(const std::string& text);
 	bool kick(const std::string& name);
 	std::vector<std::string> playerList() const;
+	bool ban(const std::string& pattern);
+	bool unban(const std::string& pattern);
+	const std::vector<std::string>& banList() const { return bans_; }
+	std::vector<std::string> pingList() const;
+	std::vector<std::string> statsList() const;
 
 private:
 	struct Player
@@ -53,6 +58,7 @@ private:
 	};
 
 	Player* joined(PeerId peer);
+	bool banned(const std::string& address) const;
 	bool withinRate(PeerId peer, Player& player);
 	std::string uniqueName(const std::string& wanted) const;
 	PeerId peerOf(uint16_t playerId) const;
@@ -71,6 +77,9 @@ private:
 	MessageRouter router_;
 	std::map<PeerId, Player> players_;
 	uint16_t nextPlayerId_;
+	std::vector<std::string> bans_;
 };
+
+bool addressMatches(const std::string& pattern, const std::string& address);
 
 #endif

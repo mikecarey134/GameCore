@@ -6,6 +6,7 @@
 #include <string>
 #include <thread>
 #include "GameServer.h"
+#include "ServerConfig.h"
 #include "ServerConsole.h"
 #include "net/EnetTransport.h"
 
@@ -37,21 +38,20 @@ namespace
 
 int main(int argc, char** argv)
 {
-	uint16_t port = GameServer::DEFAULT_PORT;
-	bool smoke = false;
-	for (int i = 1; i < argc; ++i)
+	ServerSettings settings;
+	std::string error;
+	if (!parseServerArguments(std::vector<std::string>(argv + 1, argv + argc), settings, error))
 	{
-		std::string argument = argv[i];
-		if (argument == "--smoke")
-			smoke = true;
-		else if (argument == "--port" && i + 1 < argc)
-			port = (uint16_t)std::atoi(argv[++i]);
-		else
-		{
-			std::cerr << "Usage: gamecore_server [--port <port>] [--smoke]" << std::endl;
-			return 2;
-		}
+		std::cerr << error << std::endl;
+		return 2;
 	}
+	std::vector<std::string> problems;
+	if (loadServerConfig(settings.configFile, settings, problems))
+		std::cout << "Read " << settings.configFile << std::endl;
+	else
+		std::cout << "No " << settings.configFile << ", using defaults" << std::endl;
+	for (size_t i = 0; i < problems.size(); ++i)
+		std::cerr << settings.configFile << " " << problems[i] << std::endl;
 
 	std::chrono::steady_clock::time_point started = std::chrono::steady_clock::now();
 	EnetTransport transport;
@@ -59,14 +59,14 @@ int main(int argc, char** argv)
 		[started] { return (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - started).count(); },
 		[](const std::string& line) { std::cout << line << std::endl; });
 
-	if (!server.start(port))
+	if (!server.start(settings.port, settings.maxPlayers))
 	{
-		std::cerr << "Could not listen on port " << port << std::endl;
+		std::cerr << "Could not listen on port " << settings.port << std::endl;
 		return 1;
 	}
-	std::cout << "GameCore server listening on port " << port << " for up to " << GameServer::MAX_PLAYERS << " players" << std::endl;
+	std::cout << "GameCore server listening on port " << settings.port << " for up to " << settings.maxPlayers << " players" << std::endl;
 
-	if (smoke)
+	if (settings.smoke)
 	{
 		server.tick();
 		server.stop();

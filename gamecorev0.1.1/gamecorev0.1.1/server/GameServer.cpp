@@ -1,4 +1,5 @@
 #include "GameServer.h"
+#include <algorithm>
 
 using namespace protocol;
 
@@ -35,7 +36,12 @@ void GameServer::tick()
 	NetEvent event;
 	while (transport_.poll(event))
 	{
-		if (event.kind == NetEvent::Connected)
+		if (event.kind == NetEvent::Connected && banned(transport_.address(event.peer)))
+		{
+			transport_.send(event.peer, encode(KICK, Kick{ "You are banned from this server" }), Reliable);
+			transport_.disconnect(event.peer);
+		}
+		else if (event.kind == NetEvent::Connected)
 		{
 			Player player = Player();
 			player.alive = true;
@@ -78,6 +84,69 @@ std::vector<std::string> GameServer::playerList() const
 		if (player->second.hello)
 			list.push_back(std::to_string(player->second.id) + " " + player->second.name);
 	return list;
+}
+
+bool GameServer::ban(const std::string& pattern)
+{
+	if (std::find(bans_.begin(), bans_.end(), pattern) != bans_.end())
+		return false;
+	bans_.push_back(pattern);
+	return true;
+}
+
+bool GameServer::unban(const std::string& pattern)
+{
+	std::vector<std::string>::iterator found = std::find(bans_.begin(), bans_.end(), pattern);
+	if (found == bans_.end())
+		return false;
+	bans_.erase(found);
+	return true;
+}
+
+bool GameServer::banned(const std::string& address) const
+{
+	for (size_t i = 0; i < bans_.size(); ++i)
+		if (addressMatches(bans_[i], address))
+			return true;
+	return false;
+}
+
+std::vector<std::string> GameServer::pingList() const
+{
+	std::vector<std::string> list;
+	for (std::map<PeerId, Player>::const_iterator player = players_.begin(); player != players_.end(); ++player)
+		if (player->second.hello)
+			list.push_back(std::to_string(player->second.id) + " " + player->second.name + " " + transport_.address(player->first) + " " +
+				std::to_string(transport_.stats(player->first).roundTripMs) + " ms");
+	return list;
+}
+
+std::vector<std::string> GameServer::statsList() const
+{
+	std::vector<std::string> list;
+	for (std::map<PeerId, Player>::const_iterator player = players_.begin(); player != players_.end(); ++player)
+		if (player->second.hello)
+		{
+			PeerStats stats = transport_.stats(player->first);
+			list.push_back(std::to_string(player->second.id) + " " + player->second.name + " " + transport_.address(player->first) + ": sent " +
+				std::to_string(stats.bytesSent) + " bytes, received " + std::to_string(stats.bytesReceived) + " bytes, loss " +
+				std::to_string((int)(stats.packetLoss * 100.0f + 0.5f)) + "%");
+		}
+	return list;
+}
+
+bool addressMatches(const std::string& pattern, const std::string& address)
+{
+	size_t star = pattern.find('*');
+	if (star == std::string::npos)
+		return pattern == address;
+	if (address.compare(0, star, pattern, 0, star) != 0)
+		return false;
+	std::string rest = pattern.substr(star + 1);
+	for (size_t from = star; from <= address.size(); ++from)
+		if (addressMatches(rest, address.substr(from)))
+			return true;
+	return false;
 }
 
 GameServer::Player* GameServer::joined(PeerId peer)

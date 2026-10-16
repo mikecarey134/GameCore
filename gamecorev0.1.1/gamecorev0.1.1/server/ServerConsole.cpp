@@ -41,9 +41,31 @@ ConsoleResult runConsoleCommand(const std::string& line, GameServer& server)
 		if (result.output.empty())
 			result.output.push_back("No players");
 	}
+	else if (command == "ban" || command == "unban")
+	{
+		bool banning = command == "ban";
+		if (argument.empty())
+			result.output.push_back("Usage: " + command + " <address>, where * matches anything, as in 192.168.*");
+		else if (banning)
+			result.output.push_back(server.ban(argument) ? "Banned " + argument : argument + " is already banned");
+		else
+			result.output.push_back(server.unban(argument) ? "Unbanned " + argument : "No ban for " + argument);
+	}
+	else if (command == "banlist")
+	{
+		result.output = server.banList();
+		if (result.output.empty())
+			result.output.push_back("No bans");
+	}
+	else if (command == "ping" || command == "stats")
+	{
+		result.output = command == "ping" ? server.pingList() : server.statsList();
+		if (result.output.empty())
+			result.output.push_back("No players");
+	}
 	else if (command == "quit")
 		result.quit = true;
 	else
-		result.output.push_back("Unknown command " + command + ". Commands: say <text>, kick <name>, list, quit");
+		result.output.push_back("Unknown command " + command + ". Commands: say <text>, kick <name>, list, ban <address>, unban <address>, banlist, ping, stats, quit");
 	return result;
 }

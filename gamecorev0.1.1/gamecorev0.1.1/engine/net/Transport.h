@@ -10,6 +10,14 @@ const PeerId NO_PEER = 0;
 
 enum Delivery { Reliable, Unreliable };
 
+struct PeerStats
+{
+	uint32_t roundTripMs;
+	uint64_t bytesSent;
+	uint64_t bytesReceived;
+	float packetLoss;
+};
+
 struct NetEvent
 {
 	enum Kind { Connected, Disconnected, Received };
@@ -29,6 +37,8 @@ public:
 	virtual void disconnect(PeerId peer) = 0;
 	virtual bool poll(NetEvent& event) = 0;
 	virtual void shutdown() = 0;
+	virtual std::string address(PeerId peer) const = 0;
+	virtual PeerStats stats(PeerId peer) const = 0;
 };
 
 #endif

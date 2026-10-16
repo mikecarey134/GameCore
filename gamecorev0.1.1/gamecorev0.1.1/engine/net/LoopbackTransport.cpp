@@ -1,7 +1,7 @@
 #include "LoopbackTransport.h"
 
 LoopbackTransport::LoopbackTransport(LoopbackNetwork& network)
-	: network_(network), nextPeer_(1), maxPeers_(0), port_(0), listening_(false), dropRate_(0.0f), reorderRate_(0.0f)
+	: network_(network), nextPeer_(1), maxPeers_(0), port_(0), listening_(false), dropRate_(0.0f), reorderRate_(0.0f), address_("127.0.0.1")
 {
 }
 
@@ -45,6 +45,10 @@ void LoopbackTransport::send(PeerId peer, const std::vector<uint8_t>& data, Deli
 		return;
 	LoopbackTransport* other = link->second.other;
 	PeerId remoteId = link->second.remoteId;
+	link->second.bytesSent += data.size();
+	std::map<PeerId, Link>::iterator back = other->links_.find(remoteId);
+	if (back != other->links_.end())
+		back->second.bytesReceived += data.size();
 	if (delivery == Unreliable && (dropRate_ > 0.0f || reorderRate_ > 0.0f))
 	{
 		std::uniform_real_distribution<float> roll(0.0f, 1.0f);
@@ -96,6 +100,20 @@ bool LoopbackTransport::poll(NetEvent& event)
 	return true;
 }
 
+std::string LoopbackTransport::address(PeerId peer) const
+{
+	std::map<PeerId, Link>::const_iterator link = links_.find(peer);
+	return link == links_.end() ? "" : link->second.other->address_;
+}
+
+PeerStats LoopbackTransport::stats(PeerId peer) const
+{
+	std::map<PeerId, Link>::const_iterator link = links_.find(peer);
+	if (link == links_.end())
+		return PeerStats{ 0, 0, 0, 0.0f };
+	return PeerStats{ 0, link->second.bytesSent, link->second.bytesReceived, 0.0f };
+}
+
 void LoopbackTransport::setUnreliableLoss(float dropRate, float reorderRate, uint32_t seed)
 {
 	dropRate_ = dropRate;
@@ -117,7 +135,7 @@ void LoopbackTransport::shutdown()
 PeerId LoopbackTransport::addLink(LoopbackTransport* other, PeerId remoteId)
 {
 	PeerId id = nextPeer_++;
-	links_[id] = Link{ other, remoteId };
+	links_[id] = Link{ other, remoteId, 0, 0 };
 	return id;
 }
 

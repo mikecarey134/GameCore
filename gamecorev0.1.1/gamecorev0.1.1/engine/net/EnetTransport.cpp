@@ -54,6 +54,8 @@ void EnetTransport::send(PeerId peer, const std::vector<uint8_t>& data, Delivery
 	ENetPacket* packet = enet_packet_create(data.data(), data.size(), reliable ? ENET_PACKET_FLAG_RELIABLE : 0);
 	if (enet_peer_send(found->second, reliable ? 0 : 1, packet) != 0)
 		enet_packet_destroy(packet);
+	else
+		traffic_[peer].bytesSent += data.size();
 }
 
 void EnetTransport::broadcast(const std::vector<uint8_t>& data, Delivery delivery, PeerId exceptPeer)
@@ -67,7 +69,7 @@ void EnetTransport::disconnect(PeerId peer)
 {
 	std::map<PeerId, ENetPeer*>::iterator found = peers_.find(peer);
 	if (found != peers_.end())
-		enet_peer_disconnect(found->second, 0);
+		enet_peer_disconnect_later(found->second, 0);
 }
 
 bool EnetTransport::poll(NetEvent& event)
@@ -92,10 +94,12 @@ bool EnetTransport::poll(NetEvent& event)
 			enet_packet_destroy(happened.packet);
 			if (id == NO_PEER)
 				continue;
+			traffic_[id].bytesReceived += event.data.size();
 			return true;
 		case ENET_EVENT_TYPE_DISCONNECT:
 			happened.peer->data = 0;
 			peers_.erase(id);
+			traffic_.erase(id);
 			if (id == NO_PEER)
 				continue;
 			event.kind = NetEvent::Disconnected;
@@ -116,8 +120,33 @@ void EnetTransport::shutdown()
 	for (std::map<PeerId, ENetPeer*>::iterator peer = peers_.begin(); peer != peers_.end(); ++peer)
 		enet_peer_disconnect_now(peer->second, 0);
 	peers_.clear();
+	traffic_.clear();
 	enet_host_destroy(host_);
 	host_ = 0;
+}
+
+std::string EnetTransport::address(PeerId peer) const
+{
+	std::map<PeerId, ENetPeer*>::const_iterator found = peers_.find(peer);
+	char text[64] = "";
+	if (found == peers_.end() || enet_address_get_host_ip(&found->second->address, text, sizeof(text)) != 0)
+		return "";
+	return text;
+}
+
+PeerStats EnetTransport::stats(PeerId peer) const
+{
+	PeerStats result = PeerStats{ 0, 0, 0, 0.0f };
+	std::map<PeerId, PeerStats>::const_iterator counted = traffic_.find(peer);
+	if (counted != traffic_.end())
+		result = counted->second;
+	std::map<PeerId, ENetPeer*>::const_iterator found = peers_.find(peer);
+	if (found != peers_.end())
+	{
+		result.roundTripMs = found->second->roundTripTime;
+		result.packetLoss = (float)found->second->packetLoss / ENET_PEER_PACKET_LOSS_SCALE;
+	}
+	return result;
 }
 
 PeerId EnetTransport::track(ENetPeer* peer)
@@ -126,5 +155,6 @@ PeerId EnetTransport::track(ENetPeer* peer)
 	peer->data = (void*)(uintptr_t)id;
 	enet_peer_timeout(peer, 0, timeoutMs_, timeoutMs_);
 	peers_[id] = peer;
+	traffic_[id] = PeerStats{ 0, 0, 0, 0.0f };
 	return id;
 }

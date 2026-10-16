@@ -282,7 +282,7 @@ target_include_directories(game_protocol PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(game_protocol PUBLIC gamecore_net)
 
 add_library(gamecore_server_core STATIC server/GameServer.cpp server/GameServer.h
-  server/ServerConsole.cpp server/ServerConsole.h)
+  server/ServerConsole.cpp server/ServerConsole.h server/ServerConfig.cpp server/ServerConfig.h)
 target_link_libraries(gamecore_server_core PUBLIC game_protocol)
 
 add_library(game_client_net STATIC client/NetClient.cpp client/NetClient.h)
@@ -347,7 +347,7 @@ if(GAMECORE_TOP_LEVEL)
 
   add_executable(net_tests server/tests/main.cpp server/tests/protocol_test.cpp server/tests/game_server_test.cpp
     server/tests/server_console_test.cpp server/tests/integration_test.cpp client/tests/net_client_test.cpp
-    client/tests/net_session_test.cpp)
+    client/tests/net_session_test.cpp server/tests/operator_test.cpp)
   target_include_directories(net_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inventory/third_party/doctest")
   target_link_libraries(net_tests PRIVATE game_net_session Threads::Threads)
   add_test(NAME net_tests COMMAND net_tests)

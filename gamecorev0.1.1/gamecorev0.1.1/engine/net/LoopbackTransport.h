@@ -28,14 +28,19 @@ public:
 	void disconnect(PeerId peer) override;
 	bool poll(NetEvent& event) override;
 	void shutdown() override;
+	std::string address(PeerId peer) const override;
+	PeerStats stats(PeerId peer) const override;
 
 	void setUnreliableLoss(float dropRate, float reorderRate, uint32_t seed);
+	void setAddress(const std::string& address) { address_ = address; }
 
 private:
 	struct Link
 	{
 		LoopbackTransport* other;
 		PeerId remoteId;
+		uint64_t bytesSent;
+		uint64_t bytesReceived;
 	};
 
 	PeerId addLink(LoopbackTransport* other, PeerId remoteId);
@@ -52,6 +57,7 @@ private:
 	float reorderRate_;
 	std::mt19937 random_;
 	std::map<PeerId, std::vector<uint8_t> > held_;
+	std::string address_;
 };
 
 #endif

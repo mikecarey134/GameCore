@@ -22,12 +22,15 @@ public:
 	void disconnect(PeerId peer) override;
 	bool poll(NetEvent& event) override;
 	void shutdown() override;
+	std::string address(PeerId peer) const override;
+	PeerStats stats(PeerId peer) const override;
 
 private:
 	PeerId track(_ENetPeer* peer);
 
 	_ENetHost* host_;
 	std::map<PeerId, _ENetPeer*> peers_;
+	std::map<PeerId, PeerStats> traffic_;
 	PeerId nextPeer_;
 	uint32_t timeoutMs_;
 };
