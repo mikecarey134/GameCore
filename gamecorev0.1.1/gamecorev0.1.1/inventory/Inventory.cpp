@@ -12,6 +12,16 @@ namespace inventory
 			return Result{ moved > 0 ? Outcome::Partial : Outcome::NoRoom, moved, leftover };
 		}
 
+		int across(const ItemType& type, bool rotated)
+		{
+			return rotated ? type.height : type.width;
+		}
+
+		int down(const ItemType& type, bool rotated)
+		{
+			return rotated ? type.width : type.height;
+		}
+
 		bool contains(const std::vector<std::string>& ids, const std::string& id)
 		{
 			return std::find(ids.begin(), ids.end(), id) != ids.end();
@@ -46,8 +56,8 @@ namespace inventory
 		{
 			const Placed& placed = placements_[i];
 			const ItemType* type = catalog_.itemType(placed.item.type);
-			for (int row = placed.anchor.row; row < placed.anchor.row + type->height; ++row)
-				for (int column = placed.anchor.column; column < placed.anchor.column + type->width; ++column)
+			for (int row = placed.anchor.row; row < placed.anchor.row + down(*type, placed.item.rotated); ++row)
+				for (int column = placed.anchor.column; column < placed.anchor.column + across(*type, placed.item.rotated); ++column)
 					occupant_[row * columns_ + column] = i;
 		}
 	}
@@ -79,18 +89,18 @@ namespace inventory
 		return Outcome::Done;
 	}
 
-	bool Inventory::inBounds(const ItemType& type, Cell anchor) const
+	bool Inventory::inBounds(const ItemType& type, bool rotated, Cell anchor) const
 	{
 		return anchor.column >= 0 && anchor.row >= 0
-			&& anchor.column <= columns_ - type.width && anchor.row <= rows_ - type.height;
+			&& anchor.column <= columns_ - across(type, rotated) && anchor.row <= rows_ - down(type, rotated);
 	}
 
-	bool Inventory::fits(const ItemType& type, Cell anchor) const
+	bool Inventory::fits(const ItemType& type, bool rotated, Cell anchor) const
 	{
-		if (!inBounds(type, anchor))
+		if (!inBounds(type, rotated, anchor))
 			return false;
-		for (int row = anchor.row; row < anchor.row + type.height; ++row)
-			for (int column = anchor.column; column < anchor.column + type.width; ++column)
+		for (int row = anchor.row; row < anchor.row + down(type, rotated); ++row)
+			for (int column = anchor.column; column < anchor.column + across(type, rotated); ++column)
 				if (occupant_[row * columns_ + column] >= 0)
 					return false;
 		return true;
@@ -114,10 +124,10 @@ namespace inventory
 
 		for (int row = 0; row < rows_ && remaining > 0; ++row)
 			for (int column = 0; column < columns_ && remaining > 0; ++column)
-				if (fits(*type, Cell{ column, row }))
+				if (fits(*type, item.rotated, Cell{ column, row }))
 				{
 					int stack = std::min(remaining, type->maxStack);
-					insertInOrder(Placed{ Item{ item.type, stack }, Cell{ column, row } });
+					insertInOrder(Placed{ Item{ item.type, stack, item.rotated }, Cell{ column, row } });
 					remaining -= stack;
 				}
 		return finished(item.count - remaining, remaining);
@@ -139,12 +149,12 @@ namespace inventory
 			return finished(added, item.count - added);
 		}
 
-		if (!inBounds(*type, anchor))
+		if (!inBounds(*type, item.rotated, anchor))
 			return Result{ Outcome::OutOfBounds, 0, item.count };
-		if (!fits(*type, anchor))
+		if (!fits(*type, item.rotated, anchor))
 			return Result{ Outcome::Overlaps, 0, item.count };
 		int placed = std::min(item.count, type->maxStack);
-		insertInOrder(Placed{ Item{ item.type, placed }, anchor });
+		insertInOrder(Placed{ Item{ item.type, placed, item.rotated }, anchor });
 		return finished(placed, item.count - placed);
 	}
 
@@ -159,7 +169,7 @@ namespace inventory
 		if (count < held.count)
 		{
 			held.count -= count;
-			return Taken{ Outcome::Done, Item{ held.type, count } };
+			return Taken{ Outcome::Done, Item{ held.type, count, held.rotated } };
 		}
 		Item taken = held;
 		removeAt(index);
@@ -175,8 +185,25 @@ namespace inventory
 		removeAt(index);
 		Result result = placeAt(original.item, toAnchor);
 		if (result.leftover > 0)
-			insertInOrder(Placed{ Item{ original.item.type, result.leftover }, original.anchor });
+			insertInOrder(Placed{ Item{ original.item.type, result.leftover, original.item.rotated }, original.anchor });
 		return result;
+	}
+
+	Result Inventory::rotate(Cell cell)
+	{
+		int index = placementAt(cell);
+		if (index < 0)
+			return Result{ Outcome::EmptyCell, 0, 0 };
+		Placed original = placements_[index];
+		const ItemType* type = catalog_.itemType(original.item.type);
+		removeAt(index);
+		bool turned = !original.item.rotated;
+		Outcome outcome = !inBounds(*type, turned, original.anchor) ? Outcome::OutOfBounds
+			: !fits(*type, turned, original.anchor) ? Outcome::Overlaps : Outcome::Done;
+		if (outcome == Outcome::Done)
+			original.item.rotated = turned;
+		insertInOrder(original);
+		return Result{ outcome, outcome == Outcome::Done ? 1 : 0, 0 };
 	}
 
 	Result Inventory::equipFrom(Cell cell, const std::string& slotId)
@@ -188,6 +215,7 @@ namespace inventory
 		if (slot < 0)
 			return Result{ Outcome::UnknownSlot, 0, 0 };
 		Item item = placements_[index].item;
+		item.rotated = false;
 		const ItemType* type = catalog_.itemType(item.type);
 		if (!contains(type->slots, slotId))
 			return Result{ Outcome::NotAllowed, 0, 0 };

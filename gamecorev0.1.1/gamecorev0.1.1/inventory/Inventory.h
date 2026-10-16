@@ -15,6 +15,7 @@ namespace inventory
 	{
 		std::string type;
 		int count;
+		bool rotated = false;
 	};
 
 	struct Placed
@@ -62,6 +63,7 @@ namespace inventory
 		Result placeAt(const Item& item, Cell anchor);
 		Taken takeAt(Cell cell, int count);
 		Result move(Cell from, Cell toAnchor);
+		Result rotate(Cell cell);
 
 		Result equipFrom(Cell cell, const std::string& slotId);
 		Result unequip(const std::string& slotId);
@@ -73,8 +75,8 @@ namespace inventory
 
 	private:
 		Outcome validate(const Item& item, const ItemType*& type) const;
-		bool inBounds(const ItemType& type, Cell anchor) const;
-		bool fits(const ItemType& type, Cell anchor) const;
+		bool inBounds(const ItemType& type, bool rotated, Cell anchor) const;
+		bool fits(const ItemType& type, bool rotated, Cell anchor) const;
 		int placementAt(Cell cell) const;
 		void insertInOrder(const Placed& placed);
 		void removeAt(int index);

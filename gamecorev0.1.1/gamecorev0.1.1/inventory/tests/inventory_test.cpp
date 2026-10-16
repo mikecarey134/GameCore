@@ -950,3 +950,140 @@ TEST_CASE("swapping out a two-handed weapon puts it in the freed cells and frees
 	CHECK(inventory.backpackContents()[0].item.type == "shotgun");
 	CHECK_FALSE(inventory.isBlocked("off_hand"));
 }
+
+static std::vector<std::string> occupancy(const Inventory& inventory, int columns, int rows)
+{
+	std::vector<std::string> lines;
+	for (int row = 0; row < rows; ++row)
+	{
+		std::string line;
+		for (int column = 0; column < columns; ++column)
+		{
+			const Item* item = inventory.itemAt(Cell{ column, row });
+			line += item ? item->type[0] : '.';
+		}
+		lines.push_back(line);
+	}
+	return lines;
+}
+
+TEST_CASE("a rotated item lies on its side: its width and height swap where it is placed")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	Result placed = inventory.placeAt(Item{ "pistol", 1, true }, Cell{ 0, 1 });
+	CHECK(placed.outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "....", "ppp.", "...." });
+	REQUIRE(inventory.itemAt(Cell{ 2, 1 }) != nullptr);
+	CHECK(inventory.itemAt(Cell{ 2, 1 })->rotated);
+	CHECK(inventory.backpackContents()[0].item.rotated);
+	CHECK(catalog.itemType("pistol")->width == 1);
+	CHECK(catalog.itemType("pistol")->height == 3);
+}
+
+TEST_CASE("bounds and collisions use the rotated footprint")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	CHECK(inventory.placeAt(Item{ "shotgun", 1 }, Cell{ 0, 0 }).outcome == Outcome::OutOfBounds);
+	CHECK(inventory.placeAt(Item{ "shotgun", 1, true }, Cell{ 1, 0 }).outcome == Outcome::OutOfBounds);
+	CHECK(inventory.placeAt(Item{ "shotgun", 1, true }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	CHECK(inventory.placeAt(Item{ "key", 1 }, Cell{ 3, 1 }).outcome == Outcome::Done);
+	CHECK(inventory.placeAt(Item{ "pistol", 1, true }, Cell{ 1, 1 }).outcome == Outcome::Overlaps);
+	CHECK(inventory.placeAt(Item{ "pistol", 1, true }, Cell{ 0, 1 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "ssss", "pppk", "...." });
+	CHECK(inventory.placeAt(Item{ "armor", 1, true }, Cell{ 0, 2 }).outcome == Outcome::OutOfBounds);
+}
+
+TEST_CASE("rotating a placed item turns it where it lies when it still fits, and back again")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "pistol", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	Result turned = inventory.rotate(Cell{ 0, 2 });
+	CHECK(turned.outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "ppp.", "....", "...." });
+	CHECK(inventory.itemAt(Cell{ 0, 0 })->rotated);
+	CHECK(inventory.rotate(Cell{ 2, 0 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "p...", "p...", "p..." });
+	CHECK_FALSE(inventory.itemAt(Cell{ 0, 0 })->rotated);
+}
+
+TEST_CASE("a placed item that would hit a neighbour or the edge when turned stays as it was, with the reason")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "pistol", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 2, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "knife", 1 }, Cell{ 3, 1 }).outcome == Outcome::Done);
+	std::vector<std::string> before = occupancy(inventory, 4, 3);
+	CHECK(inventory.rotate(Cell{ 0, 1 }).outcome == Outcome::Overlaps);
+	CHECK(inventory.rotate(Cell{ 3, 2 }).outcome == Outcome::OutOfBounds);
+	CHECK(occupancy(inventory, 4, 3) == before);
+	CHECK_FALSE(inventory.itemAt(Cell{ 0, 0 })->rotated);
+	CHECK_FALSE(inventory.itemAt(Cell{ 3, 1 })->rotated);
+	CHECK(inventory.rotate(Cell{ 1, 2 }).outcome == Outcome::EmptyCell);
+	CHECK(inventory.backpackContents().size() == 3);
+}
+
+TEST_CASE("an item keeps its turn when taken out, placed again and moved")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "armor", 1, true }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "aaa.", "aaa.", "...." });
+	Taken taken = inventory.takeAt(Cell{ 2, 1 }, 1);
+	REQUIRE(taken.outcome == Outcome::Done);
+	CHECK(taken.item.rotated);
+	CHECK(inventory.placeAt(taken.item, Cell{ 1, 1 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "....", ".aaa", ".aaa" });
+	CHECK(inventory.move(Cell{ 3, 2 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "aaa.", "aaa.", "...." });
+	CHECK(inventory.move(Cell{ 0, 0 }, Cell{ 2, 0 }).outcome == Outcome::OutOfBounds);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "aaa.", "aaa.", "...." });
+	REQUIRE(inventory.placeAt(Item{ "bandage", 4, true }, Cell{ 0, 2 }).outcome == Outcome::Done);
+	Taken half = inventory.takeAt(Cell{ 0, 2 }, 2);
+	REQUIRE(half.outcome == Outcome::Done);
+	CHECK(half.item.rotated);
+	CHECK(half.item.count == 2);
+}
+
+TEST_CASE("picking up finds room for an item the way it is turned")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	CHECK(inventory.pickUp(Item{ "shotgun", 1 }).outcome == Outcome::NoRoom);
+	CHECK(inventory.pickUp(Item{ "shotgun", 1, true }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "ssss", "....", "...." });
+	CHECK(inventory.pickUp(Item{ "pistol", 1, true }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "ssss", "ppp.", "...." });
+	CHECK(inventory.pickUp(Item{ "bandage", 3, true }).outcome == Outcome::Done);
+	CHECK(inventory.pickUp(Item{ "bandage", 2 }).outcome == Outcome::Done);
+	CHECK(inventory.itemAt(Cell{ 3, 1 })->count == 5);
+}
+
+TEST_CASE("square items turn without complaint and without moving")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "helmet", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 2, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 3, 0 }).outcome == Outcome::Done);
+	std::vector<std::string> before = occupancy(inventory, 4, 3);
+	CHECK(inventory.rotate(Cell{ 1, 1 }).outcome == Outcome::Done);
+	CHECK(inventory.rotate(Cell{ 3, 0 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == before);
+	CHECK(inventory.itemAt(Cell{ 0, 0 })->rotated);
+}
+
+TEST_CASE("an item goes into an equipment slot upright and comes back out upright")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "knife", 1, true }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 1, 0 }, "main_hand").outcome == Outcome::Done);
+	REQUIRE(inventory.equippedIn("main_hand") != nullptr);
+	CHECK_FALSE(inventory.equippedIn("main_hand")->rotated);
+	REQUIRE(inventory.unequip("main_hand").outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "k...", "k...", "...." });
+}
