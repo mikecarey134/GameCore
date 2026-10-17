@@ -144,6 +144,22 @@ TEST_CASE("every shipped slot has its own place on the paper doll")
 	}
 }
 
+TEST_CASE("the doll is seen from behind, so the main hand is on the right and the off hand on the left")
+{
+	Catalog catalog = shippedCatalog();
+	int main = -1;
+	int off = -1;
+	for (int index = 0; index < catalog.slotCount(); ++index)
+	{
+		if (catalog.slotId(index) == "main_hand")
+			main = catalog.slot(index).dollColumn;
+		if (catalog.slotId(index) == "off_hand")
+			off = catalog.slot(index).dollColumn;
+	}
+	CHECK(main == 2);
+	CHECK(off == 0);
+}
+
 TEST_CASE("the small backpack is 2x2 and adds two rows, the large one is 2x3 and adds four, both worn on the back, and nothing else grows the grid")
 {
 	Catalog catalog = shippedCatalog();
