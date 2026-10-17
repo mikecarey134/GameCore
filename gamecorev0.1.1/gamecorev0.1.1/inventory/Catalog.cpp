@@ -256,6 +256,14 @@ namespace inventory
 					if (blocked == slot)
 						return errors.at(row.line, "'" + type.id + "' blocks " + slot + ", a slot it can be equipped in");
 
+			const char* const expansions[] = { "expand_cols", "expand_rows" };
+			int* const grows[] = { &type.expandColumns, &type.expandRows };
+			for (int i = 0; i < 2; ++i)
+				if (table.column(expansions[i]) >= 0 && !parseIndex(cell(expansions[i]), *grows[i]))
+					return errors.at(row.line, std::string(expansions[i]) + " must be a whole number of at least 0");
+			if ((type.expandColumns > 0 || type.expandRows > 0) && type.slots.empty())
+				return errors.at(row.line, "'" + type.id + "' grows the backpack but cannot be equipped");
+
 			if (table.column("icon") >= 0)
 			{
 				if (cell("icon").empty())

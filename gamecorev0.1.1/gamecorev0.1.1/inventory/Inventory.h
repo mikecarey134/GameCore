@@ -37,7 +37,8 @@ namespace inventory
 		UnknownSlot,
 		NotAllowed,
 		Blocked,
-		BadCount
+		BadCount,
+		ItemsOutside
 	};
 
 	struct Result
@@ -64,6 +65,9 @@ namespace inventory
 		Taken takeAt(Cell cell, int count);
 		Result move(Cell from, Cell toAnchor);
 		Result rotate(Cell cell);
+		Result resize(int columns, int rows);
+		int columns() const { return columns_; }
+		int rows() const { return rows_; }
 
 		Result equipFrom(Cell cell, const std::string& slotId);
 		Result unequip(const std::string& slotId);
@@ -82,8 +86,12 @@ namespace inventory
 		void removeAt(int index);
 		void reindex();
 		int slotIndex(const std::string& slotId) const;
+		void restore(const std::vector<Placed>& placements, const std::vector<Item>& equipped, int columns, int rows);
+		Result fitEquipment();
 
 		const Catalog& catalog_;
+		int baseColumns_;
+		int baseRows_;
 		int columns_;
 		int rows_;
 		std::vector<Placed> placements_;

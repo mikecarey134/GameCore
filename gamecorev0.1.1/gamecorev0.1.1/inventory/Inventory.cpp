@@ -29,7 +29,7 @@ namespace inventory
 	}
 
 	Inventory::Inventory(const Catalog& catalog, int columns, int rows)
-		: catalog_(catalog), columns_(columns), rows_(rows),
+		: catalog_(catalog), baseColumns_(columns), baseRows_(rows), columns_(columns), rows_(rows),
 		occupant_(columns * rows, -1), equipped_(catalog.slotCount(), Item{})
 	{
 	}
@@ -206,6 +206,46 @@ namespace inventory
 		return Result{ outcome, outcome == Outcome::Done ? 1 : 0, 0 };
 	}
 
+	void Inventory::restore(const std::vector<Placed>& placements, const std::vector<Item>& equipped, int columns, int rows)
+	{
+		placements_ = placements;
+		equipped_ = equipped;
+		columns_ = columns;
+		rows_ = rows;
+		occupant_.assign(columns * rows, -1);
+		reindex();
+	}
+
+	Result Inventory::resize(int columns, int rows)
+	{
+		if (columns < 1 || rows < 1)
+			return Result{ Outcome::OutOfBounds, 0, 0 };
+		for (const Placed& placed : placements_)
+		{
+			const ItemType* type = catalog_.itemType(placed.item.type);
+			if (placed.anchor.column + across(*type, placed.item.rotated) > columns || placed.anchor.row + down(*type, placed.item.rotated) > rows)
+				return Result{ Outcome::ItemsOutside, 0, 0 };
+		}
+		columns_ = columns;
+		rows_ = rows;
+		occupant_.assign(columns * rows, -1);
+		reindex();
+		return Result{ Outcome::Done, 0, 0 };
+	}
+
+	Result Inventory::fitEquipment()
+	{
+		int columns = baseColumns_, rows = baseRows_;
+		for (const Item& worn : equipped_)
+			if (worn.count > 0)
+			{
+				const ItemType* type = catalog_.itemType(worn.type);
+				columns += type->expandColumns;
+				rows += type->expandRows;
+			}
+		return resize(columns, rows);
+	}
+
 	Result Inventory::equipFrom(Cell cell, const std::string& slotId)
 	{
 		int index = placementAt(cell);
@@ -224,6 +264,7 @@ namespace inventory
 
 		std::vector<Placed> placementsBefore = placements_;
 		std::vector<Item> equippedBefore = equipped_;
+		int columnsBefore = columns_, rowsBefore = rows_;
 		removeAt(index);
 		std::vector<Item> displaced(1, equipped_[slot]);
 		equipped_[slot] = item;
@@ -233,12 +274,15 @@ namespace inventory
 			displaced.push_back(equipped_[blocked]);
 			equipped_[blocked] = Item{};
 		}
+		if (fitEquipment().outcome != Outcome::Done)
+		{
+			restore(placementsBefore, equippedBefore, columnsBefore, rowsBefore);
+			return Result{ Outcome::ItemsOutside, 0, 0 };
+		}
 		for (const Item& old : displaced)
 			if (old.count > 0 && pickUp(old).outcome != Outcome::Done)
 			{
-				placements_ = placementsBefore;
-				equipped_ = equippedBefore;
-				reindex();
+				restore(placementsBefore, equippedBefore, columnsBefore, rowsBefore);
 				return Result{ Outcome::NoRoom, 0, 0 };
 			}
 		return Result{ Outcome::Done, 1, 0 };
@@ -251,9 +295,21 @@ namespace inventory
 			return Result{ Outcome::UnknownSlot, 0, 0 };
 		if (equipped_[slot].count == 0)
 			return Result{ Outcome::EmptySlot, 0, 0 };
-		if (pickUp(equipped_[slot]).outcome != Outcome::Done)
-			return Result{ Outcome::NoRoom, 0, 0 };
+		std::vector<Placed> placementsBefore = placements_;
+		std::vector<Item> equippedBefore = equipped_;
+		int columnsBefore = columns_, rowsBefore = rows_;
+		Item worn = equipped_[slot];
 		equipped_[slot] = Item{};
+		if (fitEquipment().outcome != Outcome::Done)
+		{
+			restore(placementsBefore, equippedBefore, columnsBefore, rowsBefore);
+			return Result{ Outcome::ItemsOutside, 0, 0 };
+		}
+		if (pickUp(worn).outcome != Outcome::Done)
+		{
+			restore(placementsBefore, equippedBefore, columnsBefore, rowsBefore);
+			return Result{ Outcome::NoRoom, 0, 0 };
+		}
 		return Result{ Outcome::Done, 1, 0 };
 	}
 

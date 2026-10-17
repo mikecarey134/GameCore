@@ -39,7 +39,7 @@ TEST_CASE("the shipped slot and item files load")
 	shippedCatalog();
 }
 
-TEST_CASE("the shipped slots are the owner's eight, in order")
+TEST_CASE("the shipped slots are the owner's eight, in order, then the back for a backpack")
 {
 	Catalog catalog = shippedCatalog();
 
@@ -47,7 +47,7 @@ TEST_CASE("the shipped slots are the owner's eight, in order")
 	for (int i = 0; i < catalog.slotCount(); ++i)
 		ids.push_back(catalog.slotId(i));
 
-	CHECK(ids == std::vector<std::string>{ "head", "chest", "gloves", "boots", "belt", "main_hand", "off_hand", "neck" });
+	CHECK(ids == std::vector<std::string>{ "head", "chest", "gloves", "boots", "belt", "main_hand", "off_hand", "neck", "back" });
 }
 
 TEST_CASE("the shipped items have the owner's sizes")
@@ -114,7 +114,7 @@ TEST_CASE("every shipped item and slot names an icon file that exists")
 	Catalog catalog = shippedCatalog();
 
 	for (const char* id : { "knife", "hatchet", "pistol", "shotgun", "flashlight", "lockpick", "key", "bandage",
-		"pills", "ammo_box", "body_armor", "helmet", "gloves", "boots", "utility_belt", "amulet" })
+		"pills", "ammo_box", "body_armor", "helmet", "gloves", "boots", "utility_belt", "amulet", "small_backpack", "large_backpack" })
 	{
 		CAPTURE(id);
 		const ItemType& type = shippedItem(catalog, id);
@@ -141,5 +141,31 @@ TEST_CASE("every shipped slot has its own place on the paper doll")
 		for (int b = a + 1; b < catalog.slotCount(); ++b)
 			CHECK_FALSE((catalog.slot(a).dollColumn == catalog.slot(b).dollColumn
 				&& catalog.slot(a).dollRow == catalog.slot(b).dollRow));
+	}
+}
+
+TEST_CASE("the small backpack is 2x2 and adds two rows, the large one is 2x3 and adds four, both worn on the back, and nothing else grows the grid")
+{
+	Catalog catalog = shippedCatalog();
+	const ItemType& small = shippedItem(catalog, "small_backpack");
+	const ItemType& large = shippedItem(catalog, "large_backpack");
+	CHECK(small.name == "Small Backpack");
+	CHECK(large.name == "Large Backpack");
+	CHECK(small.width == 2);
+	CHECK(small.height == 2);
+	CHECK(large.width == 2);
+	CHECK(large.height == 3);
+	CHECK(small.slots == std::vector<std::string>{ "back" });
+	CHECK(large.slots == std::vector<std::string>{ "back" });
+	CHECK(small.expandRows == 2);
+	CHECK(large.expandRows == 4);
+	CHECK(small.expandColumns == 0);
+	CHECK(large.expandColumns == 0);
+	for (const char* id : { "knife", "hatchet", "pistol", "shotgun", "flashlight", "lockpick", "key", "bandage", "pills", "ammo_box",
+		"body_armor", "helmet", "gloves", "boots", "utility_belt", "amulet" })
+	{
+		CAPTURE(id);
+		CHECK(shippedItem(catalog, id).expandColumns == 0);
+		CHECK(shippedItem(catalog, id).expandRows == 0);
 	}
 }

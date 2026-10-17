@@ -7,3 +7,4 @@ belt,      Belt,      utility_belt.png, 1,           2
 main_hand, Main Hand, knife.png,        0,           2
 off_hand,  Off Hand,  flashlight.png,   2,           2
 neck,      Neck,      amulet.png,       2,           0
+back,      Back,      large_backpack.png, 2,           1

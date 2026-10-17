@@ -426,3 +426,36 @@ TEST_CASE("doll positions must be whole numbers from 0, and the two columns come
 	CHECK(error.line == line);
 	CHECK(error.message == expected);
 }
+
+TEST_CASE("optional expand_cols and expand_rows say how far an equipped item grows the backpack, and are 0 without them")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string slots = "id, name\nback, Back\n";
+	std::string items = "id, name, width, height, slots, blocks, max_stack, category, expand_cols, expand_rows\n"
+		"pack, Pack, 2, 2, back, -, 1, accessory, 1, 2\n"
+		"key, Key, 1, 1, -, -, 1, key_item, 0, 0\n";
+	REQUIRE(loadCatalog(slots, items, catalog, error));
+	CHECK(catalog.itemType("pack")->expandColumns == 1);
+	CHECK(catalog.itemType("pack")->expandRows == 2);
+	CHECK(catalog.itemType("key")->expandRows == 0);
+
+	REQUIRE(loadCatalog(slots, "id, name, width, height, slots, blocks, max_stack, category\nkey, Key, 1, 1, -, -, 1, key_item\n", catalog, error));
+	CHECK(catalog.itemType("key")->expandColumns == 0);
+	CHECK(catalog.itemType("key")->expandRows == 0);
+}
+
+TEST_CASE("expansions must be whole numbers from 0, and only something worn can grow the backpack")
+{
+	Catalog catalog;
+	LoadError error;
+	std::string slots = "id, name\nback, Back\n";
+	std::string header = "id, name, width, height, slots, blocks, max_stack, category, expand_cols, expand_rows\n";
+	CHECK_FALSE(loadCatalog(slots, header + "pack, Pack, 2, 2, back, -, 1, accessory, 0, x\n", catalog, error));
+	CHECK(error.message == "expand_rows must be a whole number of at least 0");
+	CHECK_FALSE(loadCatalog(slots, header + "pack, Pack, 2, 2, back, -, 1, accessory, -1, 0\n", catalog, error));
+	CHECK(error.message == "expand_cols must be a whole number of at least 0");
+	CHECK_FALSE(loadCatalog(slots, header + "rock, Rock, 1, 1, -, -, 1, tool, 0, 2\n", catalog, error));
+	CHECK(error.message == "'rock' grows the backpack but cannot be equipped");
+	CHECK(error.line == 2);
+}

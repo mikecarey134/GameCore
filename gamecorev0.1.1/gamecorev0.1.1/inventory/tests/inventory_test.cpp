@@ -1087,3 +1087,144 @@ TEST_CASE("an item goes into an equipment slot upright and comes back out uprigh
 	REQUIRE(inventory.unequip("main_hand").outcome == Outcome::Done);
 	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "k...", "k...", "...." });
 }
+
+TEST_CASE("growing the grid keeps every item where it was and opens empty cells that take items")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "pistol", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 3, 2 }).outcome == Outcome::Done);
+	CHECK(inventory.columns() == 4);
+	CHECK(inventory.rows() == 3);
+	CHECK(inventory.placeAt(Item{ "helmet", 1 }, Cell{ 1, 3 }).outcome == Outcome::OutOfBounds);
+	Result grown = inventory.resize(5, 5);
+	CHECK(grown.outcome == Outcome::Done);
+	CHECK(inventory.columns() == 5);
+	CHECK(inventory.rows() == 5);
+	CHECK(occupancy(inventory, 5, 5) == std::vector<std::string>{ "p....", "p....", "p..k.", ".....", "....." });
+	CHECK(inventory.placeAt(Item{ "helmet", 1 }, Cell{ 1, 3 }).outcome == Outcome::Done);
+	CHECK(inventory.placeAt(Item{ "key", 1 }, Cell{ 4, 0 }).outcome == Outcome::Done);
+	CHECK(inventory.placeAt(Item{ "key", 1 }, Cell{ 4, 5 }).outcome == Outcome::OutOfBounds);
+	CHECK(inventory.rotate(Cell{ 2, 4 }).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 5, 5) == std::vector<std::string>{ "p...k", "p....", "p..k.", ".hh..", ".hh.." });
+}
+
+TEST_CASE("shrinking the grid works while everything still fits, and is refused, changing nothing, when an item would end up outside")
+{
+	Catalog catalog = fixture();
+	Inventory inventory(catalog, 4, 5);
+	REQUIRE(inventory.placeAt(Item{ "pistol", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "knife", 1 }, Cell{ 3, 2 }).outcome == Outcome::Done);
+	CHECK(inventory.resize(4, 4).outcome == Outcome::Done);
+	CHECK(inventory.rows() == 4);
+	CHECK(inventory.resize(4, 3).outcome == Outcome::ItemsOutside);
+	CHECK(inventory.rows() == 4);
+	CHECK(occupancy(inventory, 4, 4) == std::vector<std::string>{ "p...", "p...", "p..k", "...k" });
+	CHECK(inventory.resize(3, 4).outcome == Outcome::ItemsOutside);
+	CHECK(inventory.columns() == 4);
+	REQUIRE(inventory.move(Cell{ 3, 3 }, Cell{ 1, 0 }).outcome == Outcome::Done);
+	CHECK(inventory.resize(2, 3).outcome == Outcome::Done);
+	CHECK(occupancy(inventory, 2, 3) == std::vector<std::string>{ "pk", "pk", "p." });
+	CHECK(inventory.placeAt(Item{ "key", 1 }, Cell{ 2, 0 }).outcome == Outcome::OutOfBounds);
+	CHECK(inventory.resize(0, 3).outcome == Outcome::OutOfBounds);
+	CHECK(inventory.resize(2, 0).outcome == Outcome::OutOfBounds);
+	CHECK(inventory.columns() == 2);
+	CHECK(inventory.rows() == 3);
+}
+
+static Catalog packs()
+{
+	Catalog catalog;
+	LoadError error;
+	bool loaded = loadCatalog(
+		"id, name\n"
+		"main_hand, Main Hand\n"
+		"back, Back\n",
+		"id, name, width, height, slots, blocks, max_stack, category, expand_cols, expand_rows\n"
+		"key, Key, 1, 1, -, -, 1, key_item, 0, 0\n"
+		"knife, Knife, 1, 2, main_hand, -, 1, weapon, 0, 0\n"
+		"pack, Pack, 2, 2, back, -, 1, accessory, 0, 2\n"
+		"bigpack, Big Pack, 2, 3, back, -, 1, accessory, 1, 4\n",
+		catalog, error);
+	INFO(error.file, " line ", error.line, ": ", error.message);
+	REQUIRE(loaded);
+	return catalog;
+}
+
+TEST_CASE("wearing a backpack grows the grid by its expansion, and taking it off puts the grid and the pack back")
+{
+	Catalog catalog = packs();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "pack", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 1, 1 }, "back").outcome == Outcome::Done);
+	CHECK(inventory.columns() == 4);
+	CHECK(inventory.rows() == 5);
+	CHECK(inventory.placeAt(Item{ "knife", 1 }, Cell{ 0, 3 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 0, 4 }, "main_hand").outcome == Outcome::Done);
+	CHECK(inventory.rows() == 5);
+	REQUIRE(inventory.unequip("back").outcome == Outcome::Done);
+	CHECK(inventory.rows() == 3);
+	CHECK(inventory.equippedIn("back") == nullptr);
+	CHECK(occupancy(inventory, 4, 3) == std::vector<std::string>{ "pp..", "pp..", "...." });
+}
+
+TEST_CASE("a backpack with something in its extra rows cannot be taken off until they are cleared")
+{
+	Catalog catalog = packs();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "pack", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 0, 0 }, "back").outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 2, 4 }).outcome == Outcome::Done);
+	CHECK(inventory.unequip("back").outcome == Outcome::ItemsOutside);
+	CHECK(inventory.equippedIn("back") != nullptr);
+	CHECK(inventory.rows() == 5);
+	CHECK(inventory.itemAt(Cell{ 2, 4 }) != nullptr);
+	REQUIRE(inventory.move(Cell{ 2, 4 }, Cell{ 2, 0 }).outcome == Outcome::Done);
+	CHECK(inventory.unequip("back").outcome == Outcome::Done);
+	CHECK(inventory.rows() == 3);
+}
+
+TEST_CASE("a backpack that would not fit back into the smaller grid stays on")
+{
+	Catalog catalog = packs();
+	Inventory inventory(catalog, 2, 2);
+	REQUIRE(inventory.placeAt(Item{ "pack", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 0, 0 }, "back").outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 1, 1 }).outcome == Outcome::Done);
+	CHECK(inventory.unequip("back").outcome == Outcome::NoRoom);
+	CHECK(inventory.equippedIn("back") != nullptr);
+	CHECK(inventory.rows() == 4);
+	CHECK(inventory.itemAt(Cell{ 1, 1 }) != nullptr);
+}
+
+TEST_CASE("swapping to a bigger backpack grows the grid and drops the old one in; swapping down needs the extra rows clear")
+{
+	Catalog catalog = packs();
+	Inventory inventory(catalog, 4, 3);
+	REQUIRE(inventory.placeAt(Item{ "pack", 1 }, Cell{ 0, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 0, 0 }, "back").outcome == Outcome::Done);
+	REQUIRE(inventory.placeAt(Item{ "bigpack", 1 }, Cell{ 2, 0 }).outcome == Outcome::Done);
+	REQUIRE(inventory.equipFrom(Cell{ 2, 0 }, "back").outcome == Outcome::Done);
+	CHECK(inventory.columns() == 5);
+	CHECK(inventory.rows() == 7);
+	CHECK(inventory.equippedIn("back")->type == "bigpack");
+	CHECK(occupancy(inventory, 5, 7)[0] == "pp...");
+
+	REQUIRE(inventory.placeAt(Item{ "key", 1 }, Cell{ 0, 6 }).outcome == Outcome::Done);
+	CHECK(inventory.equipFrom(Cell{ 0, 0 }, "back").outcome == Outcome::ItemsOutside);
+	CHECK(inventory.equippedIn("back")->type == "bigpack");
+	CHECK(inventory.columns() == 5);
+	CHECK(inventory.rows() == 7);
+	CHECK(inventory.itemAt(Cell{ 0, 0 })->type == "pack");
+	CHECK(inventory.itemAt(Cell{ 0, 6 }) != nullptr);
+
+	REQUIRE(inventory.move(Cell{ 0, 6 }, Cell{ 3, 0 }).outcome == Outcome::Done);
+	CHECK(inventory.equipFrom(Cell{ 0, 0 }, "back").outcome == Outcome::Done);
+	CHECK(inventory.equippedIn("back")->type == "pack");
+	CHECK(inventory.columns() == 4);
+	CHECK(inventory.rows() == 5);
+	bool bigpackBack = false;
+	for (const Placed& placed : inventory.backpackContents())
+		bigpackBack = bigpackBack || placed.item.type == "bigpack";
+	CHECK(bigpackBack);
+}

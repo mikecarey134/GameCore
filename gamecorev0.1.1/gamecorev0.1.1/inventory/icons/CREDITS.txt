@@ -21,3 +21,5 @@ rendered to a 128 x 128 PNG.
   utility_belt.png  Belt                by lucasms
   amulet.png        Gem pendant         by Lorc
   doll.png          Person              by Delapouite
+  small_backpack.png Knapsack          by Lorc
+  large_backpack.png Backpack          by Delapouite

@@ -17,6 +17,8 @@ namespace inventory
 		int maxStack = 1;
 		Category category = Category::Tool;
 		std::string icon;
+		int expandColumns = 0;
+		int expandRows = 0;
 	};
 
 	struct LoadError

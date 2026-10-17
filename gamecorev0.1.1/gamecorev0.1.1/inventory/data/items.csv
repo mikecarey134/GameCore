@@ -1,17 +1,19 @@
-id,           name,         width, height, slots,              blocks,   max_stack, category,   icon
-knife,        Knife,        1,     2,      main_hand|off_hand, -,        1,         weapon,     knife.png
-hatchet,      Hatchet,      1,     3,      main_hand,          -,        1,         weapon,     hatchet.png
-pistol,       Pistol,       1,     3,      main_hand,          -,        1,         weapon,     pistol.png
-shotgun,      Shotgun,      1,     4,      main_hand,          off_hand, 1,         weapon,     shotgun.png
-flashlight,   Flashlight,   1,     2,      main_hand|off_hand, -,        1,         tool,       flashlight.png
-lockpick,     Lockpick,     1,     1,      -,                  -,        1,         tool,       lockpick.png
-key,          Key,          1,     1,      -,                  -,        1,         key_item,   key.png
-bandage,      Bandage,      1,     1,      -,                  -,        5,         consumable, bandage.png
-pills,        Pills,        1,     1,      -,                  -,        10,        consumable, pills.png
-ammo_box,     Ammo Box,     1,     1,      -,                  -,        10,        consumable, ammo_box.png
-body_armor,   Body Armor,   2,     3,      chest,              -,        1,         armor,      body_armor.png
-helmet,       Helmet,       2,     2,      head,               -,        1,         armor,      helmet.png
-gloves,       Gloves,       2,     1,      gloves,             -,        1,         armor,      gloves.png
-boots,        Boots,        2,     2,      boots,              -,        1,         armor,      boots.png
-utility_belt, Utility Belt, 2,     1,      belt,               -,        1,         accessory,  utility_belt.png
-amulet,       Amulet,       1,     2,      neck,               -,        1,         accessory,  amulet.png
+id,           name,         width, height, slots,              blocks,   max_stack, category,   icon, expand_cols, expand_rows
+knife,        Knife,        1,     2,      main_hand|off_hand, -,        1,         weapon,     knife.png, 0,           0
+hatchet,      Hatchet,      1,     3,      main_hand,          -,        1,         weapon,     hatchet.png, 0,           0
+pistol,       Pistol,       1,     3,      main_hand,          -,        1,         weapon,     pistol.png, 0,           0
+shotgun,      Shotgun,      1,     4,      main_hand,          off_hand, 1,         weapon,     shotgun.png, 0,           0
+flashlight,   Flashlight,   1,     2,      main_hand|off_hand, -,        1,         tool,       flashlight.png, 0,           0
+lockpick,     Lockpick,     1,     1,      -,                  -,        1,         tool,       lockpick.png, 0,           0
+key,          Key,          1,     1,      -,                  -,        1,         key_item,   key.png, 0,           0
+bandage,      Bandage,      1,     1,      -,                  -,        5,         consumable, bandage.png, 0,           0
+pills,        Pills,        1,     1,      -,                  -,        10,        consumable, pills.png, 0,           0
+ammo_box,     Ammo Box,     1,     1,      -,                  -,        10,        consumable, ammo_box.png, 0,           0
+body_armor,   Body Armor,   2,     3,      chest,              -,        1,         armor,      body_armor.png, 0,           0
+helmet,       Helmet,       2,     2,      head,               -,        1,         armor,      helmet.png, 0,           0
+gloves,       Gloves,       2,     1,      gloves,             -,        1,         armor,      gloves.png, 0,           0
+boots,        Boots,        2,     2,      boots,              -,        1,         armor,      boots.png, 0,           0
+utility_belt, Utility Belt, 2,     1,      belt,               -,        1,         accessory,  utility_belt.png, 0,           0
+amulet,       Amulet,       1,     2,      neck,               -,        1,         accessory,  amulet.png, 0,           0
+small_backpack, Small Backpack, 2, 2,   back,               -,        1,         accessory,  small_backpack.png, 0,           2
+large_backpack, Large Backpack, 2, 3,   back,               -,        1,         accessory,  large_backpack.png, 0,           4
