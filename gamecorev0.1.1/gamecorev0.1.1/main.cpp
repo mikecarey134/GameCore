@@ -15,6 +15,7 @@
 #include "ChatQueue.h"
 #include "IrrlichtCanvas.h"
 #include "physics/PhysicsWorld.h"
+#include "AssimpMeshLoader.h"
 #include <irrlicht.h>
 #include "SoundEngine.h"
 #include <iostream>
@@ -139,6 +140,7 @@ int main(int argc, char** argv)
 
 	//load our scene manager and set up the shadow color with an alpha channel
 	ISceneManager* smgr = device->getSceneManager();smgr->setShadowColor(irr::video::SColor(70,0,0,0));
+	addAssimpMeshLoader(smgr);
 	//keymap userkeys;
 
 	PhysicsWorld* world = PhysicsWorld::create(device);

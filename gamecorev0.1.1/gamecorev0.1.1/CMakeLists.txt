@@ -253,7 +253,7 @@ add_library(gamecore_engine STATIC
   ${ENGINE_DIR}/GuiInputLayer.cpp ${ENGINE_DIR}/GuiInputLayer.h ${ENGINE_DIR}/GuiPanel.cpp ${ENGINE_DIR}/GuiPanel.h
   ${ENGINE_DIR}/Canvas.h ${ENGINE_DIR}/IrrlichtCanvas.cpp ${ENGINE_DIR}/IrrlichtCanvas.h)
 target_include_directories(gamecore_engine PUBLIC "${ENGINE_DIR}")
-target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics PRIVATE miniaudio luajit)
+target_link_libraries(gamecore_engine PUBLIC irrlicht_engine gamecore_net gamecore_physics gamecore_models PRIVATE miniaudio luajit)
 
 add_library(gamecore_physics STATIC
   ${ENGINE_DIR}/physics/PhysicsWorld.h ${ENGINE_DIR}/physics/CharacterController.h
