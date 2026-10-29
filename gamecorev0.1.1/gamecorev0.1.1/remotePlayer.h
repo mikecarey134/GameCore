@@ -6,14 +6,14 @@
 /************************************************************************/
 #pragma once
 #include<irrlicht.h>
-#include<irrKlang.h>
-#include<irrbullet.h>
+#include "SoundEngine.h"
+#include <cstdint>
 #include <string>
 
 #include<string>
-#include"kinematiccharactercontroller.h"
-#include"exampleframework.h"
+#include "physics/PhysicsWorld.h"
 #include"common.h"
+#include "net/Interpolator.h"
 
 class remotePlayer
 {
@@ -21,7 +21,7 @@ public:
 	remotePlayer(){}
 	remotePlayer(irr::IrrlichtDevice* device,
 		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world, int model_type);
+		gamecore::SoundEngine* engine, PhysicsWorld* physics, int model_type);
 
 	~remotePlayer(void);
 
@@ -34,6 +34,12 @@ public:
 	irr::core::vector3df calculateCameraPos	();
 	void				 nodeSelector		();
 	void                 delete_player      ();
+	void                 hide               ();
+	void                 show               ();
+	void                 setId              (uint16_t id);
+	void                 addSnapshot        (uint16_t seq, const irr::core::vector3df& position, const irr::core::vector3df& rotation, float now);
+	void                 follow             (float now);
+	uint16_t             getId              () const { return id_; }
 
     void                 drawName();
 	
@@ -50,9 +56,9 @@ public:
 	bool isDead()								  { return dead_; }
 	
 
-	const irr::f32 getXDir () const		{ return xDirection_; }
-	const irr::f32 getZDir () const		{ return zDirection_; }
-	bool isOnGround        ()           { return character_->isOnGround();  }
+	irr::f32 getXDir () const		{ return xDirection_; }
+	irr::f32 getZDir () const		{ return zDirection_; }
+	bool isOnGround        ()           { return character_->onGround();  }
 	bool isBeingDamaged		()			{ return beingDamaged_; }
 
 	irr::scene::IAnimatedMeshSceneNode* getPSceneNode () {return characterModel_;}
@@ -65,18 +71,17 @@ public:
 
 private:
 	void idle();
-	IKinematicCharacterController* character_;
+	CharacterController* character_;
 	irr::scene::IAnimatedMeshSceneNode* characterModel_;
 	irr::scene::IMeshSceneNode* rem_player_shadow_;
 
-	irrBulletWorld* world_;
+	PhysicsWorld* physics_;
 	irr::IrrlichtDevice* device_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
 
-	irrklang::ISoundEngine* engine_;
-	irrklang::ISound* playerSteps_;
-	irrklang::ISound* player_punch;
+	gamecore::SoundEngine* engine_;
+	gamecore::Sound* player_punch;
 
 	irr::u32 then;
 
@@ -95,5 +100,8 @@ private:
 	common_paths paths_;
 
 	bool beingDamaged_;
+	uint16_t id_ = 0;
+	Interpolator motion_;
+	irr::core::vector3df lastRotation_;
 	bool dead_;
 };

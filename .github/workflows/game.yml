@@ -1,0 +1,111 @@
+name: Game
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            install: sudo apt-get update && sudo apt-get install -y libirrlicht-dev libgl-dev libx11-dev libxext-dev libxxf86vm-dev
+            configure: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+            keep_going: -- -k
+            exe: ./gamecore
+            server_exe: build/gamecore_server
+            binaries: gamecore
+          - os: macos-14
+            install: brew install irrlicht
+            configure: ""
+            keep_going: -- -k
+            exe: ./gamecore
+            server_exe: build/gamecore_server
+            binaries: gamecore
+          - os: windows-2022
+            install: vcpkg install irrlicht:x64-windows
+            configure: -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
+            keep_going: ""
+            exe: ./Release/gamecore.exe
+            server_exe: build/Release/gamecore_server.exe
+            binaries: Release/gamecore.exe Release/*.dll
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /gamecorev0.1.1/gamecorev0.1.1/*.cpp
+            /gamecorev0.1.1/gamecorev0.1.1/*.h
+            /gamecorev0.1.1/gamecorev0.1.1/CMakeLists.txt
+            /gamecorev0.1.1/gamecorev0.1.1/engine/
+            /gamecorev0.1.1/gamecorev0.1.1/protocol/
+            /gamecorev0.1.1/gamecorev0.1.1/server/
+            /gamecorev0.1.1/gamecorev0.1.1/client/
+            /gamecorev0.1.1/gamecorev0.1.1/third_party/
+            /gamecorev0.1.1/gamecorev0.1.1/inventory/
+            /gamecorev0.1.1/gamecorev0.1.1/inventory_ui/
+            /gamecorev0.1.1/gamecorev0.1.1/bill/
+            /gamecorev0.1.1/gamecorev0.1.1/characters/
+            /gamecorev0.1.1/gamecorev0.1.1/config/
+            /gamecorev0.1.1/gamecorev0.1.1/map/
+            /gamecorev0.1.1/gamecorev0.1.1/models/clue/
+            /gamecorev0.1.1/gamecorev0.1.1/models/nature/
+            /gamecorev0.1.1/gamecorev0.1.1/scripts/
+            /gamecorev0.1.1/gamecorev0.1.1/sounds/
+
+      - name: Install Irrlicht
+        run: ${{ matrix.install }}
+
+      - name: Configure
+        run: cmake -S gamecorev0.1.1/gamecorev0.1.1 -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.configure }}
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 4 ${{ matrix.keep_going }}
+
+      - name: Run unit tests
+        run: ctest --test-dir build --build-config Release --output-on-failure --verbose
+
+      - name: Smoke run
+        timeout-minutes: 5
+        working-directory: gamecorev0.1.1/gamecorev0.1.1
+        run: |
+          ${{ matrix.exe }} --smoke 2>&1 | tee "$RUNNER_TEMP/smoke.log"
+          if grep -E "Could not|FATAL ERROR" "$RUNNER_TEMP/smoke.log"; then
+            echo "::error::The smoke run could not load some game data"
+            exit 1
+          fi
+
+      - name: Server smoke run
+        timeout-minutes: 2
+        run: ${{ matrix.server_exe }} --smoke
+
+      - name: Collect binary
+        id: collect
+        working-directory: gamecorev0.1.1/gamecorev0.1.1
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/dist"
+          cp ${{ matrix.binaries }} "$GITHUB_WORKSPACE/dist/"
+          cp "$GITHUB_WORKSPACE/${{ matrix.server_exe }}" "$GITHUB_WORKSPACE/dist/"
+          printf '%s\n' \
+            "GameCore build of commit $GITHUB_SHA for ${{ matrix.os }}." \
+            "This is the binary only. Run it from the game data directory (gamecorev0.1.1/gamecorev0.1.1 in the repository)," \
+            "next to config/, map/, models/, sounds/ and the other data folders, or it will not find its files." \
+            "Linux and macOS builds need Irrlicht 1.8 installed (libirrlicht or Homebrew irrlicht)." \
+            "gamecore_server is the dedicated server; it needs no game data: gamecore_server [--port 25515]." \
+            > "$GITHUB_WORKSPACE/dist/RUN.txt"
+          echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: gamecore-${{ matrix.os }}-${{ steps.collect.outputs.short }}
+          path: dist/
+          if-no-files-found: error

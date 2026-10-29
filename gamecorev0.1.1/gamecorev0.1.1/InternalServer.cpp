@@ -1,275 +1,118 @@
-
 //////////////////////////////////////////////////////////////////////////
 /*
- BSD License 
- For RakNet software
-
- Copyright (c) 2014, Oculus VR, Inc.
- All rights reserved.*/
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-/*
-	InternalServer.cpp 
+	InternalServer.cpp
 	By : Michael Carey
 	Purpose : provide communication to game Server from the client side
 	in the forms of chat and player data
 */
 //////////////////////////////////////////////////////////////////////////
 
-
-
-
 #include "InternalServer.h"
-#include "MessageIdentifiers.h"
-#include "RakPeerInterface.h"
-#include "RakNetStatistics.h"
-#include "RakNetTypes.h"
-#include "BitStream.h"
-#include "PacketLogger.h"
 #include <string>
 
+using namespace irr;
+using namespace video;
 
-using namespace RakNet;
-using namespace std;
-
-InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,char* filename,
-							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-							   irrklang::ISoundEngine* engine, irrBulletWorld* world, char* ip,
-							   int remote_port, int local_port,ChatQueue* message_buffer, 
-							   player* thePlayer): online_(online),
-							   device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-							   networkData_(device,filename,smgr,driver,engine,world, message_buffer, thePlayer),
-							   message_buffer_(message_buffer)
+namespace
 {
-	if(online_)
+	std::string hostFrom(const char* ip)
 	{
-		//convert value passed in to block style c_string 
-		//because racknet connect only works with that form of c_string
-		char ip_[MAX_IP_SIZE];
-		
-		int index =0;
-		while(ip[index])
+		std::string host = ip ? ip : "";
+		size_t end = host.find_last_not_of(" \t\r\n");
+		return end == std::string::npos ? "" : host.substr(0, end + 1);
+	}
+
+	SColor colourFor(NetClient::LineKind kind)
+	{
+		switch (kind)
 		{
-			ip_[index] = ip[index];
-			++index;
-		}
-		ip_[index-1]='\0';//insert the null terminator 
-		
-
-		//////////////////////////////////////////////////////////////////////////
-		//current server info the user will specify this later
-		//////////////////////////////////////////////////////////////////////////
-
-		client_=RakNet::RakPeerInterface::GetInstance();
-		// Connecting the client is very simple.  0 means we don't care about
-		// a connectionValidationInteger, and false for low priority threads
-		SocketDescriptor socketDescriptor(local_port,0);
-		socketDescriptor.socketFamily=AF_INET;
-
-		// Record the first client that connects to us so we can pass it to the ping function
-		//RakNet::SystemAddress clientID=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
-		isServer=false;
-
-		if(online_)
-		{
-			// Record the first client that connects to us so we can pass it to the ping function
-			//SystemAddress clientID = UNASSIGNED_SYSTEM_ADDRESS;
-
-
-			// A client
-			isServer=false;
-
-			client_->AllowConnectionResponseIPMigration(false);
-
-			client_->Startup(8,&socketDescriptor,1);
-			client_->SetOccasionalPing(true);
-
-			//start the connection
-			RakNet::ConnectionAttemptResult car = client_->Connect(ip_, remote_port, "0", (int) strlen("0"));
-			bool b = (car==RakNet::CONNECTION_ATTEMPT_STARTED);
-
-			if (b)
-				puts("Connecting");
-			else
-			{
-				puts("Connection Failed Bad Connection Attempt!");
-				exit(1);
-			}
+		case NetClient::JoinedLine:
+		case NetClient::InfoLine:
+			return SColor(255,0,255,0);
+		case NetClient::LeftLine:
+		case NetClient::DiedLine:
+		case NetClient::ErrorLine:
+			return SColor(255,255,0,0);
+		default:
+			return SColor(255,255,255,255);
 		}
 	}
+}
+
+InternalServer::InternalServer(bool online,irr::IrrlichtDevice* device,const char*,
+							   irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
+							   gamecore::SoundEngine* engine, PhysicsWorld* physics, char* ip,
+							   int remote_port, int,ChatQueue* message_buffer,
+							   player* thePlayer):
+							   networkData_(device,smgr,driver,engine,physics),
+							   message_buffer_(message_buffer), player_(thePlayer),
+							   started_(std::chrono::steady_clock::now()),
+							   client_(transport_, [this] {
+								   return (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - started_).count();
+							   }, events())
+{
+	if(online)
+		client_.connect(hostFrom(ip), (uint16_t)remote_port, thePlayer->getname(), (uint8_t)thePlayer->get_model_type());
 }
 
 InternalServer::~InternalServer(void)
 {
 }
-void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont* font)
+
+float InternalServer::seconds() const
 {
-	
-	if (online_ == true)//if the online parameter is set maybe we will have a user set this
+	return std::chrono::duration<float>(std::chrono::steady_clock::now() - started_).count();
+}
+
+NetClient::Events InternalServer::events()
+{
+	NetClient::Events events;
+	events.line = [this](const std::string& text, NetClient::LineKind kind) {
+		message_buffer_->addMessage(irr::core::stringw(text.c_str()), colourFor(kind));
+	};
+	events.joined = [this](const NetClient::Remote& remote) { networkData_.add(remote.id, remote.name, remote.model); };
+	events.left = [this](uint16_t id) { networkData_.remove(id); };
+	events.moved = [this](const NetClient::Remote& remote) { networkData_.place(remote.id, remote.state, seconds()); };
+	events.died = [this](uint16_t id) { networkData_.hide(id); };
+	events.respawned = [this](const NetClient::Remote& remote) { networkData_.show(remote.id); };
+	events.damaged = [this](uint16_t) {
+		if (!player_->isDead())
+			player_->damage();
+	};
+	return events;
+}
+
+void InternalServer::messageLoop(player& thePlayer)
+{
+	if (client_.isOnline())
 	{
-
-		RakNet::SystemAddress clientID=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
-
-		// message is the data to send
-		// strlen(message)+1 is to send the null terminator
-		// HIGH_PRIORITY doesn't actually matter here because we don't use any other priority
-		// RELIABLE_ORDERED means make sure the message arrives in the right order
-
-
-		//send chat messages if we have them
-		networkData_.setString(thePlayer);
-		//since i made get read only once 
-
-		std::string myMessage= "1 ";//append the one as a message identifier
-		myMessage+= thePlayer.getname();//add the name of the player to the message
-		myMessage+=" ";//separator
-		myMessage+= thePlayer.getChatMessage();
-		//+= "\0";
-		
-		//display the current player's message in the buffer
-		std::string buffered_message = "<";
-		buffered_message+= thePlayer.getname();
-		buffered_message+= "> ";
-		buffered_message+= thePlayer.getChatMessage();
-
-		//if player in our player's list is damaged send it to the server
-		std::vector<remotePlayer> damagedPlayers = networkData_.findDamagedPlayers();
-		if (!damagedPlayers.empty())
+		if(!emptyMess(thePlayer.getChatMessage()))
 		{
-			for (int i = 0; i < damagedPlayers.size(); ++i)
-			{
-				std::string damageMsg = "3 ";
-				damageMsg += damagedPlayers[i].getName();
-				client_->Send(damageMsg.c_str(), damageMsg.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-			}
+			client_.sendChat(thePlayer.getChatMessage());
+			thePlayer.setChatMessage("\0");
 		}
-		
+
+		std::vector<uint16_t> hits = networkData_.takeDamaged();
+		for (size_t i = 0; i < hits.size(); ++i)
+			client_.sendHit(hits[i]);
+
 		if(thePlayer.getCurrentState() == DEAD)
 		{
-			std::string damageMsg = "4 ";
-			damageMsg += thePlayer.getname();
-			client_->Send(damageMsg.c_str(), damageMsg.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-			thePlayer.setState(SPECTATOR);		
+			client_.sendDied();
+			thePlayer.setState(SPECTATOR);
 		}
 
-		//Only send if we have a new message
-
-		if(!emptyMess(thePlayer.getChatMessage())) //if we have more than just the messageID aka its empty send
-		{
-			client_->Send(myMessage.c_str(), myMessage.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-			thePlayer.setChatMessage("\0");
-			message_buffer_->addMessage(buffered_message.c_str());
-		}
-
-		
-
-		//Sends our network info about our player.
-		client_->Send(networkData_.getNetworkData(), networkData_.length() + 1 , HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+		irr::core::vector3df position = thePlayer.getPosition();
+		irr::core::vector3df rotation = thePlayer.getRotation();
+		client_.update(protocol::State{ 0, { position.X, position.Y, position.Z }, { rotation.X, rotation.Y, rotation.Z },
+			(uint8_t)thePlayer.get_curr_state() });
+		networkData_.update(seconds());
 	}
-
-
-	if(online_)
-	{
-		    unsigned char packetIdentifier;
-			
-		    // Get a packet from either the server or the client
-			for (p=client_->Receive(); p; client_->DeallocatePacket(p), p = client_->Receive())
-			{
-				// We got a packet, get the identifier with our handy function
-				packetIdentifier = GetPacketIdentifier(p);
-
-				// Check if this is a network message packet
-				switch (packetIdentifier)
-				{
-				case ID_DISCONNECTION_NOTIFICATION:
-					// Connection lost normally
-					printf("Player Disconnected\n");
-					break;
-
-				case ID_ALREADY_CONNECTED:
-					// Connection lost normally
-					printf("Already Connected with guid %" PRINTF_64_BIT_MODIFIER "u\n", p->guid);
-					message_buffer_->addMessage("[info] Already Connected!",SColor(255,0,255,0));
-					break;
-
-				case ID_INCOMPATIBLE_PROTOCOL_VERSION:
-					printf("Incompatible Protocol\n");
-					online_ = false;
-					break;
-
-				case ID_REMOTE_DISCONNECTION_NOTIFICATION: // Server telling the clients of another client disconnecting gracefully.  You can manually broadcast this in a peer to peer enviroment if you want.
-					printf("Player Disconnected\n"); 
-					break;
-
-				case ID_REMOTE_CONNECTION_LOST: // Server telling the clients of another client disconnecting forcefully.  You can manually broadcast this in a peer to peer enviroment if you want.
-					printf("Remote Connection Lost\n");
-					break;
-
-				case ID_REMOTE_NEW_INCOMING_CONNECTION: // Server telling the clients of another client connecting.  You can manually broadcast this in a peer to peer enviroment if you want.
-					printf("Incoming Connection\n");
-					break;
-
-				case ID_CONNECTION_BANNED: // Banned from this server
-					printf("You are banned from this server.\n");
-					break;
-
-				case ID_CONNECTION_ATTEMPT_FAILED:
-					printf("Connection attempt failed\n");
-					message_buffer_->addMessage("[info] Connection Attempt Failed!",SColor(255,255,0,0));
-					online_= false;
-					
-					break;
-
-				case ID_NO_FREE_INCOMING_CONNECTIONS:
-					// Sorry, the server is full. 
-		
-					printf("Server is Full\n");
-					online_ = false;
-					break;
-
-				case ID_INVALID_PASSWORD:
-					printf("Invalid Password\n");
-					break;
-
-				case ID_CONNECTION_LOST:
-					// Couldn't deliver a reliable packet - i.e. the other system was abnormally
-					// terminated
-					printf("Connection Lost!\n");
-					message_buffer_->addMessage("[info] Connection Lost!",SColor(255,255,0,0));
-					break;
-
-				case ID_CONNECTION_REQUEST_ACCEPTED:
-					// This tells the client they have connected
-					printf("Connected To Server\n");
-					message_buffer_->addMessage("[info] Connected To Server",SColor(255,0,255,0));
-					//printf("external address is %s\n", client_->GetExternalID(p->systemAddress).ToString(true));
-					break;
-				case ID_CONNECTED_PING:
-				case ID_UNCONNECTED_PING:
-					printf("Ping from %s\n", p->systemAddress.ToString(true));
-					break;
-				
-				default:// It's a client
-
-					if(p->data[0]!= '0' && p->data[0]!= '9' && p->data[0]!= '1' && p->data[0]!= '3'&& p->data[0]!= '4'){//if the packet id is 0 or 99 do not print it
-						printf("%s", p->data);
-						puts("\n");
-						message_buffer_->addMessage(p->data);//print out server messages on the message buffer
-					}
-					networkData_.setRemote((char*)p->data);
-					break;
-				}
-			}
-
-		}
-
 	else
 	{
 		if(!emptyMess(thePlayer.getChatMessage())) //if we have more than just the messageID aka its empty send
 		{
-			
+
 			//display the current player's message in the buffer
 			std::string buffered_message = "<";
 			buffered_message+= thePlayer.getname();
@@ -279,16 +122,13 @@ void InternalServer::messageLoop(player& thePlayer, GUI& GUI,irr::gui::IGUIFont*
 			thePlayer.setChatMessage("\0");
 			message_buffer_->addMessage(buffered_message.c_str());
 		}
-
-
 	}
-	//}
 }
 
-bool InternalServer::emptyMess(char* message)
-{	
+bool InternalServer::emptyMess(const char* message)
+{
 	int length=0;
-	while(*message!= NULL)
+	while(*message!= '\0')
 	{
 		++length;
 		++message;
@@ -296,27 +136,9 @@ bool InternalServer::emptyMess(char* message)
 
 	return length == 0;
 }
-void InternalServer::shutdown(player& thePlayer)
+
+void InternalServer::shutdown(player&)
 {
-	// Be nice and let the server know we quit
-	std::string quit_message ="99 ";
-	quit_message += thePlayer.getname();
-	client_->Send(quit_message.c_str(), quit_message.length() + 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-	client_->Shutdown(300);
-	RakNet::RakPeerInterface::DestroyInstance(client_);
+	client_.shutdown();
 	puts("Shutting Down Internal Server");
-}
-
-unsigned char GetPacketIdentifier(RakNet::Packet *p)
-{
-	if (p==0)
-		return 255;
-
-	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
-	{
-		RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
-		return (unsigned char) p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
-	}
-	else
-		return (unsigned char) p->data[0];
 }

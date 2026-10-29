@@ -7,8 +7,7 @@
 
 #pragma once
 #include<irrlicht.h>
-#include<irrKlang.h>
-#include<irrbullet.h>
+#include "SoundEngine.h"
 
 class SolarCycle
 {

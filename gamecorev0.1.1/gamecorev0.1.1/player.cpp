@@ -5,12 +5,11 @@
 */
 /************************************************************************/
 
-#include <irrbullet.h>
 #include "player.h"
 #include <fstream>
 
 using namespace irr;
-using namespace irrklang;
+using namespace gamecore;
 using namespace core;
 using namespace scene;
 using namespace video;
@@ -18,12 +17,12 @@ using namespace io;
 using namespace gui;
 
 
-player::player(IrrlichtDevice* device,char* filename,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, ISoundEngine* engine, 
-			   irrBulletWorld* world, std::string player_name,int model_type):
-device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
-xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0),cameradist_(CAMERA_DISTANCE_BACK), player_name_(player_name),
+player::player(IrrlichtDevice* device,const ActionMap& actions,const char*,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver, SoundEngine* engine, 
+			   PhysicsWorld* physics, std::string player_name,int model_type):
+camera_(smgr),physics_(physics),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
+xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH),playerHunger_(PLAYER_HUNGER),playerWater_(PLAYER_WATER),walkframe_(0), player_name_(player_name),
 player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-10,10,30,10),vector3df(0.0f,0.3f,0.0f),300,100
-									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2,0.2),dimension2df(4.0,4.0))
+									,SColor(150,203,104,86),SColor(150,167,90,65),800,200,90,dimension2df(0.2f,0.2f),dimension2df(4.0,4.0))
 {
 	//append number to players to make 
 	//sure the same player id is not created
@@ -31,51 +30,36 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	for (int i=0;i<4;++i)
 	{
 		int id = (rand() % 10) +48;
-		player_name_+= id;
+		player_name_+= (char)id;
 	}
 	
 	//set the init chat message to an empty string
 	chat_message_="\0";
 
-	//hacky key mapping for the 
-	//observer camera
-	SKeyMap keyMap[8];
-	keyMap[1].Action = EKA_MOVE_FORWARD;
-	keyMap[1].KeyCode = KEY_KEY_W;
-
-	keyMap[3].Action = EKA_MOVE_BACKWARD;
-	keyMap[3].KeyCode = KEY_KEY_S;
-
-	keyMap[5].Action = EKA_STRAFE_LEFT;
-	keyMap[5].KeyCode = KEY_KEY_A;
-
-	keyMap[7].Action = EKA_STRAFE_RIGHT;
-	keyMap[7].KeyCode = KEY_KEY_D;
+	//key mapping for the observer camera
+	const char* moves[] = { "move_forward", "move_back", "move_left", "move_right" };
+	const EKEY_ACTION cameraMoves[] = { EKA_MOVE_FORWARD, EKA_MOVE_BACKWARD, EKA_STRAFE_LEFT, EKA_STRAFE_RIGHT };
+	core::array<SKeyMap> keyMap;
+	for (int i = 0; i < 4; ++i)
+		for (size_t k = 0; k < actions.keys(moves[i]).size(); ++k)
+			keyMap.push_back(SKeyMap(cameraMoves[i], actions.keys(moves[i])[k]));
 
 
 	//////////////////////////////////////////////////////////////////////////
 	//player cameras
 	//////////////////////////////////////////////////////////////////////////
-	camera_ = device->getSceneManager()->addCameraSceneNode();
-	camera_->bindTargetAndRotation(true);
-	camera_->setID(ID_IsNotPickable);
+	camera_.getNode()->setID(ID_IsNotPickable);
 
-	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap,8);
+	fpsCam_ = smgr_->addCameraSceneNodeFPS(0,75,0.2F,-1,keyMap.pointer(),keyMap.size());
 	fpsCam_->setID(ID_IsNotPickable);
-	smgr_->setActiveCamera(camera_);
+	camera_.makeActive();
 	//set up the camera clipping planes in order to render the scene faster
 
-	camera_->setNearValue(5);
-	camera_->setFarValue(1500);
+	camera_.getNode()->setNearValue(5);
+	camera_.getNode()->setFarValue(1500);
 	//////////////////////////////////////////////////////////////////////////
 		
-	mouseCursorX_ = 0.0;
-	mouseCursorY_ = 0.0;
-
-	float height = 5.0;
-	float width  = 3.0;
-
-	character_ = new IKinematicCharacterController(world_);
+	createCharacter();
 
 	//dungeon example
 	//character_->warp(vector3df(-217.0f, 3.8f, 390.0f));
@@ -85,7 +69,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	//player attributes
 	//////////////////////////////////////////////////////////////////////////
 	common_paths model_path;
-    house_spawn spawn_loc;
 
 	characterModel_ = smgr_->addAnimatedMeshSceneNode(smgr_->getMesh(model_path.model_paths[player_model_type_].c_str()));
 
@@ -95,21 +78,16 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	characterModel_->setScale(vector3df(1.0, 1.0, 1.0));
 	
 	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
-	
-	character_->setGravity(PLAYER_EARTH_GRAVITY);
-
-	character_->setJumpForce(PLAYER_JUMP_FORCE);
 
 	//const c8 modelName = player_name_;
 	//characterModel_->setName(&modelName);
 
 	//add the player shadow
+	player_shadow_ = 0;
 	//player_shadow_ = smgr_->addMeshSceneNode(smgr_->getMesh("models/shadows/shadow.ms3d"));
 	//player_shadow_->setMaterialTexture(0,driver_->getTexture("models/shadows/shadow1.png"));
 
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
-
-	character_->setMaxSlope(PI / 1.8);
 
 	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	playerSteps_->setVolume(.55f);
@@ -121,10 +99,6 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 	characterModel_->setID(ID_IsNotPickable);//so we cannot select our model
 	
 	
-	vector3df spawn(spawn_loc.get_spawn());
-	fpsCam_->setPosition(spawn);
-	character_->warp(spawn);//set the init player pos on the map
-	characterModel_->setPosition(spawn);
 	//setup the player shadow
 	//player_shadow_->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
 
@@ -144,7 +118,7 @@ player_model_type_(model_type),gore_(smgr_,driver_,irr::core::aabbox3df(-10,48,-
 
 	clues_.clear();
 
-	camera_->setPosition(characterModel_->getPosition());
+	camera_.getNode()->setPosition(characterModel_->getPosition());
 	
 	//good CPU feature
 	characterModel_->addShadowVolumeSceneNode();//make realtime shadows on the character
@@ -167,7 +141,7 @@ void player::animate(EMD2_ANIMATION_TYPE animation)
 void player::jump()
 {
 	//animate the player on jump
-	if (character_->isOnGround()){
+	if (character_->onGround()){
 		player_jump_= engine_->play2D("sounds/jump.mp3");
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
@@ -232,15 +206,15 @@ void player::setUpCameraCollisions()
 	}
 
 	scene::ISceneNodeAnimator* anim = device_->getSceneManager()->createCollisionResponseAnimator(
-		meta, camera_, core::vector3df(1,1,1),
+		meta, camera_.getNode(), core::vector3df(1,1,1),
 		core::vector3df(0,0,0));
 	meta->drop(); // I'm done with the meta selector now
 
-	camera_->addAnimator(anim);
+	camera_.getNode()->addAnimator(anim);
 	anim->drop(); // I'm done with the animator now
 }
 
-void player::moveCameraControl()
+void player::moveCameraControl(const irr::core::position2df& mouseDelta)
 {
 /*
 	if (current_state_ == DEAD)
@@ -259,39 +233,34 @@ void player::moveCameraControl()
 	else*/
 	if (!isDead())
 	{
-		smgr_->setActiveCamera(camera_);
+		camera_.makeActive();
 		
 		characterModel_->setVisible(true);
 
-		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+		characterModel_->setPosition(character_->position());
 
-		vector3df rot(0, camera_->getRotation().Y, 0);
+		vector3df rot(0, camera_.getMoveYaw(), 0);
 		characterModel_->setRotation(rot);
 
 		vector3df direction(xDirection_, 0.0f, zDirection_);
 
 		irr::core::matrix4 m;
 
-		m.setRotationDegrees(vector3df(0, camera_->getRotation().Y-180.0f, 0));
+		m.setRotationDegrees(vector3df(0, camera_.getMoveYaw()-180.0f, 0));
 
 		m.transformVect(direction);
 
-		character_->setPositionIncrementPerSimulatorStep(direction*0.3f);
+		character_->setWalk(direction*0.3f*60.0f);
 
-		camera_->setTarget(characterModel_->getPosition());
-
-		// Step the simulation with our delta time
-
-		irr::core::position2d<f32> cursorPos = device_->getCursorControl()->getRelativePosition();
-		camera_ = device_->getSceneManager()->getActiveCamera();
-		irr::core::vector3df cameraPos = camera_->getAbsolutePosition();
-
-		characterModel_->setPosition(character_->getWorldTransform().getTranslation());
+		characterModel_->setPosition(character_->position());
 		//manage shadow
 		//player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-3.8f,getPosition().Z));
 		//player_shadow_->setScale(vector3df(.35,.35,.35));
 
-		camera_->setPosition(calculateCameraPos());	
+		camera_.setTarget(characterModel_->getPosition());
+		camera_.update(mouseDelta);
+
+		gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();
 
 		nodeSelector(); //highlights nodes within a certain range of the player	
 	}
@@ -300,9 +269,9 @@ void player::moveCameraControl()
 
 	//setup the player lamp position
 	vector3df lamppos;
-	lamppos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * 4 )* -1 ;
+	lamppos.X = characterModel_->getPosition().X + camera_.lookDirection().X * 4;
 	lamppos.Y = characterModel_->getPosition().Y ;
-	lamppos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * 4) * -1 ;
+	lamppos.Z = characterModel_->getPosition().Z + camera_.lookDirection().Z * 4;
 
 	//lamp_->enableCastShadow(false);
 	
@@ -313,34 +282,6 @@ void player::moveCameraControl()
 	
 	
 }
-vector3df player::calculateCameraPos()
-{
-	vector3df newCamPos;
-
-	position2d<f32> cursor = device_->getCursorControl()->getRelativePosition();
-	
-	mouseCursorX_ += (cursor.X - 0.5f) * CAMERA_MOVE_SPEED;
-	mouseCursorY_ -= (cursor.Y - 0.5f) * CAMERA_MOVE_SPEED;
-
-	if( mouseCursorY_ < -90 )
-		mouseCursorY_ = -89.9f;
-	else
-		if( mouseCursorY_ > 40 )
-			mouseCursorY_ = 39.9f;
-
-	//std::cout << mouseCursorX_ << ", " << mouseCursorY_ << std::endl;
-
-	newCamPos.X = characterModel_->getPosition().X - (cos(mouseCursorX_ * PI / 180.0f) * cameradist_);
-	newCamPos.Y = characterModel_->getPosition().Y - (sin(mouseCursorY_ * PI / 180.0f) * cameradist_);
-	newCamPos.Z = characterModel_->getPosition().Z + (sin(mouseCursorX_ * PI / 180.0f) * cameradist_);
-
-	gore_.set_min_max_amounts(0,0);gore_.setUpEmitter();
-
-	
-
-	return newCamPos;
-}
-
 void player::forward()
 {	
 	//early walk animations 
@@ -358,7 +299,7 @@ void player::forward()
 		walkframe_ = 301;
 	}
 	
-	characterModel_->setCurrentFrame(walkframe_);
+	characterModel_->setCurrentFrame((f32)walkframe_);
 	current_state_=State::WALK;
 
 	
@@ -402,11 +343,7 @@ void player::nodeSelector()
 						  characterModel_->getPosition().Z);
 	//ray.end = ray.start + (camera_->getTarget() - ray.start) * 100000.0f;
 	//f32 rayEndX = abs(characterModel_->getPosition()) - abs(camera_->getPosition())
-	ray.end =	vector3df (characterModel_->getPosition().X + (cos(mouseCursorX_ * PI / 180.0f) * REACH_DIST),
-						   characterModel_->getPosition().Y + (sin(mouseCursorY_ * PI / 180.0f) * REACH_DIST),
-						   characterModel_->getPosition().Z - (sin(mouseCursorX_ * PI / 180.0f) * REACH_DIST));//ray.start + (characterModel_->getRotation()) * 10.0f;
-
-	device_->getVideoDriver()->draw3DLine(ray.start,ray.end,SColor(255,255,0,0));
+	ray.end = characterModel_->getPosition() + camera_.lookDirection() * REACH_DIST;
 
 	// Tracks the current intersection point with the level or a mesh
 	core::vector3df intersection;
@@ -509,6 +446,8 @@ void player::isAttackingSomeone(bool& attacking, std::string& enemyName)
 
 void player::damage()
 {
+	if (isDead())
+		return;
 	
 	player_punch_= engine_->play2D("sounds/damage.mp3");
 	gore_.setPosition(vector3df(getPosition().X,getPosition().Y-40,getPosition().Z));
@@ -532,19 +471,60 @@ void player::kill()
 	//remove all player model attributes
 	gore_.hide(true);
 	characterModel_->setVisible(false); 
-	player_shadow_->setVisible(false);
+	if (player_shadow_)
+		player_shadow_->setVisible(false);
 	delete character_;
+	character_ = 0;
 	smgr_->setActiveCamera(fpsCam_);
-	camera_->remove();
+}
+
+void player::createCharacter()
+{
+	CharacterSettings settings;
+	settings.gravity = PLAYER_EARTH_GRAVITY;
+	settings.jumpSpeed = PLAYER_JUMP_FORCE;
+	settings.maxSlope = (f32)(PI / 1.8);
+	character_ = physics_->addCharacter(settings);
+}
+
+void player::respawn(vector3df pos)
+{
+	if (!character_)
+		createCharacter();
+	playerHealth_ = PLAYER_HEALTH;
+	playerHunger_ = PLAYER_HUNGER;
+	playerWater_ = PLAYER_WATER;
+	camera_.reset();
+	clues_.clear();
+	gore_.hide(false);
+	characterModel_->setVisible(true);
+	camera_.makeActive();
+	idle();
+	spawn(pos);
 }
 
 //early player weapon switching system
+void player::spawn(vector3df pos)
+{
+	fpsCam_->setPosition(pos);
+	if (character_)
+		character_->warp(pos);
+	characterModel_->setPosition(pos);
+}
+
 void player::switch_weap(int type)
 {
-	characterModel_->setVisible(false);
+	common_paths model_path;
+	const char* meshes[] = { model_path.model_paths[player_model_type_].c_str(), "characters/stick_mike_knife.ms3d" };
+	if (type < 0 || type > 1)
+		return;
 
-	characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(smgr_->getMesh("characters/stick_mike_knife.ms3d"),
-		0,-1,getPosition());
-	characterModel_->setScale(vector3df(3.0f,3.0f,3.0f));
-
+	s32 start = characterModel_->getStartFrame();
+	s32 end = characterModel_->getEndFrame();
+	characterModel_->setMesh(smgr_->getMesh(meshes[type]));
+	characterModel_->setFrameLoop(start, end);
+	characterModel_->setAnimationSpeed(PLAYER_ANIMATION_SPEED);
+	setTexture(model_path.skin_paths[player_model_type_].c_str());
+	characterModel_->setMaterialFlag(video::EMF_NORMALIZE_NORMALS,1);
+	characterModel_->setMaterialFlag(video::EMF_LIGHTING,0);
 }

@@ -3,14 +3,13 @@
 #include "InteractiveObject.h"
 
 #include<irrlicht.h>
-#include<irrKlang.h>
-#include<irrbullet.h>
-#include <lua.hpp>
+#include "SoundEngine.h"
+#include "LuaVM.h"
 #include <vector>
 #include <iostream>
 
 #include "common.h"
-#include "mapLoader.h"
+#include "GameMap.h"
 
 class ClueObject: public InteractiveObject
 {
@@ -26,18 +25,22 @@ private:
 
 public:
 	ClueObject(irr::core::string<char> filename, irr::IrrlichtDevice* device, irr::scene::ISceneManager* smgr,
-				irrBulletWorld* world, irr::video::IVideoDriver* driver, mapLoader* theMap);
+				irr::video::IVideoDriver* driver, GameMap* theMap, LuaVM& lua);
 	~ClueObject() {}
 
 	const irr::core::string<char> getObjectType() const { return type_; }
 	void update(); 
 	void prepareClue();
+	void placeOnMap();
+	void reset();
+	bool isNoteShowing() const { return clueProperties_.showClue_; }
+	const irr::core::string<char>& getMessage() const { return clueProperties_.clueMessage_; }
+	void hideNote() { clueProperties_.showClue_ = false; }
 	irr::core::vector3df setLocation();
 	irr::core::string<char> setClueMsg();
 	irr::scene::ISceneNode* getModel () const { return model_; }
 	const bool& isFound() const				  { return clueProperties_.isFound_; }
 
-	void drawClueMessage();
 
 	void eraseModelFromWorld();
 
@@ -45,12 +48,9 @@ private:
 	properties clueProperties_;
 	irr::core::string<char> type_;
 	
-	ICollisionShape* clueCollisionObject_;
 	irr::scene::ISceneNode* model_;
 
 	irr::IrrlichtDevice* device_;
-	irr::scene::ISceneManager* smgr_;
-	irr::video::IVideoDriver* driver_;
-	irrBulletWorld* world_;
-	mapLoader* theMap_;
+	GameMap* theMap_;
+	LuaVM& lua_;
 };

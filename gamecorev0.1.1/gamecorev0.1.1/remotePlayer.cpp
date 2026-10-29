@@ -11,15 +11,12 @@
 #include "remotePlayer.h"
 #include "player.h"
 #include<irrlicht.h>
-#include<irrKlang.h>
-#include<irrbullet.h>
+#include "SoundEngine.h"
 #include<string>
-#include"kinematiccharactercontroller.h"
-#include"exampleframework.h"
 
 
 using namespace irr;
-using namespace irrklang;
+using namespace gamecore;
 using namespace core;
 using namespace scene;
 using namespace video;
@@ -28,15 +25,18 @@ using namespace gui;
 
 
 remotePlayer::remotePlayer(IrrlichtDevice* device,irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
-						   ISoundEngine* engine, irrBulletWorld* world,int model_type):
-device_(device),smgr_(smgr),driver_(driver), engine_(engine), world_(world),
+						   SoundEngine* engine, PhysicsWorld* physics,int model_type):
+physics_(physics),device_(device),smgr_(smgr), driver_(driver), engine_(engine),
 xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_(false), dead_(false)
 {
 	
-	float height = 5.0;
-	float width  = 3.0;
 
-	character_ = new IKinematicCharacterController(world_);
+	CharacterSettings settings;
+	settings.gravity = PLAYER_EARTH_GRAVITY;
+	settings.jumpSpeed = PLAYER_JUMP_FORCE;
+	settings.maxSlope = PI/4;
+	settings.collidesWithCharacters = false;
+	character_ = physics_->addCharacter(settings);
 	character_->warp(vector3df(113.0f, 38.0f, 25.0f));//set the init player pos on the map
 
 	//characterModel_ = device_->getSceneManager()->addAnimatedMeshSceneNode(device_->getSceneManager()->getMesh(filename));
@@ -55,13 +55,6 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_
 	ITriangleSelector* selector = device_->getSceneManager()->createTriangleSelectorFromBoundingBox(characterModel_);
 	characterModel_->setTriangleSelector(selector);
 	
-	character_->setGravity(PLAYER_EARTH_GRAVITY);
-
-	character_->setJumpForce(PLAYER_JUMP_FORCE);
-
-	character_->setMaxSlope(PI/4);
-
-	playerSteps_ = engine_->play2D("sounds/footsteps-4.wav", true, true); //Player foot steps sounds. Declare them here and start it off as paused
 	
 	playerSpeed_ = DEFAULT_PLAYER_SPEED;
 
@@ -72,7 +65,6 @@ xDirection_(0.0f), zDirection_(0.0f),playerHealth_(PLAYER_HEALTH), beingDamaged_
 	//rem_player_shadow_->setScale(vector3df(.85,.85,.85));
 
 	IGUIFont* font = device_->getGUIEnvironment()->getFont("bill/bigfont.png");
-	vector3df textPosition = vector3df(characterModel_->getPosition().X, characterModel_->getPosition().Y + 10, characterModel_->getPosition().Z);
 
 
 	nameDisplay_ = smgr_->addBillboardTextSceneNode(font,name_.c_str(),0, dimension2d<f32>(12,2),
@@ -106,13 +98,13 @@ void remotePlayer::animate(EMD2_ANIMATION_TYPE animation)
 void remotePlayer::setposition(irr::core::vector3df pos)
 {
 	 character_->warp(pos); 
-	 characterModel_->setPosition(character_->getWorldTransform().getTranslation());//set the player at the correct pos
+	 characterModel_->setPosition(character_->position());//set the player at the correct pos
 	 rem_player_shadow_->setPosition(vector3df(getPosition().X,getPosition().Y-13.0f,getPosition().Z));
 }
 
 void remotePlayer::jump()
 {
-	if (character_->isOnGround()){
+	if (character_->onGround()){
 		character_->jump();
 		characterModel_->setFrameLoop(103,111);
 	}
@@ -124,7 +116,7 @@ void remotePlayer::forward()
 	characterModel_->setFrameLoop(301,318);
 	characterModel_->setAnimationSpeed(4);
 
-	/*if (walkframe_== 0 || walkframe_ == 319 )
+	if (walkframe_== 0 || walkframe_ == 319 )
 	{
 		walkframe_ = 301;
 	}
@@ -151,10 +143,13 @@ void remotePlayer::right()
 */
 void remotePlayer::delete_player ()
 {
+	if (!character_)
+		return;
 	dead_ = true;
 	characterModel_->setVisible(false);
 	rem_player_shadow_->setVisible(false);
 	delete character_; 
+	character_ = 0;
 	characterModel_->remove(); 
 	rem_player_shadow_->remove();	
 	nameDisplay_->remove(); 
@@ -174,6 +169,53 @@ void remotePlayer::drawName()
 		characterModel_->getPosition().Z));
 
 }
+void remotePlayer::setId(uint16_t id)
+{
+	id_ = id;
+	string<char> modelName = TYPE_PLAYER;
+	modelName += (u32)id;
+	characterModel_->setName(modelName);
+}
+
+void remotePlayer::addSnapshot(uint16_t seq, const vector3df& position, const vector3df& rotation, float now)
+{
+	const float at[3] = { position.X, position.Y, position.Z };
+	motion_.addSnapshot(seq, at, rotation.Y, now);
+	lastRotation_ = rotation;
+}
+
+void remotePlayer::follow(float now)
+{
+	Pose pose;
+	if (dead_ || !character_ || !motion_.sample(now - Interpolator::DELAY, pose))
+		return;
+	setposition(vector3df(pose.position[0], pose.position[1], pose.position[2]));
+	setRotation(vector3df(lastRotation_.X, pose.yaw, lastRotation_.Z));
+	drawName();
+}
+
+void remotePlayer::hide()
+{
+	if (!character_)
+		return;
+	motion_.reset();
+	dead_ = true;
+	characterModel_->setVisible(false);
+	rem_player_shadow_->setVisible(false);
+	nameDisplay_->setVisible(false);
+}
+
+void remotePlayer::show()
+{
+	if (!character_)
+		return;
+	dead_ = false;
+	playerHealth_ = PLAYER_HEALTH;
+	characterModel_->setVisible(true);
+	rem_player_shadow_->setVisible(true);
+	nameDisplay_->setVisible(true);
+}
+
 void remotePlayer::setName(const std::string& name)
 {
 	internalName_ = name;
@@ -185,9 +227,6 @@ void remotePlayer::setName(const std::string& name)
 
 	}
 	name_+=">";//postfix 
-	string<char> modelName = TYPE_PLAYER;
-	modelName += name_;
-	characterModel_->setName(modelName);
 	//create < player_name >
 
 }

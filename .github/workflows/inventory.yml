@@ -1,0 +1,36 @@
+name: Inventory
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            compiler: -DCMAKE_CXX_COMPILER=clang++
+          - os: macos-14
+            compiler: -DCMAKE_CXX_COMPILER=clang++
+          - os: windows-2022
+            compiler: ""
+    defaults:
+      run:
+        working-directory: gamecorev0.1.1/gamecorev0.1.1/inventory
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: gamecorev0.1.1/gamecorev0.1.1/inventory
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_COMPILE_WARNING_AS_ERROR=ON ${{ matrix.compiler }}
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: ctest --test-dir build --build-config Release --output-on-failure --verbose

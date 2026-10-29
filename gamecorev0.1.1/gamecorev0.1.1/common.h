@@ -53,19 +53,6 @@
 		std::vector<std::string> skin_paths;
 	};
 
-	struct house_spawn
-	{
-		house_spawn()
-		{
-			loc.push_back(irr::core::vector3df(81,47,60));
-			loc.push_back(irr::core::vector3df(119,47,-34));
-			loc.push_back(irr::core::vector3df(113.0f, 47.0f, 25.0f));
-		}
-		irr::core::vector3df get_spawn(){return loc[rand()% 3 ];}
-
-		std::vector<irr::core::vector3df> loc;
-	};
-
 	#define TYPE_CLUE "clue"
 	#define TYPE_PLAYER "player"
     #define TYPE_WEAPON "weapon"

@@ -4,71 +4,42 @@
 /*
 //////////////////////////////////////////////////////////////////////////
 NETWORKDATA.H
-used to transport data from the client to the host
-as well as store and remove remote players 
+stores and removes the remote players the server tells us about
 By: Michael Carey
 //////////////////////////////////////////////////////////////////////////
 */
-#define  MAX_PLAYERS 8
 
-#pragma once
-#include "ChatQueue.h"
-#include <sstream>
+#include <map>
 #include <string>
-#include "player.h"
-#include "remotePlayer.h"
 #include <vector>
-#include"common.h"
-#include <iostream>
 #include <irrlicht.h>
-#include "InteractiveObject.h"
+#include "remotePlayer.h"
+#include "protocol/GameMessages.h"
 
 class NetworkData
 {
 public:
-	//ctor
-	NetworkData(irr::IrrlichtDevice* device,char* filename,
-		irr::scene::ISceneManager* smgr,irr::video::IVideoDriver* driver,
-		irrklang::ISoundEngine* engine, irrBulletWorld* world, ChatQueue* message_buffer, player* thePlayer);
-	//dtor
-	virtual ~NetworkData();
+	NetworkData(irr::IrrlichtDevice* device, irr::scene::ISceneManager* smgr, irr::video::IVideoDriver* driver,
+		gamecore::SoundEngine* engine, PhysicsWorld* physics);
 
-	int chatLength ();
-	int length     ();
-	
-	//setters
-	void  setChatMessage  (char* chat);
-	void  setString       (player& thereInput);
-	void  setRemote       (const char* ourData);
-	std::vector<remotePlayer> findDamagedPlayers();
-	
-	//getters
-    const char*       getNetworkData      ()const;// get the remote data
-	const std::string getChatMessage      ();
-	const std::string getThereChatMessage ();
-	int               getMaxPlayers       ();//return the max number of players for our network game
-	std::map<std::string,remotePlayer>& getRemotePlayers() { return players_;}
+	void add(uint16_t id, const std::string& name, uint8_t model);
+	void remove(uint16_t id);
+	void place(uint16_t id, const protocol::State& state, float now);
+	void update(float now);
+	void hide(uint16_t id);
+	void show(uint16_t id);
+	remotePlayer* findByNode(const std::string& nodeName);
+	std::vector<uint16_t> takeDamaged();
 
+	std::map<uint16_t, remotePlayer>& getRemotePlayers() { return players_; }
 
 private:
-
-	int dataSize_;
-	int currentPlayers_;
-	int maxPlayers_;
-	std::ostringstream ourNetworkData;
-	std::string ourNetworkChatMine;
-	std::string ourNetworkChatTheres;
-	std::map<std::string,remotePlayer> players_;
 	irr::IrrlichtDevice* device_;
-	char* filename_;
 	irr::scene::ISceneManager* smgr_;
 	irr::video::IVideoDriver* driver_;
-	irrklang::ISoundEngine* engine_;
-	irrBulletWorld* world_;
-	ChatQueue* message_buffer_;
-	common_paths paths_;
-	player* player_;
-
+	gamecore::SoundEngine* engine_;
+	PhysicsWorld* physics_;
+	std::map<uint16_t, remotePlayer> players_;
 };
 
 #endif

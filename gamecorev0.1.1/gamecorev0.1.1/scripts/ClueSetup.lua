@@ -1,7 +1,4 @@
 function pickRandomLocation(size)
-	math.randomseed(os.time());
-	math.random(); math.random(); math.random();	
-	
 	selection = math.random(0,size-1);
 	
 	return selection

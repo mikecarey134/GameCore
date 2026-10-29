@@ -1,0 +1,111 @@
+; FBX 7.4.0 project file
+FBXHeaderExtension:  {
+	FBXHeaderVersion: 1003
+	FBXVersion: 7400
+	Creator: "GameCore make_rig_fbx.py"
+}
+GlobalSettings:  {
+	Version: 1000
+	Properties70:  {
+		P: "UpAxis", "int", "Integer", "",1
+		P: "UpAxisSign", "int", "Integer", "",1
+		P: "FrontAxis", "int", "Integer", "",2
+		P: "FrontAxisSign", "int", "Integer", "",1
+		P: "CoordAxis", "int", "Integer", "",0
+		P: "CoordAxisSign", "int", "Integer", "",1
+		P: "UnitScaleFactor", "double", "Number", "",1
+	}
+}
+Objects:  {
+	Model: 300, "Model::Bone1", "LimbNode" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Model: 301, "Model::Bone2", "LimbNode" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,1,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Model: 302, "Model::Bone3", "LimbNode" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,1,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Model: 220, "Model::Holder", "Null" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",3,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+		}
+	}
+	Model: 200, "Model::Body", "Mesh" {
+		Version: 232
+		Properties70:  {
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,90,0
+		}
+	}
+	Geometry: 100, "Geometry::Body", "Mesh" {
+		Vertices: *36 {
+			a: -0.25,0,-0.25,0.25,0,-0.25,0.25,0,0.25,-0.25,0,0.25,-0.25,1,-0.25,0.25,1,-0.25,0.25,1,0.25,-0.25,1,0.25,-0.25,2,-0.25,0.25,2,-0.25,0.25,2,0.25,-0.25,2,0.25
+		}
+		PolygonVertexIndex: *40 {
+			a: 0,3,2,-2,8,9,10,-12,0,1,5,-5,1,2,6,-6,2,3,7,-7,3,0,4,-8,4,5,9,-9,5,6,10,-10,6,7,11,-11,7,4,8,-12
+		}
+		GeometryVersion: 124
+	}
+	Deformer: 400, "Deformer::Skin", "Skin" {
+		Version: 101
+		Link_DeformAcuracy: 50
+	}
+	Deformer: 401, "SubDeformer::Cluster 300", "Cluster" {
+		Version: 100
+		Indexes: *8 {
+			a: 0,1,2,3,4,5,6,7
+		}
+		Weights: *8 {
+			a: 1,1,1,1,1,1,1,1
+		}
+		Transform: *16 {
+			a: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+		}
+		TransformLink: *16 {
+			a: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+		}
+	}
+	Deformer: 402, "SubDeformer::Cluster 301", "Cluster" {
+		Version: 100
+		Indexes: *4 {
+			a: 8,9,10,11
+		}
+		Weights: *4 {
+			a: 1,1,1,1
+		}
+		Transform: *16 {
+			a: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+		}
+		TransformLink: *16 {
+			a: 1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1
+		}
+	}
+}
+Connections:  {
+	C: "OO",300,0
+	C: "OO",301,300
+	C: "OO",302,301
+	C: "OO",220,0
+	C: "OO",200,220
+	C: "OO",100,200
+	C: "OO",400,100
+	C: "OO",401,400
+	C: "OO",300,401
+	C: "OO",402,400
+	C: "OO",301,402
+}
