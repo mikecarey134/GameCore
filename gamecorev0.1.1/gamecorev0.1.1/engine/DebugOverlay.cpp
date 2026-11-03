@@ -113,7 +113,7 @@ void DebugOverlay::draw(const vector3df& nodePosition, const irr::core::stringw&
 	// Draw the background rectangle
 	canvas_.drawRect(anchored(rect<s32>(x, y, x + width, y + (height+offset)), 0.0f, 0.0f, screenSizeDim), SColor(100, 0, 0, 0));
 
-	canvas_.drawText(canvas_.builtInFont(), fpsstr.c_str(),
+	canvas_.drawText(font_ ? font_ : canvas_.builtInFont(), fpsstr.c_str(),
 		anchored(rect<s32>(x + 10, y + 10, x + width - 10, y + height - 10), 0.0f, 0.0f, screenSizeDim), SColor(255, 255, 255, 255));
 
 	if (physics_)
