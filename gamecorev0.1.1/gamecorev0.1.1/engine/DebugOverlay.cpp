@@ -1,5 +1,6 @@
 #include "DebugOverlay.h"
 #include <irrlicht.h>
+#include <string>
 #include "UiAnchor.h"
 #include "physics/PhysicsWorld.h"
 #ifdef _WIN32
@@ -20,20 +21,22 @@ using namespace irr;
 using namespace core;
 using namespace video;
 
-// Appends text in fixed-width chunks, each on its own line
-void appendWrapped(core::stringw& out, const char* text, size_t width)
+namespace
 {
-	if (!text)
-		return;
-	const std::string s(text);
-	for (size_t i = 0; i < s.size(); i += width)
+	void appendWrapped(core::stringw& out, const char* text, std::size_t width)
 	{
-		out += "\n  ";
-		out += core::stringw(s.substr(i, width).c_str());
+		if (!text)
+			return;
+		const std::string s(text);
+		for (std::size_t i = 0; i < s.size(); i += width)
+		{
+			out += "\n  ";
+			out += core::stringw(s.substr(i, width).c_str());
+		}
 	}
 }
 
-void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw playerDirection,irr::core::stringw cameraDirection)
+void DebugOverlay::draw(const vector3df& nodePosition, const irr::core::stringw& playerDirection, const irr::core::stringw& cameraDirection)
 {
 	IVideoDriver* driver = device_->getVideoDriver();
 
@@ -47,18 +50,21 @@ void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw player
 	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
 	GlobalMemoryStatusEx(&memInfo);
 	DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
+	const char* memoryLabel = "\nSystem Page File MB:";
 #elif defined(__linux__)
 	// Resident memory of this process (statm fields are in pages)
-    unsigned long long virtualMemUsed = 0;
-    if (FILE* f = fopen("/proc/self/statm", "r"))
-    {
-        unsigned long long sizePages = 0, residentPages = 0;
-        if (fscanf(f, "%llu %llu", &sizePages, &residentPages) == 2)
-            virtualMemUsed = residentPages * (unsigned long long)sysconf(_SC_PAGESIZE);
-        fclose(f);
-    }
+	unsigned long long virtualMemUsed = 0;
+	if (FILE* f = fopen("/proc/self/statm", "r"))
+	{
+		unsigned long long sizePages = 0, residentPages = 0;
+		if (fscanf(f, "%llu %llu", &sizePages, &residentPages) == 2)
+			virtualMemUsed = residentPages * (unsigned long long)sysconf(_SC_PAGESIZE);
+		fclose(f);
+	}
+	const char* memoryLabel = "\nProcess RSS MB:";
 #else
 	unsigned long long virtualMemUsed = 0;
+	const char* memoryLabel = "\nMemory MB:";
 #endif
 
 	//PROCESS_MEMORY_COUNTERS_EX pmc;
@@ -69,8 +75,8 @@ void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw player
 	fpsstr+="---GameCorev0.1.1---\n";
 	fpsstr+= "FPS:";
 	fpsstr+=GUIFps;
-	fpsstr+= "\nVMemory MB:";
-	fpsstr+= (long)virtualMemUsed / (1024 * 1024); // Convert bytes to MB
+	fpsstr+= memoryLabel;
+	fpsstr+= static_cast<long>(virtualMemUsed / (1024ULL * 1024ULL)); // Convert bytes to MB
 	fpsstr+= "\nPrim Drawn:";
 	fpsstr+=pDrawn;
 	fpsstr+= "\nTex Loaded:";
@@ -86,8 +92,7 @@ void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw player
 	fpsstr+="\nVendor:";
 	fpsstr+=driver->getVendorInfo();//get card vendor info
 	fpsstr+="\nCard:";
-    //fpsstr+=driver->getVendorInfo();
-    if (driver->getDriverType() == EDT_OPENGL)
+	if (driver->getDriverType() == EDT_OPENGL)
 		appendWrapped(fpsstr, reinterpret_cast<const char*>(glGetString(GL_RENDERER)), 15);
 	fpsstr+="\nDriver:";
 	fpsstr+= driver->getName();
@@ -108,19 +113,8 @@ void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw player
 	// Draw the background rectangle
 	canvas_.drawRect(anchored(rect<s32>(x, y, x + width, y + (height+offset)), 0.0f, 0.0f, screenSizeDim), SColor(100, 0, 0, 0));
 
-	// Load and draw the font
-	auto font = canvas_.loadFont("assets/fonts/console.bmp");
-	if (font)
-	{
-		canvas_.drawText(font, fpsstr.c_str(),
-			anchored(rect<s32>(x + 10, y + 10, x + width - 10, y + height - 10), 0.0f, 0.0f, screenSizeDim), SColor(255, 255, 255, 255));
-	}
-	else
-	{
-		// Handle font loading failure
-		canvas_.drawText(nullptr, L"Font not loaded",
-			anchored(rect<s32>(x + 10, y + 10, x + width - 10, y + height - 10), 0.0f, 0.0f, screenSizeDim), SColor(255, 0, 0, 255));
-	}
+	canvas_.drawText(canvas_.builtInFont(), fpsstr.c_str(),
+		anchored(rect<s32>(x + 10, y + 10, x + width - 10, y + height - 10), 0.0f, 0.0f, screenSizeDim), SColor(255, 255, 255, 255));
 
 	if (physics_)
 		physics_->drawDebug(driver);
