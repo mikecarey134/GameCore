@@ -13,7 +13,7 @@ class DebugOverlay
 {
 public:
 	DebugOverlay(irr::IrrlichtDevice* device, Canvas& canvas, PhysicsWorld* physics) : device_(device), canvas_(canvas), physics_(physics) {}
-	void draw(const irr::core::vector3df& nodePosition, irr::core::stringw playerDirection);// add more parameters as needed
+	void draw(const irr::core::vector3df& nodePosition, irr::core::stringw playerDirection, irr::core::stringw cameraDirection);// add more parameters as needed
 
 private:
 	irr::IrrlichtDevice* device_;

@@ -33,7 +33,7 @@ void appendWrapped(core::stringw& out, const char* text, size_t width)
 	}
 }
 
-void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw playerDirection)
+void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw playerDirection,irr::core::stringw cameraDirection)
 {
 	IVideoDriver* driver = device_->getVideoDriver();
 
@@ -75,7 +75,7 @@ void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw player
 	fpsstr+=pDrawn;
 	fpsstr+= "\nTex Loaded:";
 	fpsstr+=driver->getTextureCount();
-	fpsstr+="\nDirection:";
+	fpsstr+="\nPlayer Facing:";
 	fpsstr+= playerDirection;
 	fpsstr+="\nX:";
 	fpsstr+= nodePosition.X;
@@ -93,8 +93,9 @@ void DebugOverlay::draw(const vector3df& nodePosition, irr::core::stringw player
 	fpsstr+= driver->getName();
 	fpsstr+="\nDebug:";
 	fpsstr+= driver->getDebugName();
+	fpsstr+="\nCamera Facing:";
+	fpsstr+= cameraDirection;
 	
-
 	fpsstr+="\n-------------------------";
 	// Calculate the dynamic position for the top-right corner
 	dimension2d<u32> screenSizeDim = canvas_.screenSize();
