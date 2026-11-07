@@ -70,7 +70,7 @@ using namespace gui;
 #ifdef _MSC_VER
 #pragma comment(lib, "ws2_32.lib")
 #endif
-#ifdef _IRR_WINDOWS_
+#if defined(_IRR_WINDOWS_) && defined(_MSC_VER)
 #pragma comment(lib, "Irrlicht.lib")
 
 #ifdef CONSOLE//if we want the console displayed
@@ -332,7 +332,4 @@ int main(int argc, char** argv)
 
 	return 0;
 }
-
-
-
 
