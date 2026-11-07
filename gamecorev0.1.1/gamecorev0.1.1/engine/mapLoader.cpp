@@ -1,4 +1,5 @@
 #include "mapLoader.h"
+#include <string>
 #include <vector>
 
 using namespace irr;
@@ -32,9 +33,10 @@ void mapLoader::loadMap()
 
 		ISceneNode* node = nodes[i];
 		node->updateAbsolutePosition();
-		stringc name = node->getName();
-		const stringc prefix = name.subString(0,name.findFirst('_'));
-		const stringc suffix = name.subString(name.findFirst('_')+1, name.size()-name.findFirst('_'));
+		const std::string name = node->getName();
+		const std::size_t separator = name.find('_');
+		const std::string prefix = name.substr(0, separator);
+		const std::string suffix = separator == std::string::npos ? std::string() : name.substr(separator + 1);
 
 
 		if(prefix == "spawn")
