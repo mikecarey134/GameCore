@@ -86,11 +86,21 @@ if(MSVC)
   set(LUAJIT_VM "${LUAJIT_GEN}/lj_vm.obj")
 else()
   enable_language(ASM)
-  execute_process(COMMAND ${CMAKE_C_COMPILER} -E -dM -x c "${LUAJIT_SRC}/lj_arch.h"
-    OUTPUT_VARIABLE LUAJIT_ARCH RESULT_VARIABLE LUAJIT_ARCH_RESULT)
+  execute_process(
+    COMMAND "${CMAKE_C_COMPILER}"
+      -isysroot "${CMAKE_OSX_SYSROOT}"
+      -arch x86_64
+      -E -dM -x c "${LUAJIT_SRC}/lj_arch.h"
+    OUTPUT_VARIABLE LUAJIT_ARCH
+    ERROR_VARIABLE LUAJIT_ARCH_ERROR
+    RESULT_VARIABLE LUAJIT_ARCH_RESULT
+  )
+
   if(NOT LUAJIT_ARCH_RESULT EQUAL 0)
-    message(FATAL_ERROR "Could not preprocess LuaJIT's lj_arch.h")
+    message(FATAL_ERROR
+      "Could not preprocess LuaJIT's lj_arch.h:\n${LUAJIT_ARCH_ERROR}")
   endif()
+
   set(LUAJIT_DASM_FLAGS "")
   if(WIN32)
     list(APPEND LUAJIT_DASM_FLAGS -D WIN)
