@@ -1,0 +1,588 @@
+c++ -I. -I../../include -Izlib -Ijpeglib -Ilibpng -DIRRLICHT_EXPORTS=1 -IMacOSX -D_IRR_COMPILE_WITH_OSX_DEVICE_ -D_IRR_COMPILE_WITH_OPENGL_ -Wall -pipe -fno-exceptions -fno-rtti -fstrict-aliasing -g -D_DEBUG -c -o MacOSX/CIrrDeviceMacOSX.o MacOSX/CIrrDeviceMacOSX.mm
+In file included from MacOSX/CIrrDeviceMacOSX.mm:6:
+../../include/IrrCompileConfig.h:97:9: warning: '_IRR_COMPILE_WITH_OSX_DEVICE_' macro redefined [-Wmacro-redefined]
+   97 | #define _IRR_COMPILE_WITH_OSX_DEVICE_
+      |         ^
+<command line>:2:9: note: previous definition is here
+    2 | #define _IRR_COMPILE_WITH_OSX_DEVICE_ 1
+      |         ^
+In file included from MacOSX/CIrrDeviceMacOSX.mm:6:
+../../include/IrrCompileConfig.h:164:9: warning: '_IRR_COMPILE_WITH_OPENGL_' macro redefined [-Wmacro-redefined]
+  164 | #define _IRR_COMPILE_WITH_OPENGL_
+      |         ^
+<command line>:3:9: note: previous definition is here
+    3 | #define _IRR_COMPILE_WITH_OPENGL_ 1
+      |         ^
+In file included from MacOSX/CIrrDeviceMacOSX.mm:16:
+MacOSX/CIrrDeviceMacOSX.h:230:3: warning: 'NSOpenGLContext' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  230 |                 NSOpenGLContext *OGLContext;
+      |                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:184:12: note: 'NSOpenGLContext' has been explicitly marked deprecated here
+  184 | @interface NSOpenGLContext : NSObject <NSLocking>
+      |            ^
+In file included from MacOSX/CIrrDeviceMacOSX.mm:16:
+MacOSX/CIrrDeviceMacOSX.h:110:26: warning: field 'IsVisible' will be initialized after field 'InvWindowSize' [-Wreorder-ctor]
+  110 |                                 : WindowSize(wsize), IsVisible(true), InvWindowSize(0.0f, 0.0f), Device(device), UseReferenceRect(false)
+      |                                                      ^~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~
+      |                                                      InvWindowSize(0.0f, 0.0f) Device(device)    IsVisible(true)
+MacOSX/CIrrDeviceMacOSX.mm:197:32: warning: field 'minRead' will be initialized after field 'max' [-Wreorder-ctor]
+  197 |         JoystickComponent() : min(0), minRead(0), max(0), maxRead(0)
+      |                                       ^~~~~~~~~~  ~~~~~~
+      |                                       max(0)      minRead(0)
+MacOSX/CIrrDeviceMacOSX.mm:221:89: warning: field 'usagePage' will be initialized after field 'numActiveJoysticks' [-Wreorder-ctor]
+  221 |         JoystickInfo() : hats(0), axes(0), buttons(0), interface(0), removed(false), usage(0), usagePage(0), numActiveJoysticks(0)
+      |                                                        ~~~~~~~~~~~~  ~~~~~~~~~~~~~~  ~~~~~~~~  ^~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~
+      |                                                        numActiveJoysticks(0) interface(0) removed(false) usage(0) usagePage(0)
+MacOSX/CIrrDeviceMacOSX.mm:482:2: warning: field 'IsActive' will be initialized after field 'IsFullscreen' [-Wreorder-ctor]
+  482 |         IsActive(true), IsFullscreen(false), IsShiftDown(false), IsControlDown(false), IsResizable(false)
+      |         ^~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~
+      |         IsFullscreen(false) IsActive(true)
+MacOSX/CIrrDeviceMacOSX.mm:500:14: warning: 'loadNibNamed:owner:' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
+  500 |                         [NSBundle loadNibNamed:@"MainMenu" owner:[NSApp delegate]];
+      |                                   ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSNibLoading.h:33:1: note: 'loadNibNamed:owner:' has been explicitly marked deprecated here
+   33 | + (BOOL)loadNibNamed:(null_unspecified NSString *)nibName owner:(null_unspecified id)owner API_DEPRECATED("", macos(10.0,10.8));
+      | ^
+MacOSX/CIrrDeviceMacOSX.mm:508:15: warning: unused variable 'a' [-Wunused-variable]
+  508 |     NSWindow* a;
+      |               ^
+MacOSX/CIrrDeviceMacOSX.mm:576:7: warning: 'NSOpenGLContext' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  576 |                                 [(NSOpenGLContext *)OGLContext clearDrawable];
+      |                                   ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:184:12: note: 'NSOpenGLContext' has been explicitly marked deprecated here
+  184 | @interface NSOpenGLContext : NSObject <NSLocking>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:577:7: warning: 'NSOpenGLContext' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  577 |                                 [(NSOpenGLContext *)OGLContext release];
+      |                                   ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:184:12: note: 'NSOpenGLContext' has been explicitly marked deprecated here
+  184 | @interface NSOpenGLContext : NSObject <NSLocking>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:583:5: warning: 'CGLClearDrawable' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  583 |                                 CGLClearDrawable(CGLContext);
+      |                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:78:17: note: 'CGLClearDrawable' has been explicitly marked deprecated here
+   78 | extern CGLError CGLClearDrawable(CGLContextObj ctx) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:584:5: warning: 'CGLDestroyContext' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  584 |                                 CGLDestroyContext(CGLContext);
+      |                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:49:17: note: 'CGLDestroyContext' has been explicitly marked deprecated here
+   49 | extern CGLError CGLDestroyContext(CGLContextObj ctx) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:625:107: warning: 'NSBackingStoreNonretained' is deprecated: first deprecated in macOS 10.13 [-Wdeprecated-declarations]
+  625 |                                 NSBackingStoreType type = (CreationParams.DriverType == video::EDT_OPENGL) ? NSBackingStoreBuffered : NSBackingStoreNonretained;
+      |                                                                                                                                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                       NSBackingStoreBuffered
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSGraphics.h:98:5: note: 'NSBackingStoreNonretained' has been explicitly marked deprecated here
+   98 |     NSBackingStoreNonretained API_DEPRECATED_WITH_REPLACEMENT("NSBackingStoreBuffered", macos(10.0,10.13)) = 1,
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:627:143: warning: 'NSTitledWindowMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  627 |                                 Window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,CreationParams.WindowSize.Width,CreationParams.WindowSize.Height) styleMask:NSTitledWindowMask+NSClosableWindowMask+NSResizableWindowMask backing:type defer:FALSE];
+      |                                                                                                                                                                           ^~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                                           NSWindowStyleMaskTitled
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:1046:32: note: 'NSTitledWindowMask' has been explicitly marked deprecated here
+ 1046 | static const NSWindowStyleMask NSTitledWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskTitled", macos(10.0,10.12)) = NSWindowStyleMaskTitled;
+      |                                ^
+MacOSX/CIrrDeviceMacOSX.mm:627:162: warning: 'NSClosableWindowMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  627 |                                 Window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,CreationParams.WindowSize.Width,CreationParams.WindowSize.Height) styleMask:NSTitledWindowMask+NSClosableWindowMask+NSResizableWindowMask backing:type defer:FALSE];
+      |                                                                                                                                                                                              ^~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                                                              NSWindowStyleMaskClosable
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:1047:32: note: 'NSClosableWindowMask' has been explicitly marked deprecated here
+ 1047 | static const NSWindowStyleMask NSClosableWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskClosable", macos(10.0,10.12)) = NSWindowStyleMaskClosable;
+      |                                ^
+MacOSX/CIrrDeviceMacOSX.mm:627:183: warning: 'NSResizableWindowMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  627 |                                 Window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,CreationParams.WindowSize.Width,CreationParams.WindowSize.Height) styleMask:NSTitledWindowMask+NSClosableWindowMask+NSResizableWindowMask backing:type defer:FALSE];
+      |                                                                                                                                                                                                                   ^~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                                                                                   NSWindowStyleMaskResizable
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:1049:32: note: 'NSResizableWindowMask' has been explicitly marked deprecated here
+ 1049 | static const NSWindowStyleMask NSResizableWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskResizable", macos(10.0,10.12)) = NSWindowStyleMaskResizable;
+      |                                ^
+MacOSX/CIrrDeviceMacOSX.mm:634:6: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  634 |                                         NSOpenGLPixelFormatAttribute windowattribs[] =
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:645:7: error: cast from pointer to smaller type 'NSOpenGLPixelFormatAttribute' (aka 'unsigned int') loses information
+  645 |                                                 (NSOpenGLPixelFormatAttribute)nil
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MacOSX/CIrrDeviceMacOSX.mm:636:7: warning: 'NSOpenGLPFANoRecovery' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  636 |                                                 NSOpenGLPFANoRecovery,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:79:5: note: 'NSOpenGLPFANoRecovery' has been explicitly marked deprecated here
+   79 |     NSOpenGLPFANoRecovery            NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  72,     /* disable all failure recovery systems         */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:637:7: warning: 'NSOpenGLPFAAccelerated' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  637 |                                                 NSOpenGLPFAAccelerated,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:80:5: note: 'NSOpenGLPFAAccelerated' has been explicitly marked deprecated here
+   80 |     NSOpenGLPFAAccelerated           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  73,     /* choose a hardware accelerated renderer       */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:638:7: warning: 'NSOpenGLPFADepthSize' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  638 |                                                 NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)depthSize,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:66:5: note: 'NSOpenGLPFADepthSize' has been explicitly marked deprecated here
+   66 |     NSOpenGLPFADepthSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  12,     /* number of depth buffer bits                  */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:638:30: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  638 |                                                 NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)depthSize,
+      |                                                                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:639:7: warning: 'NSOpenGLPFAColorSize' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  639 |                                                 NSOpenGLPFAColorSize, (NSOpenGLPixelFormatAttribute)CreationParams.Bits,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:64:5: note: 'NSOpenGLPFAColorSize' has been explicitly marked deprecated here
+   64 |     NSOpenGLPFAColorSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   8,     /* number of color buffer bits                  */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:639:30: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  639 |                                                 NSOpenGLPFAColorSize, (NSOpenGLPixelFormatAttribute)CreationParams.Bits,
+      |                                                                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:640:7: warning: 'NSOpenGLPFAAlphaSize' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  640 |                                                 NSOpenGLPFAAlphaSize, (NSOpenGLPixelFormatAttribute)alphaSize,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:65:5: note: 'NSOpenGLPFAAlphaSize' has been explicitly marked deprecated here
+   65 |     NSOpenGLPFAAlphaSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  11,     /* number of alpha component bits               */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:640:30: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  640 |                                                 NSOpenGLPFAAlphaSize, (NSOpenGLPixelFormatAttribute)alphaSize,
+      |                                                                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:641:7: warning: 'NSOpenGLPFASampleBuffers' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  641 |                                                 NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:71:5: note: 'NSOpenGLPFASampleBuffers' has been explicitly marked deprecated here
+   71 |     NSOpenGLPFASampleBuffers         NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  55,     /* number of multi sample buffers               */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:641:34: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  641 |                                                 NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
+      |                                                                            ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:642:7: warning: 'NSOpenGLPFASamples' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  642 |                                                 NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute)CreationParams.AntiAlias,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:72:5: note: 'NSOpenGLPFASamples' has been explicitly marked deprecated here
+   72 |     NSOpenGLPFASamples               NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  56,     /* number of samples per multi sample buffer    */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:642:28: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  642 |                                                 NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute)CreationParams.AntiAlias,
+      |                                                                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:643:7: warning: 'NSOpenGLPFAStencilSize' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  643 |                                                 NSOpenGLPFAStencilSize, (NSOpenGLPixelFormatAttribute)(CreationParams.Stencilbuffer?1:0),
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:67:5: note: 'NSOpenGLPFAStencilSize' has been explicitly marked deprecated here
+   67 |     NSOpenGLPFAStencilSize           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  13,     /* number of stencil buffer bits                */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:643:32: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  643 |                                                 NSOpenGLPFAStencilSize, (NSOpenGLPixelFormatAttribute)(CreationParams.Stencilbuffer?1:0),
+      |                                                                          ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:644:7: warning: 'NSOpenGLPFADoubleBuffer' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  644 |                                                 NSOpenGLPFADoubleBuffer,
+      |                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:62:5: note: 'NSOpenGLPFADoubleBuffer' has been explicitly marked deprecated here
+   62 |     NSOpenGLPFADoubleBuffer          NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   5,     /* choose a double buffered pixel format        */
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:645:8: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  645 |                                                 (NSOpenGLPixelFormatAttribute)nil
+      |                                                  ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:650:28: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  650 |                                                 windowattribs[ 9] = (NSOpenGLPixelFormatAttribute)0;
+      |                                                                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:651:28: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  651 |                                                 windowattribs[11] = (NSOpenGLPixelFormatAttribute)0;
+      |                                                                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:654:6: warning: 'NSOpenGLPixelFormat' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  654 |                                         NSOpenGLPixelFormat *format;
+      |                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:115:12: note: 'NSOpenGLPixelFormat' has been explicitly marked deprecated here
+  115 | @interface NSOpenGLPixelFormat : NSObject <NSCoding>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:662:28: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  662 |                                                                 windowattribs[13]=(NSOpenGLPixelFormatAttribute)0;
+      |                                                                                    ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:671:27: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  671 |                                                         windowattribs[14]=(NSOpenGLPixelFormatAttribute)nil;
+      |                                                                            ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:671:26: error: cast from pointer to smaller type 'NSOpenGLPixelFormatAttribute' (aka 'unsigned int') loses information
+  671 |                                                         windowattribs[14]=(NSOpenGLPixelFormatAttribute)nil;
+      |                                                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MacOSX/CIrrDeviceMacOSX.mm:674:18: warning: 'NSOpenGLPixelFormat' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  674 |                                                 format = [[NSOpenGLPixelFormat alloc] initWithAttributes:windowattribs];
+      |                                                            ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:115:12: note: 'NSOpenGLPixelFormat' has been explicitly marked deprecated here
+  115 | @interface NSOpenGLPixelFormat : NSObject <NSCoding>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:681:31: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  681 |                                                                         windowattribs[12] = (NSOpenGLPixelFormatAttribute)((int)windowattribs[12]-1);
+      |                                                                                              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:682:21: warning: 'NSOpenGLPixelFormat' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  682 |                                                                         format = [[NSOpenGLPixelFormat alloc] initWithAttributes:windowattribs];
+      |                                                                                    ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:115:12: note: 'NSOpenGLPixelFormat' has been explicitly marked deprecated here
+  115 | @interface NSOpenGLPixelFormat : NSObject <NSCoding>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:687:30: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  687 |                                                                         windowattribs[9] = (NSOpenGLPixelFormatAttribute)0;
+      |                                                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:688:31: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  688 |                                                                         windowattribs[11] = (NSOpenGLPixelFormatAttribute)0;
+      |                                                                                              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:689:21: warning: 'NSOpenGLPixelFormat' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  689 |                                                                         format = [[NSOpenGLPixelFormat alloc] initWithAttributes:windowattribs];
+      |                                                                                    ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:115:12: note: 'NSOpenGLPixelFormat' has been explicitly marked deprecated here
+  115 | @interface NSOpenGLPixelFormat : NSObject <NSCoding>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:693:31: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  693 |                                                                                 windowattribs[9] = (NSOpenGLPixelFormatAttribute)1;
+      |                                                                                                     ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:694:32: warning: 'NSOpenGLPixelFormatAttribute' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated; please use Metal and MetalKit.  (Define GL_SILENCE_DEPRECATION to silence these warnings.) [-Wdeprecated-declarations]
+  694 |                                                                                 windowattribs[11] = (NSOpenGLPixelFormatAttribute)CreationParams.AntiAlias;
+      |                                                                                                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:101:18: note: 'NSOpenGLPixelFormatAttribute' has been explicitly marked deprecated here
+  101 | typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
+      |                  ^
+MacOSX/CIrrDeviceMacOSX.mm:711:22: warning: 'NSOpenGLContext' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  711 |                                                 OGLContext = [[NSOpenGLContext alloc] initWithFormat:format shareContext:NULL];
+      |                                                                ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:184:12: note: 'NSOpenGLContext' has been explicitly marked deprecated here
+  184 | @interface NSOpenGLContext : NSObject <NSLocking>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:724:20: warning: 'setView:' is deprecated: first deprecated in macOS 10.14 - Use NSOpenGLView to provide OpenGL content in a Cocoa app. [-Wdeprecated-declarations]
+  724 |                                                         [OGLContext setView:[Window contentView]];
+      |                                                                     ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:193:36: note: property 'view' is declared deprecated here
+  193 | @property (nullable, weak) NSView *view NS_SWIFT_UI_ACTOR API_DEPRECATED("", macos(10.0,10.14));
+      |                                    ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:194:1: note: 'setView:' has been explicitly marked deprecated here
+  194 | - (void)setView:(nullable NSView *)view NS_SWIFT_UI_ACTOR API_DEPRECATED("Use NSOpenGLView to provide OpenGL content in a Cocoa app.", macos(10.0,10.14));
+      | ^
+MacOSX/CIrrDeviceMacOSX.mm:731:19: warning: 'setView:' is deprecated: first deprecated in macOS 10.14 - Use NSOpenGLView to provide OpenGL content in a Cocoa app. [-Wdeprecated-declarations]
+  731 |                                                 [OGLContext setView:(NSView*)CreationParams.WindowId];
+      |                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:193:36: note: property 'view' is declared deprecated here
+  193 | @property (nullable, weak) NSView *view NS_SWIFT_UI_ACTOR API_DEPRECATED("", macos(10.0,10.14));
+      |                                    ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:194:1: note: 'setView:' has been explicitly marked deprecated here
+  194 | - (void)setView:(nullable NSView *)view NS_SWIFT_UI_ACTOR API_DEPRECATED("Use NSOpenGLView to provide OpenGL content in a Cocoa app.", macos(10.0,10.14));
+      | ^
+MacOSX/CIrrDeviceMacOSX.mm:757:26: warning: 'CGDisplayModeCopyPixelEncoding' is deprecated: first deprecated in macOS 10.11 - No longer supported [-Wdeprecated-declarations]
+  757 |                                 CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(CurrentMode);
+      |                                                      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGDirectDisplay.h:177:34: note: 'CGDisplayModeCopyPixelEncoding' has been explicitly marked deprecated here
+  177 | CG_EXTERN CFStringRef __nullable CGDisplayModeCopyPixelEncoding(
+      |                                  ^
+MacOSX/CIrrDeviceMacOSX.mm:802:9: warning: 'kCGLPFAFullScreen' is deprecated: first deprecated in macOS 10.6 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  802 |                                                                 kCGLPFAFullScreen,
+      |                                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/CGLTypes.h:98:2: note: 'kCGLPFAFullScreen' has been explicitly marked deprecated here
+   98 |         kCGLPFAFullScreen OPENGL_ENUM_DEPRECATED(10_0, 10_6)     =  54,
+      |         ^
+MacOSX/CIrrDeviceMacOSX.mm:818:8: warning: 'CGLChoosePixelFormat' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  818 |                                                         CGLChoosePixelFormat(fullattribs,&pixelFormat,&numPixelFormats);
+      |                                                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:31:17: note: 'CGLChoosePixelFormat' has been explicitly marked deprecated here
+   31 | extern CGLError CGLChoosePixelFormat(const CGLPixelFormatAttribute *attribs, CGLPixelFormatObj OPENGL_NULLABLE * OPENGL_NONNULL pix, GLint *npix) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:822:9: warning: 'CGLCreateContext' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  822 |                                                                 CGLCreateContext(pixelFormat,NULL,&CGLContext);
+      |                                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:48:17: note: 'CGLCreateContext' has been explicitly marked deprecated here
+   48 | extern CGLError CGLCreateContext(CGLPixelFormatObj pix, CGLContextObj OPENGL_NULLABLE share, CGLContextObj OPENGL_NULLABLE * OPENGL_NONNULL ctx) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:823:9: warning: 'CGLDestroyPixelFormat' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  823 |                                                                 CGLDestroyPixelFormat(pixelFormat);
+      |                                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:32:17: note: 'CGLDestroyPixelFormat' has been explicitly marked deprecated here
+   32 | extern CGLError CGLDestroyPixelFormat(CGLPixelFormatObj pix) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:829:9: warning: 'CGLSetFullScreenOnDisplay' is deprecated: first deprecated in macOS 10.7 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  829 |                                                                 CGLSetFullScreenOnDisplay(CGLContext, CGDisplayIDToOpenGLDisplayMask(display));
+      |                                                                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:73:17: note: 'CGLSetFullScreenOnDisplay' has been explicitly marked deprecated here
+   73 | extern CGLError CGLSetFullScreenOnDisplay(CGLContextObj ctx, GLuint display_mask) OPENGL_DEPRECATED(10.5, 10.7);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:842:95: warning: 'NSBorderlessWindowMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  842 |                                                         Window = [[NSWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreNonretained defer:NO screen:[NSScreen mainScreen]];
+      |                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                NSWindowStyleMaskBorderless
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:1045:32: note: 'NSBorderlessWindowMask' has been explicitly marked deprecated here
+ 1045 | static const NSWindowStyleMask NSBorderlessWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskBorderless", macos(10.0,10.12)) = NSWindowStyleMaskBorderless;
+      |                                ^
+MacOSX/CIrrDeviceMacOSX.mm:842:126: warning: 'NSBackingStoreNonretained' is deprecated: first deprecated in macOS 10.13 [-Wdeprecated-declarations]
+  842 |                                                         Window = [[NSWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreNonretained defer:NO screen:[NSScreen mainScreen]];
+      |                                                                                                                                                                               ^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                                               NSBackingStoreBuffered
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSGraphics.h:98:5: note: 'NSBackingStoreNonretained' has been explicitly marked deprecated here
+   98 |     NSBackingStoreNonretained API_DEPRECATED_WITH_REPLACEMENT("NSBackingStoreBuffered", macos(10.0,10.13)) = 1,
+      |     ^
+MacOSX/CIrrDeviceMacOSX.mm:882:4: warning: 'CGLSetParameter' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  882 |                         CGLSetParameter(CGLContext,kCGLCPSwapInterval,&newSwapInterval);
+      |                         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:87:17: note: 'CGLSetParameter' has been explicitly marked deprecated here
+   87 | extern CGLError CGLSetParameter(CGLContextObj ctx, CGLContextParameter pname, const GLint *params) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:896:16: warning: if statement has empty body [-Wempty-body]
+  896 |         if(OGLContext);
+      |                       ^
+MacOSX/CIrrDeviceMacOSX.mm:896:16: note: put the semicolon on a separate line to silence this warning
+MacOSX/CIrrDeviceMacOSX.mm:909:5: warning: 'NSOpenGLContext' is deprecated: first deprecated in macOS 10.14 - Please use Metal or MetalKit. [-Wdeprecated-declarations]
+  909 |                 [(NSOpenGLContext *)OGLContext update];
+      |                   ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSOpenGL.h:184:12: note: 'NSOpenGLContext' has been explicitly marked deprecated here
+  184 | @interface NSOpenGLContext : NSObject <NSLocking>
+      |            ^
+MacOSX/CIrrDeviceMacOSX.mm:961:3: warning: 'CGLFlushDrawable' is deprecated: first deprecated in macOS 10.14 - OpenGL API deprecated. (Define GL_SILENCE_DEPRECATION to silence these warnings) [-Wdeprecated-declarations]
+  961 |                 CGLFlushDrawable(CGLContext);
+      |                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGL.h:79:17: note: 'CGLFlushDrawable' has been explicitly marked deprecated here
+   79 | extern CGLError CGLFlushDrawable(CGLContextObj ctx) OPENGL_DEPRECATED(10.0, 10.14);
+      |                 ^
+MacOSX/CIrrDeviceMacOSX.mm:974:39: warning: 'NSAnyEventMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  974 |         event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantPast] inMode:NSDefaultRunLoopMode dequeue:YES];
+      |                                              ^~~~~~~~~~~~~~
+      |                                              NSEventMaskAny
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:162:26: note: 'NSAnyEventMask' has been explicitly marked deprecated here
+  162 | static const NSEventMask NSAnyEventMask                 API_DEPRECATED_WITH_REPLACEMENT("NSEventMaskAny", macos(10.0,10.12)) = NSUIntegerMax;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:981:9: warning: 'NSKeyDown' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  981 |                         case NSKeyDown:
+      |                              ^~~~~~~~~
+      |                              NSEventTypeKeyDown
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:76:26: note: 'NSKeyDown' has been explicitly marked deprecated here
+   76 | static const NSEventType NSKeyDown              API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeKeyDown", macos(10.0,10.12)) = NSEventTypeKeyDown;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:985:9: warning: 'NSKeyUp' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  985 |                         case NSKeyUp:
+      |                              ^~~~~~~
+      |                              NSEventTypeKeyUp
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:77:26: note: 'NSKeyUp' has been explicitly marked deprecated here
+   77 | static const NSEventType NSKeyUp                API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeKeyUp", macos(10.0,10.12)) = NSEventTypeKeyUp;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:989:9: warning: 'NSFlagsChanged' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  989 |                         case NSFlagsChanged:
+      |                              ^~~~~~~~~~~~~~
+      |                              NSEventTypeFlagsChanged
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:78:26: note: 'NSFlagsChanged' has been explicitly marked deprecated here
+   78 | static const NSEventType NSFlagsChanged         API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeFlagsChanged", macos(10.0,10.12)) = NSEventTypeFlagsChanged;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:991:65: warning: 'NSShiftKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  991 |                                 ievent.KeyInput.Shift = ([(NSEvent *)event modifierFlags] & NSShiftKeyMask) != 0;
+      |                                                                                             ^~~~~~~~~~~~~~
+      |                                                                                             NSEventModifierFlagShift
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:182:35: note: 'NSShiftKeyMask' has been explicitly marked deprecated here
+  182 | static const NSEventModifierFlags NSShiftKeyMask              API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagShift", macos(10.0,10.12)) = NSEventModifierFlagShift;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:992:67: warning: 'NSControlKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+  992 |                                 ievent.KeyInput.Control = ([(NSEvent *)event modifierFlags] & NSControlKeyMask) != 0;
+      |                                                                                               ^~~~~~~~~~~~~~~~
+      |                                                                                               NSEventModifierFlagControl
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:183:35: note: 'NSControlKeyMask' has been explicitly marked deprecated here
+  183 | static const NSEventModifierFlags NSControlKeyMask            API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagControl", macos(10.0,10.12)) = NSEventModifierFlagControl;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1019:9: warning: 'NSLeftMouseDown' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1019 |                         case NSLeftMouseDown:
+      |                              ^~~~~~~~~~~~~~~
+      |                              NSEventTypeLeftMouseDown
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:67:26: note: 'NSLeftMouseDown' has been explicitly marked deprecated here
+   67 | static const NSEventType NSLeftMouseDown        API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeLeftMouseDown", macos(10.0,10.12)) = NSEventTypeLeftMouseDown;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1027:9: warning: 'NSLeftMouseUp' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1027 |                         case NSLeftMouseUp:
+      |                              ^~~~~~~~~~~~~
+      |                              NSEventTypeLeftMouseUp
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:68:26: note: 'NSLeftMouseUp' has been explicitly marked deprecated here
+   68 | static const NSEventType NSLeftMouseUp          API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeLeftMouseUp", macos(10.0,10.12)) = NSEventTypeLeftMouseUp;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1035:9: warning: 'NSOtherMouseDown' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1035 |                         case NSOtherMouseDown:
+      |                              ^~~~~~~~~~~~~~~~
+      |                              NSEventTypeOtherMouseDown
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:87:26: note: 'NSOtherMouseDown' has been explicitly marked deprecated here
+   87 | static const NSEventType NSOtherMouseDown       API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeOtherMouseDown", macos(10.0,10.12)) = NSEventTypeOtherMouseDown;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1043:9: warning: 'NSOtherMouseUp' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1043 |                         case NSOtherMouseUp:
+      |                              ^~~~~~~~~~~~~~
+      |                              NSEventTypeOtherMouseUp
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:88:26: note: 'NSOtherMouseUp' has been explicitly marked deprecated here
+   88 | static const NSEventType NSOtherMouseUp         API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeOtherMouseUp", macos(10.0,10.12)) = NSEventTypeOtherMouseUp;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1051:9: warning: 'NSMouseMoved' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1051 |                         case NSMouseMoved:
+      |                              ^~~~~~~~~~~~
+      |                              NSEventTypeMouseMoved
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:71:26: note: 'NSMouseMoved' has been explicitly marked deprecated here
+   71 | static const NSEventType NSMouseMoved           API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeMouseMoved", macos(10.0,10.12)) = NSEventTypeMouseMoved;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1052:9: warning: 'NSLeftMouseDragged' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1052 |                         case NSLeftMouseDragged:
+      |                              ^~~~~~~~~~~~~~~~~~
+      |                              NSEventTypeLeftMouseDragged
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:72:26: note: 'NSLeftMouseDragged' has been explicitly marked deprecated here
+   72 | static const NSEventType NSLeftMouseDragged     API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeLeftMouseDragged", macos(10.0,10.12)) = NSEventTypeLeftMouseDragged;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1053:9: warning: 'NSRightMouseDragged' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1053 |                         case NSRightMouseDragged:
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              NSEventTypeRightMouseDragged
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:73:26: note: 'NSRightMouseDragged' has been explicitly marked deprecated here
+   73 | static const NSEventType NSRightMouseDragged    API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeRightMouseDragged", macos(10.0,10.12)) = NSEventTypeRightMouseDragged;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1054:9: warning: 'NSOtherMouseDragged' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1054 |                         case NSOtherMouseDragged:
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              NSEventTypeOtherMouseDragged
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:89:26: note: 'NSOtherMouseDragged' has been explicitly marked deprecated here
+   89 | static const NSEventType NSOtherMouseDragged    API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeOtherMouseDragged", macos(10.0,10.12)) = NSEventTypeOtherMouseDragged;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1061:9: warning: 'NSRightMouseDown' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1061 |                         case NSRightMouseDown:
+      |                              ^~~~~~~~~~~~~~~~
+      |                              NSEventTypeRightMouseDown
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:69:26: note: 'NSRightMouseDown' has been explicitly marked deprecated here
+   69 | static const NSEventType NSRightMouseDown       API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeRightMouseDown", macos(10.0,10.12)) = NSEventTypeRightMouseDown;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1069:9: warning: 'NSRightMouseUp' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1069 |                         case NSRightMouseUp:
+      |                              ^~~~~~~~~~~~~~
+      |                              NSEventTypeRightMouseUp
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:70:26: note: 'NSRightMouseUp' has been explicitly marked deprecated here
+   70 | static const NSEventType NSRightMouseUp         API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeRightMouseUp", macos(10.0,10.12)) = NSEventTypeRightMouseUp;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1077:9: warning: 'NSScrollWheel' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1077 |                         case NSScrollWheel:
+      |                              ^~~~~~~~~~~~~
+      |                              NSEventTypeScrollWheel
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:84:26: note: 'NSScrollWheel' has been explicitly marked deprecated here
+   84 | static const NSEventType NSScrollWheel          API_DEPRECATED_WITH_REPLACEMENT("NSEventTypeScrollWheel", macos(10.0,10.12)) = NSEventTypeScrollWheel;
+      |                          ^
+MacOSX/CIrrDeviceMacOSX.mm:1098:29: warning: instance method '-isQuit' not found (return type defaults to 'id') [-Wobjc-method-access]
+ 1098 |         return (![[NSApp delegate] isQuit] && IsActive);
+      |                                    ^~~~~~
+MacOSX/CIrrDeviceMacOSX.mm:1131:9: warning: variable 'size' set but not used [-Wunused-but-set-variable]
+ 1131 |         size_t size;
+      |                ^
+MacOSX/CIrrDeviceMacOSX.mm:1207:45: warning: 'NSCommandKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1207 |                                         if ([(NSEvent *)event modifierFlags] & NSCommandKeyMask)
+      |                                                                                ^~~~~~~~~~~~~~~~
+      |                                                                                NSEventModifierFlagCommand
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:185:35: note: 'NSCommandKeyMask' has been explicitly marked deprecated here
+  185 | static const NSEventModifierFlags NSCommandKeyMask            API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagCommand", macos(10.0,10.12)) = NSEventModifierFlagCommand;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1222:63: warning: 'NSShiftKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1222 |                 ievent.KeyInput.Shift = ([(NSEvent *)event modifierFlags] & NSShiftKeyMask) != 0;
+      |                                                                             ^~~~~~~~~~~~~~
+      |                                                                             NSEventModifierFlagShift
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:182:35: note: 'NSShiftKeyMask' has been explicitly marked deprecated here
+  182 | static const NSEventModifierFlags NSShiftKeyMask              API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagShift", macos(10.0,10.12)) = NSEventModifierFlagShift;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1223:65: warning: 'NSControlKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1223 |                 ievent.KeyInput.Control = ([(NSEvent *)event modifierFlags] & NSControlKeyMask) != 0;
+      |                                                                               ^~~~~~~~~~~~~~~~
+      |                                                                               NSEventModifierFlagControl
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:183:35: note: 'NSControlKeyMask' has been explicitly marked deprecated here
+  183 | static const NSEventModifierFlags NSControlKeyMask            API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagControl", macos(10.0,10.12)) = NSEventModifierFlagControl;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1228:47: warning: 'NSCommandKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1228 |                 else if ([(NSEvent *)event modifierFlags] & NSCommandKeyMask)
+      |                                                             ^~~~~~~~~~~~~~~~
+      |                                                             NSEventModifierFlagCommand
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:185:35: note: 'NSCommandKeyMask' has been explicitly marked deprecated here
+  185 | static const NSEventModifierFlags NSCommandKeyMask            API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagCommand", macos(10.0,10.12)) = NSEventModifierFlagCommand;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1175:15: warning: unused variable 'result' [-Wunused-variable]
+ 1175 |         unsigned int result,c,mkey,mchar;
+      |                      ^~~~~~
+MacOSX/CIrrDeviceMacOSX.mm:1263:65: warning: 'NSShiftKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1263 |                 ievent.MouseInput.Shift = ([(NSEvent *)event modifierFlags] & NSShiftKeyMask) != 0;
+      |                                                                               ^~~~~~~~~~~~~~
+      |                                                                               NSEventModifierFlagShift
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:182:35: note: 'NSShiftKeyMask' has been explicitly marked deprecated here
+  182 | static const NSEventModifierFlags NSShiftKeyMask              API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagShift", macos(10.0,10.12)) = NSEventModifierFlagShift;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1264:67: warning: 'NSControlKeyMask' is deprecated: first deprecated in macOS 10.12 [-Wdeprecated-declarations]
+ 1264 |                 ievent.MouseInput.Control = ([(NSEvent *)event modifierFlags] & NSControlKeyMask) != 0;
+      |                                                                                 ^~~~~~~~~~~~~~~~
+      |                                                                                 NSEventModifierFlagControl
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSEvent.h:183:35: note: 'NSControlKeyMask' has been explicitly marked deprecated here
+  183 | static const NSEventModifierFlags NSControlKeyMask            API_DEPRECATED_WITH_REPLACEMENT("NSEventModifierFlagControl", macos(10.0,10.12)) = NSEventModifierFlagControl;
+      |                                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1281:15: warning: 'convertScreenToBase:' is deprecated: first deprecated in macOS 10.7 - Use -convertRectFromScreen or -convertPointFromScreen: instead [-Wdeprecated-declarations]
+ 1281 |                 p = [Window convertScreenToBase:p];
+      |                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:1000:1: note: 'convertScreenToBase:' has been explicitly marked deprecated here
+ 1000 | - (NSPoint)convertScreenToBase:(NSPoint)point API_DEPRECATED("Use -convertRectFromScreen or -convertPointFromScreen: instead", macos(10.0,10.7));
+      | ^
+MacOSX/CIrrDeviceMacOSX.mm:1321:15: warning: 'convertBaseToScreen:' is deprecated: first deprecated in macOS 10.7 - Use -convertRectToScreen: or -convertPointToScreen: instead [-Wdeprecated-declarations]
+ 1321 |                 p = [Window convertBaseToScreen:p];
+      |                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:999:1: note: 'convertBaseToScreen:' has been explicitly marked deprecated here
+  999 | - (NSPoint)convertBaseToScreen:(NSPoint)point API_DEPRECATED("Use -convertRectToScreen: or -convertPointToScreen: instead", macos(10.0,10.7));
+      | ^
+MacOSX/CIrrDeviceMacOSX.mm:1337:2: warning: 'CGSetLocalEventsSuppressionInterval' is deprecated: first deprecated in macOS 10.6 - No longer supported [-Wdeprecated-declarations]
+ 1337 |         CGSetLocalEventsSuppressionInterval(0);
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGRemoteOperation.h:379:19: note: 'CGSetLocalEventsSuppressionInterval' has been explicitly marked deprecated here
+  379 | CG_EXTERN CGError CGSetLocalEventsSuppressionInterval(CFTimeInterval seconds)
+      |                   ^
+MacOSX/CIrrDeviceMacOSX.mm:1613:11: warning: 'IOMasterPort' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+ 1613 |         result = IOMasterPort (bootstrap_port, &masterPort);
+      |                  ^~~~~~~~~~~~
+      |                  kIOMainPortDefault
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h:143:1: note: 'IOMasterPort' has been explicitly marked deprecated here
+  143 | IOMasterPort( mach_port_t       bootstrapPort,
+      | ^
+MacOSX/CIrrDeviceMacOSX.mm:1794:10: warning: unused variable 'ButtonStates' [-Wunused-variable]
+ 1794 |                                         u32 ButtonStates = 0;
+      |                                             ^~~~~~~~~~~~
+MacOSX/CIrrDeviceMacOSX.mm:1847:25: warning: 'CGDisplayModeCopyPixelEncoding' is deprecated: first deprecated in macOS 10.11 - No longer supported [-Wdeprecated-declarations]
+ 1847 |                         CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(CurrentMode);
+      |                                              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGDirectDisplay.h:177:34: note: 'CGDisplayModeCopyPixelEncoding' has been explicitly marked deprecated here
+  177 | CG_EXTERN CFStringRef __nullable CGDisplayModeCopyPixelEncoding(
+      |                                  ^
+94 warnings and 2 errors generated.
+make: *** [MacOSX/CIrrDeviceMacOSX.o] Error 1

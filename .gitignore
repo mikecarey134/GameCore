@@ -1,3 +1,22 @@
+# macOS metadata
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverride
+
+# CMake-generated build files
+build/
+build-*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# Compiled object files
+*.o
+*.d
+
 gamecorev0.1.1/gamecorev0.1.1/Models/CGSpeed Anims/01/01_01.bvh
 gamecorev0.1.1/gamecorev0.1.1/Models/CGSpeed Anims/01/01_02.bvh
 gamecorev0.1.1/gamecorev0.1.1/Models/CGSpeed Anims/01/01_03.bvh
