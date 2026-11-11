@@ -86,10 +86,13 @@ if(MSVC)
   set(LUAJIT_VM "${LUAJIT_GEN}/lj_vm.obj")
 else()
   enable_language(ASM)
+  set(LUAJIT_ARCH_FLAGS "")
+  if(APPLE)
+    set(LUAJIT_ARCH_FLAGS -isysroot "${CMAKE_OSX_SYSROOT}" -arch x86_64)
+  endif()
   execute_process(
     COMMAND "${CMAKE_C_COMPILER}"
-      -isysroot "${CMAKE_OSX_SYSROOT}"
-      -arch x86_64
+      ${LUAJIT_ARCH_FLAGS}
       -E -dM -x c "${LUAJIT_SRC}/lj_arch.h"
     OUTPUT_VARIABLE LUAJIT_ARCH
     ERROR_VARIABLE LUAJIT_ARCH_ERROR
